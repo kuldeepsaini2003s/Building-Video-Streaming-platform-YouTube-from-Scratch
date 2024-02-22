@@ -33,7 +33,7 @@ function App() {
   return (
     <Provider store={store}>
       <Navbar setToggle={setToggle}/>
-      {toggle && <Slider setToggle={setToggle} toggle={toggle}/>}
+      {toggle && <Slider setToggle={setToggle}/>}
       <RouterProvider router={appRouter}/>
     </Provider>
   );
