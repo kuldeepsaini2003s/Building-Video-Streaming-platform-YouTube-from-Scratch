@@ -6,8 +6,11 @@ module.exports = {
       current: "currentColor",
       white: "#fdfdff",
       black: "#000000",
+      lightblack: "#626262",
       gray: "#cccccc",
       lightgray: "#f2f2f2",
+      blue: "#0d64d5",
+      lightblue: "#9fc1ee",
     },
     extend: {
       screens: {

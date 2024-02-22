@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Navbar = ({setToggle}) => {
   const togglehandler = ()=>{
     setToggle(true)
   }
+    // const clickHandler = () => {
+    //   console.log("kya hua re")
+    //   const sidebar = document.getElementById("slider-bar");
+    //   if (sidebar) {
+    //     sidebar.classList.toggle('slide-in');
+    //   }
+    // };
+
+    // const toggle = document.getElementById("menubarBtn");
+    // if (toggle) {
+    //   toggle.addEventListener("click", clickHandler);
+    // }
+
+    // // Cleanup the event listener on component unmount
+    // return () => {
+    //   if (toggle) {
+    //     toggle.removeEventListener("click", clickHandler);
+    //   }
+    // };
+
   return (
     <>
     <div id="navbar" className="flex shadow-md h-22 p-3 items-center justify-between">
@@ -20,7 +40,7 @@ const Navbar = ({setToggle}) => {
         </div> 
        </div>
             {/* Search-Bar  */}
-        <div id="searchBar" className="flex justify-between -ml-[5rem] items-center w-[52vw] ">
+        <div id="searchBar" className="flex justify-between ml-[5rem] items-center w-[52vw] ">
          <div className="flex">
          <input type="text" placeholder="Search"  className="w-[42vw] h-[2.5rem]  border border-gray border-r-0 rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"/>
             {/* Search-btn */}
@@ -35,9 +55,14 @@ const Navbar = ({setToggle}) => {
           </button>
           </div>
         </div>
+              {/* Option-Btn */}
+        <div>
+        <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon h-7 ml-32"><g class="style-scope yt-icon"><path d="M12,16.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S11.17,16.5,12,16.5z M10.5,12 c0,0.83,0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5s-0.67-1.5-1.5-1.5S10.5,11.17,10.5,12z M10.5,6c0,0.83,0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S12.83,4.5,12,4.5S10.5,5.17,10.5,6z" class="style-scope yt-icon"></path></g></svg>
+        </div>
             {/* user-icon */}
-        <div id="user-icon" className="mr-[2rem]"> 
-            <svg viewBox="0 0 24 24"preserveAspectRatio="xMidYMid meet"focusable="false"className="style-scope yt-icon h-7"><g className="style-scope yt-icon h-10"><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M12,3c4.96,0,9,4.04,9,9 c0,1.42-0.34,2.76-0.93,3.96c-1.53-1.72-3.98-2.89-7.38-3.03C14.57,12.6,16,10.97,16,9c0-2.21-1.79-4-4-4C9.79,5,8,6.79,8,9 c0,1.97,1.43,3.6,3.31,3.93c-3.4,0.14-5.85,1.31-7.38,3.03C3.34,14.76,3,13.42,3,12C3,7.04,7.04,3,12,3z M9,9c0-1.65,1.35-3,3-3 s3,1.35,3,3c0,1.65-1.35,3-3,3S9,10.65,9,9z M12,21c-3.16,0-5.94-1.64-7.55-4.12C6.01,14.93,8.61,13.9,12,13.9 c3.39,0,5.99,1.03,7.55,2.98C17.94,19.36,15.16,21,12,21z"className="style-scope yt-icon h-10"></path></g></svg>
+        <div id="user-icon" className=" mr-[2rem] hover:bg-lightblue  px-3 py-2  text-blue  flex gap-x-1 items-center  rounded-3xl "> 
+        <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-circle h-7 w-7" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0d64d5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" /></svg>
+            <p className="text-base">Sign in</p>
         </div>
     </div>
       {/* <div id="categoriesMenu">
@@ -62,11 +87,7 @@ const Navbar = ({setToggle}) => {
       </div>
       <div id="menuCRightBtn"></div>
        </div> */}
-    
-
-    <scrpit>
-      
-    </scrpit>
+  
     </>
   );
 };

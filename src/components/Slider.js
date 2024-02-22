@@ -1,15 +1,39 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
-const Slider = ({setToggle, toggle}) => {
-
+const Slider = ({setToggle}) => {
+  const sliderRef = useRef();
   const toggleHandler = ()=>{
     setToggle(false)
   }
+  // const handleClickOutside = (event) => {
+  //   // Check if the slider is clicked
+  //   const isSliderClicked = sliderRef.current && sliderRef.current.contains(event.target);
+  
+  //   // Check if the toggle is false and the slider is not clicked, then open the slider
+  //   if (!setToggle && !isSliderClicked) {
+  //     setToggle(true);
+  //   }
+  
+  //   // If the slider is clicked, or the toggle is true, close the slider
+  //   if (setToggle && !isSliderClicked) {
+  //     setToggle(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   document.addEventListener('click', handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener('click', handleClickOutside);
+  //   };
+  // }, []);
+
   return (
-    <div id="sideMenu" className="slider bg-white  h-[100vh] p-3 shadow-xl w-[14rem]">
+    <div className='w-[100vw] fixed h-[100vh] bg-black bg-opacity-40 top-0'>
+    <div id="slider-bar" className="slider  bg-white  h-[100vh] p-3 shadow-xl w-[14rem]">
         <div id="menu-bar yt-icon" className="flex items-center gap-x-4">
              {/* Menu-Bar-Btn */}
-       <div id="menubarBtn" className="hover:bg-lightgray rounded-full p-2" onClick={toggleHandler}>
+       <div id="menubar-Btn" className="hover:bg-lightgray rounded-full p-2" onClick={toggleHandler}>
           <svg  viewBox="0 0 24 24"preserveAspectRatio="xMidYMid meet"focusable="false"className="style-scope yt-icon h-6"><g className="style-scope yt-icon h-10"><path d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"className="style-scope yt-icon h-10"></path></g></svg>
         </div>
             {/* Youtube-logo */}
@@ -37,12 +61,17 @@ const Slider = ({setToggle, toggle}) => {
           <p className='text-sm  pl-6'>Subscribers</p>
         </div>
             {/* Your */}
-        <div className='border-t border-gray  w-full'>
+        <div className='border-t border-gray  mt-3 py-2 w-full'>
 
           <div className='w-full flex  items-center px-3  rounded-xl h-10  hover:bg-lightgray'>
             <p>You</p>
             <svg xmlns="http://www.w3.org/2000/svg" className='pl-1' width="25" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </div>
+               {/* you-channel-btn */}
+        <div id="HistoryBtn menu-items" className='w-full flex  items-center px-3 hover:bg-lightgray rounded-xl h-10'>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-square h-7 w-7" width="44" height="44" viewBox="0 0 24 24" stroke-width="1" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 10a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M6 21v-1a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v1" /><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /></svg>
+          <p className='text-sm  pl-5'>Your channel</p>
+        </div>
                {/* history-btn */}
         <div id="HistoryBtn menu-items" className='w-full flex  items-center px-3 hover:bg-lightgray rounded-xl h-10'>
           <svg viewBox="0 0 24 24"preserveAspectRatio="xMidYMid meet"focusable="false"className="style-scope yt-icon h-6"><g><path d="M14.97,16.95L10,13.87V7h2v5.76l4.03,2.49L14.97,16.95z M22,12c0,5.51-4.49,10-10,10S2,17.51,2,12h1c0,4.96,4.04,9,9,9 s9-4.04,9-9s-4.04-9-9-9C8.81,3,5.92,4.64,4.28,7.38C4.17,7.56,4.06,7.75,3.97,7.94C3.96,7.96,3.95,7.98,3.94,8H8v1H1.96V3h1v4.74 C3,7.65,3.03,7.57,3.07,7.49C3.18,7.27,3.3,7.07,3.42,6.86C5.22,3.86,8.51,2,12,2C17.51,2,22,6.49,22,12z"></path></g></svg>
@@ -61,6 +90,7 @@ const Slider = ({setToggle, toggle}) => {
         </div>
         
        
+    </div>
     </div>
     </div>
   )
