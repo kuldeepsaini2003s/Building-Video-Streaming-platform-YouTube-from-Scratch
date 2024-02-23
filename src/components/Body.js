@@ -4,7 +4,7 @@ import Menu from './Menu'
 
 const Body = () => {
   return (
-    <div className='flex'>
+    <div className='grid grid-flow-col'>
       <Menu/>
       <Outlet/>
     </div>

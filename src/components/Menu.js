@@ -2,7 +2,7 @@ import React from 'react'
 
 const Menu = () => {
   return (
-    <div id="sideMenu" className='w-[10rem] flex flex-col items-center py-5 gap-y-8 '>
+    <div id="sideMenu" className='w-[5rem] flex flex-col items-center py-5 gap-y-8 '>
             {/* home-btn */}
         <div id="HomeBtn menu-items" 
           className="active flex flex-col items-center">

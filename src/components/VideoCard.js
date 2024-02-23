@@ -11,7 +11,7 @@ const formatViewCount = (viewCount) => {
 };
 
 const VideoCard = ({ info }) => {
-  console.log(info);
+  
   const { snippet, statistics } = info;
   const { channelTitle, localized, thumbnails } = snippet;
   const { title } = localized;
@@ -27,7 +27,7 @@ const VideoCard = ({ info }) => {
   return (
     <div className=" mx-1 p-1 mb-2  w-[30vw]">
       <img
-        className="rounded-lg h-[42vh] w-[30vw]"
+        className="rounded-lg h-[45vh] w-[30vw]"
         alt="Thumbnails"
         src={thumbnails.high.url}
       />
