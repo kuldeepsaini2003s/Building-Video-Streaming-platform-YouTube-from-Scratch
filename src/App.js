@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import Body from './components/Body';
@@ -8,6 +8,8 @@ import store from './utils/store';
 import WatchPage from './components/WatchPage';
 import { useState } from 'react';
 import Slider from './components/Slider';
+import Categories from './components/Categories';
+import Menu from './components/Menu';
 
 const appRouter=createBrowserRouter([
   {
@@ -34,7 +36,7 @@ function App() {
     <Provider store={store}>
       <Navbar setToggle={setToggle}/>
       {toggle && <Slider setToggle={setToggle}/>}
-      <RouterProvider router={appRouter}/>
+      <RouterProvider router={appRouter}></RouterProvider>
     </Provider>
   );
 }
