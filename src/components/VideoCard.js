@@ -1,5 +1,6 @@
-import React from "react";
-import { useTheme } from "../utils/ThemeContext";
+import React, { useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import Shimmer from "./Shimmer";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -12,10 +13,9 @@ const formatViewCount = (viewCount) => {
 };
 
 const VideoCard = ({ info }) => {
-  const { theme, toggleTheme } = useTheme();
-
+ 
   const { snippet, statistics } = info;
-  const { channelTitle, localized, thumbnails } = snippet;
+  const { channelTitle, publishedAt, localized, thumbnails } = snippet;
   const { title } = localized;
   const titleStyle = {
     display: "-webkit-box",
@@ -26,37 +26,65 @@ const VideoCard = ({ info }) => {
   };
 
   const formattedViewCount = formatViewCount(statistics.viewCount);
+  // Convert publishedAt to a Date object
+  const publishedDate = new Date(publishedAt);
+  // Format the date to show relative time
+  let relativeTime = formatDistanceToNow(publishedDate, { addSuffix: true });
+
+  // Remove "about" prefix for durations less than 24 hours
+  if (relativeTime.includes("about")) {
+    relativeTime = relativeTime.replace("about ", "");
+  }
+
   return (
-    <div
-      className={`bg-${theme === "dark" ? "black" : "white"} text-${
-        theme === "dark" ? "white" : "black"
-      } h-[60vh] p-2
-      lg:w-[30vw]
-      sm:w-[43vw]`}
-    >
-      <img
-        className="rounded-xl  h-[75%] w-[100%]"
+    <div className="h-[60vh] p-2 lg:w-[30vw] sm:w-[43vw]">
+         <img
+        className="rounded-xl h-[65%] w-[100%]"
         alt="Thumbnails"
-        src={thumbnails.standard.url}
+        src={thumbnails.maxres.url}
       />
-      <div className="py-2 flex gap-x-3">
+      <div className="yt-details py-2 flex gap-x-3">
         <img
-          className="user-img rounded-full h-10 w-10 "
+          className="user-img rounded-full h-10 w-10"
           alt="Thumbnails"
           src={thumbnails.medium.url}
         />
-        <div>
-          <p
-            className={`text-${
-              theme === "dark" ? "white" : "black"
-            }font-semibold text-base`}
-            style={titleStyle}
-          >
-            {title}
-          </p>
-          <p className={`text-Lightblack text-sm`}>{channelTitle}</p>
-          <p className={`text-Lightblack text-sm`}>
-            {formattedViewCount} views
+        <div className="w-full">
+          <div className="flex gap-5 justify-between w-full">
+            <p className="font-semibold text-base" style={titleStyle}>
+              {title}
+            </p>
+            <p className="three-dots-container ">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                class="bi bi-three-dots-vertical"
+                viewBox="0 0 16 16"
+              >
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+              </svg>
+            </p>
+          </div>
+          <p className="text-Lightblack text-sm">{channelTitle}</p>
+          <p className="flex items-center ">
+            <span className="text-Lightblack text-sm">
+              {formattedViewCount} views
+            </span>
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="16"
+                fill="#5a5a5a"
+                class="bi bi-dot "
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
+              </svg>
+            </span>
+            <span className="text-Lightblack text-sm">{relativeTime}</span>
           </p>
         </div>
       </div>

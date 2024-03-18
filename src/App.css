@@ -4,18 +4,159 @@
 
 /* styles.css */
 :root {
-    --text-color: black;
     --background-color: white;
     --border-color: lightgray;
     --hover-bg-color: lightgray;
+    --svg-fill-dark: #ffffff;
+    --svg-fill-light: #000000;
+    --Lightblack: #5a5a5a;
+    --darkblack: #292929;
+    --gray: #cccccc;
+    --lightgray: #f2f2f2;
+    --darkgray: #3b3b3b;
+    --blue: #0d64d5;
+    --lightblue: #9fc1ee;
    }
-   
-   [data-theme="dark"] {
-    --text-color: white;
-    --background-color: black;
-    --border-color: gray;
-    --hover-bg-color: lightblack;
-   }
+
+        /* Main Theme toggle */
+
+[data-theme="light"] {
+    background-color: white;
+    color: black;
+    fill: var(--svg-fill-light);
+  }
+  
+  [data-theme="dark"] {
+    background-color: black;
+    color: white;
+    fill: var(--svg-fill-dark);
+  }
+
+        /* floting windows theme */
+
+[data-theme="light"] .floting {
+    background-color: white;
+    color: black;
+    fill: var(--svg-fill-light);
+  }
+  
+  [data-theme="dark"] .floting{
+    background-color: black;
+    color: white;
+    fill: var(--svg-fill-dark);
+  }
+
+        /* Input theme */
+
+[data-theme="light"] #input {
+    background-color: white;
+    color: black;
+    fill: var(--svg-fill-light);
+    border: 1px solid var(--gray);
+  }
+  
+  [data-theme="dark"] #input {
+    background-color: black;
+    color: white;
+    fill: var(--svg-fill-dark);
+    border: 1px solid #5a5a5a;
+  }
+
+        /* search-btn theme */
+
+[data-theme="light"] #search-btn {
+    background-color: white;
+    color: black;
+    fill: var(--svg-fill-light);
+    border: 1px solid var(--gray);
+  }
+  
+  [data-theme="dark"] #search-btn {
+    background-color: #292929;
+    color: white;
+    fill: var(--svg-fill-dark);
+    border: 1px solid #5a5a5a;
+  }
+
+        /* search-btn hover theme */
+
+[data-theme="light"] #search-btn:hover {
+    background-color: #f2f2f2;
+    color: black;
+    fill: var(--svg-fill-light);
+    border: 1px solid var(--gray);
+  }
+  
+  [data-theme="dark"] #search-btn:hover {
+    background-color: var(--darkgray);
+    color: white;
+    fill: var(--svg-fill-dark);
+    border: 1px solid var(--Lightblack);
+  }
+
+        /* nav-icon theme */
+  #nav-icon{
+    border-radius: 50%;
+    height:2.7rem;
+    padding: 8px;
+  }
+
+[data-theme="light"] #nav-icon:hover {
+        background-color: var(--lightgray);
+  }
+  
+  [data-theme="dark"] #nav-icon:hover {
+    background-color: var(--darkblack);
+  }
+
+        /* menu-icon */
+
+     .menu-icon{
+        width: 100%;
+        padding: 15px 0;
+        border-radius: 10%;
+     }   
+  [data-theme="light"] .menu-icon:hover {
+        background-color: var(--lightgray);
+       
+    }
+    
+    [data-theme="dark"] .menu-icon:hover {
+      background-color: var(--darkblack);
+    }
+        /* slider-icon */
+  [data-theme="light"] .slider-icon:hover {
+        background-color: var(--lightgray);
+    }
+    [data-theme="dark"] .slider-icon:hover {
+      background-color: var(--darkblack);
+    }
+        /* categories-icon */
+
+     .categories-icon{
+        border-radius: 10px;
+        font-size: small;
+     }   
+
+            /* normal .categories-icon */
+
+  [data-theme="light"] .categories-icon {
+       background-color: var(--lightgray);
+    }
+    
+    [data-theme="dark"] .categories-icon {
+      background-color: var(--darkblack);
+    }
+
+            /* hover .categories-icon */
+  [data-theme="light"] .categories-icon:hover {
+        background-color: #e4e3e3;
+       
+    }
+    
+    [data-theme="dark"] .categories-icon:hover {
+      background-color: var(--darkgray);
+    }
 
 *{
     padding: 0;
@@ -37,12 +178,10 @@
     left: 0;
 }
 
-.dark-theme {
-    background-color: black;
-    color: white;
-  }
-  
-  .light-theme {
-    background-color: white;
-    color: black;
-  }
+  .yt-details .three-dots-container {
+    display: none;
+   }
+   
+   .yt-details:hover .three-dots-container {
+    display: block;
+   }
