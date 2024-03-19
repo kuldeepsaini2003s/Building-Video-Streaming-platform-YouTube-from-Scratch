@@ -125,6 +125,11 @@
     [data-theme="dark"] .menu-icon:hover {
       background-color: var(--darkblack);
     }
+
+    .slider-icon{
+      width: 100%;
+    }
+
         /* slider-icon */
   [data-theme="light"] .slider-icon:hover {
         background-color: var(--lightgray);

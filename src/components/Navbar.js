@@ -239,19 +239,19 @@ const Navbar = ({ setToggle }) => {
           </div>
         </div>
         {showSetting && (
-          <div className="floting fixed bg-white right-40 top-[4rem] shadow-lg rounded-xl py-5">
-            <div className="border-b border-gray pb-2 mb-3 mx-4">
-              <p className="text-sm ">Setting applies to this browser only</p>
+          <div className="floting fixed bg-white right-40 top-[4rem] shadow-lg rounded-xl px-4 py-5">
+            <div className="border-b border-gray pb-2 mb-3">
+              <p className="text-sm m-0">Setting applies to this browser only</p>
             </div>
             <div>
               <p
-                className="text-sm  w-[99.9%]  p-2 pl-10 w-max cursor-pointer"
+                className="slider-icon text-sm  rounded-lg  p-3  w-max cursor-pointer"
                 onClick={() => toggleTheme("dark")}
               >
                 Dark Theme
               </p>
               <p
-                className="text-sm  w-[99.9%]  p-2 pl-10 w-max cursor-pointer"
+                className="slider-icon text-sm rounded-lg w-[99.9%]  p-3 w-max cursor-pointer"
                 onClick={() => toggleTheme("light")}
               >
                 Light Theme
