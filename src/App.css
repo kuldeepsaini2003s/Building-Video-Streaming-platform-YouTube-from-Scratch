@@ -5,6 +5,7 @@
 /* styles.css */
 :root {
     --background-color: white;
+    --black: #0f0f0f;
     --border-color: lightgray;
     --hover-bg-color: lightgray;
     --svg-fill-dark: #ffffff;
@@ -22,12 +23,12 @@
 
 [data-theme="light"] {
     background-color: white;
-    color: black;
+    color: var(--black);
     fill: var(--svg-fill-light);
   }
   
   [data-theme="dark"] {
-    background-color: black;
+    background-color: var(--black);
     color: white;
     fill: var(--svg-fill-dark);
   }
@@ -36,12 +37,12 @@
 
 [data-theme="light"] .floting {
     background-color: white;
-    color: black;
+    color: var(--black);
     fill: var(--svg-fill-light);
   }
   
   [data-theme="dark"] .floting{
-    background-color: black;
+    background-color: var(--black);
     color: white;
     fill: var(--svg-fill-dark);
   }
@@ -50,13 +51,13 @@
 
 [data-theme="light"] #input {
     background-color: white;
-    color: black;
+    color: var(--black);
     fill: var(--svg-fill-light);
     border: 1px solid var(--gray);
   }
   
   [data-theme="dark"] #input {
-    background-color: black;
+    background-color: var(--black);
     color: white;
     fill: var(--svg-fill-dark);
     border: 1px solid #5a5a5a;
@@ -65,8 +66,8 @@
         /* search-btn theme */
 
 [data-theme="light"] #search-btn {
-    background-color: white;
-    color: black;
+    background-color: #E3E3E3;
+    color: var(--black);
     fill: var(--svg-fill-light);
     border: 1px solid var(--gray);
   }
@@ -82,7 +83,7 @@
 
 [data-theme="light"] #search-btn:hover {
     background-color: #f2f2f2;
-    color: black;
+    color: var(--black);
     fill: var(--svg-fill-light);
     border: 1px solid var(--gray);
   }
@@ -142,7 +143,7 @@
 
      .categories-icon{
         border-radius: 10px;
-        font-size: small;
+        font-size:15px;
      }   
 
             /* normal .categories-icon */
@@ -163,6 +164,35 @@
     
     [data-theme="dark"] .categories-icon:hover {
       background-color: var(--darkgray);
+    }
+            /* shimmer */
+            
+  [data-theme="light"] .shimmer {
+        background-color: #E3E3E3; 
+    }
+    
+    [data-theme="dark"] .shimmer {
+      background-color: #252525;
+    }
+            /* shimmer-border */
+
+  [data-theme="light"] .shimmer-border {
+    border-top:1px solid #E3E3E3;
+    border-bottom:1px solid #E3E3E3;
+    }
+    
+    [data-theme="dark"] .shimmer-border {
+      border-top:1px solid #252525;
+      border-bottom:1px solid #252525;
+    }
+            /* shimmer-input */
+
+  [data-theme="light"] .shimmer-input {
+    border:1px solid var(--gray);
+    }
+    
+    [data-theme="dark"] .shimmer-input {
+      border:1px solid var(--Lightblack);
     }
 
 *{

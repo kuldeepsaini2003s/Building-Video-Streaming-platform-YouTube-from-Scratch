@@ -42,7 +42,7 @@ const VideoCard = ({ info }) => {
   return (
     <div className="h-[60vh] p-2 lg:w-[30vw] sm:w-[43vw]">
          <img
-        className="rounded-xl h-[65%] w-[100%]"
+        className="rounded-xl h-[13rem] w-[100%]"
         alt="Thumbnails"
         src={thumbnail.url}
       />
