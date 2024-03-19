@@ -169,12 +169,12 @@ const Slider = ({ setToggle }) => {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-user-square h-7 w-7"
+                className="icon-slider icon icon-tabler icon-tabler-user-square h-7 w-7"
                 width="44"
                 height="44"
                 viewBox="0 0 24 24"
                 stroke-width="1"
-                stroke="#000000"
+                stroke="#ffffff" 
                 fill="none"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -228,12 +228,11 @@ const Slider = ({ setToggle }) => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-clock-hour-4 h-7 w-6"
+              className="icon-slider icon-tabler icon-tabler-clock-hour-4 h-7 w-6"
               width="44"
               height="44"
               viewBox="0 0 24 24"
               stroke-width="1.5"
-              stroke="#000000"
               fill="none"
               stroke-linecap="round"
               stroke-linejoin="round"

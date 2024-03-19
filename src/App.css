@@ -131,6 +131,13 @@
     [data-theme="dark"] .slider-icon:hover {
       background-color: var(--darkblack);
     }
+        /* icon-slider */
+  [data-theme="light"] .icon-slider {
+      stroke: #000000;
+    }
+    [data-theme="dark"] .icon-slider {
+      stroke: #ffffff;
+    }
         /* categories-icon */
 
      .categories-icon{
@@ -185,3 +192,37 @@
    .yt-details:hover .three-dots-container {
     display: block;
    }
+
+
+   #shimmer{
+    background-image: linear-gradient(#dadada, #2f2f2f, #dadada);
+    transform: rotate(90deg);
+    animation:  shimmer 1.5s infinite;
+    left: 100%;
+}
+
+
+ #loader-element {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #dadada;
+    margin-bottom: 2px;
+    overflow: hidden;
+    border-radius: 5px;
+ }
+ #loader-element::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#dadada, #f2f2f2, #dadada);
+    transform: rotate(90deg);
+    animation: Change 1.5s infinite ;
+ }
+
+ @keyframes Change {
+  0%{left: -100%;}
+  100%{left: 100%;}
+}

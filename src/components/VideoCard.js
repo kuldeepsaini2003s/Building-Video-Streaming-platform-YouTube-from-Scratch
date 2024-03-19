@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { formatDistanceToNow } from "date-fns";
-import Shimmer from "./Shimmer";
+import ShimmerCard from "./ShimmerCard";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -13,7 +13,10 @@ const formatViewCount = (viewCount) => {
 };
 
 const VideoCard = ({ info }) => {
- 
+  if(!info || !info.snippet || !info.statistics) {
+    console.log("rendering shimmer effect")
+    return <ShimmerCard/>;
+  }
   const { snippet, statistics } = info;
   const { channelTitle, publishedAt, localized, thumbnails } = snippet;
   const { title } = localized;
@@ -25,13 +28,13 @@ const VideoCard = ({ info }) => {
     WebkitLineClamp: 2,
   };
 
+  const {medium, maxres} = thumbnails;
+  const thumbnail = maxres || medium ;
+
   const formattedViewCount = formatViewCount(statistics.viewCount);
-  // Convert publishedAt to a Date object
   const publishedDate = new Date(publishedAt);
-  // Format the date to show relative time
   let relativeTime = formatDistanceToNow(publishedDate, { addSuffix: true });
 
-  // Remove "about" prefix for durations less than 24 hours
   if (relativeTime.includes("about")) {
     relativeTime = relativeTime.replace("about ", "");
   }
@@ -41,9 +44,9 @@ const VideoCard = ({ info }) => {
          <img
         className="rounded-xl h-[65%] w-[100%]"
         alt="Thumbnails"
-        src={thumbnails.maxres.url}
+        src={thumbnail.url}
       />
-      <div className="yt-details py-2 flex gap-x-3">
+      <div className="yt-details pt-4 py-2 flex gap-x-3">
         <img
           className="user-img rounded-full h-10 w-10"
           alt="Thumbnails"

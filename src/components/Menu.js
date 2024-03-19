@@ -4,7 +4,7 @@ const Menu = () => {
   return (
     <div
       id="sideMenu"
-      className="w-[5rem] fixed  -z-40 left-1 top-[4rem] h-full flex flex-col items-center py-5 p-2  "
+      className="w-[5rem] fixed  -z-40 left-1 top-[3rem] h-full flex flex-col items-center py-5 p-2  "
     >
       {/* home-btn */}
       <div
