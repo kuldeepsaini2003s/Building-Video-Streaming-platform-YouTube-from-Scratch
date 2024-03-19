@@ -9,14 +9,7 @@ const Navbar = ({ setToggle }) => {
     setTheme(savedTheme);
     document.body.setAttribute("data-theme", savedTheme);
 
-    const timer = setTimeout(() => {
-      toggleTheme(savedTheme === "light" ? "dark" : "light");
-    }, 2000);
-
-    // Clean up the timeout if the component is unmounted
-    return () => clearTimeout(timer);
   }, []);
-
 
   const toggleTheme = (theme) => {
     setShowSetting(false);
@@ -249,7 +242,9 @@ const Navbar = ({ setToggle }) => {
         {showSetting && (
           <div className="floting fixed bg-white right-40 top-[4rem] shadow-lg rounded-xl px-4 py-5">
             <div className="border-b border-gray pb-2 mb-3">
-              <p className="text-sm m-0">Setting applies to this browser only</p>
+              <p className="text-sm m-0">
+                Setting applies to this browser only
+              </p>
             </div>
             <div>
               <p
