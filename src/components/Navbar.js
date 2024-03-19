@@ -8,7 +8,15 @@ const Navbar = ({ setToggle }) => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.body.setAttribute("data-theme", savedTheme);
+
+    const timer = setTimeout(() => {
+      toggleTheme(savedTheme === "light" ? "dark" : "light");
+    }, 2000);
+
+    // Clean up the timeout if the component is unmounted
+    return () => clearTimeout(timer);
   }, []);
+
 
   const toggleTheme = (theme) => {
     setShowSetting(false);
