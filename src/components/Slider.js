@@ -5,7 +5,7 @@ const Slider = ({ setToggle }) => {
   };
 
   return (
-    <div className=" w-[100vw] fixed h-[100vh] bg-black bg-opacity-40 top-0" onClick={()=>setToggle(false)}>
+    <div className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0" onClick={()=>setToggle(false)}>
       <div id="slider-bar" className="floting h-[100vh]  z-50 p-3 shadow-xl w-[14rem]">
         <div id="menu-bar yt-icon" className="flex items-center gap-x-4">
           {/* Menu-Bar-Btn */}

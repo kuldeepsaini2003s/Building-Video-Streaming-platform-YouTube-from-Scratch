@@ -22,7 +22,7 @@ const VideoContainer = () => {
   }, []);
 
   return (
-    <div className="flex fixed -z-50 top-[9rem] overflow-y-auto max-h-screen  w-full left-[3rem] flex-wrap gap-2 justify-center">
+    <div className="flex fixed -z-50 top-[7rem] overflow-y-auto max-h-screen  w-full left-[3rem] flex-wrap gap-2 justify-center">
       {isLoading ? (
           <ShimmerCard/>
       ) : (

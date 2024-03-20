@@ -4,9 +4,9 @@ import ShimmerCard from "./ShimmerCard";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
-    return (viewCount / 1e6).toFixed(1) + "m";
+    return (viewCount / 1e6).toFixed(1) + "M";
   } else if (viewCount >= 1e3) {
-    return (viewCount / 1e3).toFixed(1) + "k";
+    return (viewCount / 1e3).toFixed(1) + "K";
   } else {
     return viewCount.toString();
   }

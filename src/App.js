@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import Slider from './components/Slider';
 import Shimmer from './components/Shimmer';
 
-const appRouter=createBrowserRouter([
+const AppRouter=createBrowserRouter([
   {
     path:"/",
     element:<Body/>,
@@ -45,9 +45,9 @@ function App() {
     <Provider store={store}>
       {loading ? (<Shimmer/>) : (
         <>
-        <Navbar setToggle={setToggle} theme={theme} setTheme={setTheme}/>
+        <Navbar setToggle={setToggle}/>
         {toggle && <Slider setToggle={setToggle}/>}
-        <RouterProvider router={appRouter}></RouterProvider>
+        <RouterProvider router={AppRouter}/>
         </>
       )}
     </Provider>

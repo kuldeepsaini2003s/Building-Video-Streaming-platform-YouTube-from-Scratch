@@ -8,7 +8,6 @@ const Navbar = ({ setToggle }) => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.body.setAttribute("data-theme", savedTheme);
-
   }, []);
 
   const toggleTheme = (theme) => {
@@ -34,7 +33,7 @@ const Navbar = ({ setToggle }) => {
       <div>
         <div
           id="navbar"
-          className="navbar flex fixed  -z-50 h-20 p-3 items-center w-full justify-between"
+          className="navbar screen  flex fixed z-10 h-14 px-3  py-8 items-center w-full justify-between"
         >
           {/* Menu-Bar-Btn */}
           <div id="menu-ba yt-icon" className="flex items-center gap-x-4">
@@ -197,7 +196,8 @@ const Navbar = ({ setToggle }) => {
               </button>
             </div>
           </div>
-          {/* Option-Btn */}
+          <div className="flex items-center">
+            {/* Option-Btn */}
           <div className="rounded-full p-2" onClick={settingHandler}>
             <svg
               viewBox="0 0 24 24"
@@ -237,6 +237,7 @@ const Navbar = ({ setToggle }) => {
               <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
             </svg>
             <p className="text-base">Sign in</p>
+          </div>
           </div>
         </div>
         {showSetting && (
