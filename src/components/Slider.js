@@ -5,8 +5,14 @@ const Slider = ({ setToggle }) => {
   };
 
   return (
-    <div className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0" onClick={()=>setToggle(false)}>
-      <div id="slider-bar" className="floting h-[100vh]  z-50 p-3 shadow-xl w-[14rem]">
+    <div
+      className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0"
+      onClick={() => setToggle(false)}
+    >
+      <div
+        id="slider-bar"
+        className="floting h-[100vh]  z-50 px-3  shadow-xl w-[14rem]"
+      >
         <div id="menu-bar yt-icon" className="flex items-center gap-x-4">
           {/* Menu-Bar-Btn */}
           <div
@@ -108,6 +114,7 @@ const Slider = ({ setToggle }) => {
             </svg>
             <p className="text-sm font-semibold pl-6">Home</p>
           </div>
+
           {/* shorts-btn */}
           <div
             id="ShortsBtn menu-items"
@@ -148,16 +155,15 @@ const Slider = ({ setToggle }) => {
               <p>You</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="pl-2"
                 width="25"
                 height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="feather feather-chevron-right"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-chevron-right pl-2"
               >
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
@@ -173,11 +179,11 @@ const Slider = ({ setToggle }) => {
                 width="44"
                 height="44"
                 viewBox="0 0 24 24"
-                stroke-width="1"
-                stroke="#ffffff" 
+                strokeWidth="1"
+                stroke="#ffffff"
                 fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M9 10a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
@@ -232,10 +238,10 @@ const Slider = ({ setToggle }) => {
               width="44"
               height="44"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />

@@ -1,30 +1,26 @@
-
-import React, { useEffect, useState } from 'react';
-import { YOUTUBE_VIDEOS_API } from '../utils/constants';
-import { Link } from 'react-router-dom';
-import VideoCard from './VideoCard';
-import ShimmerCard from './ShimmerCard';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import VideoCard from "./VideoCard";
+import ShimmerCard from "./ShimmerCard";
+import { useSelector } from "react-redux";
 
 const VideoContainer = () => {
   const [videos, setVideos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getVideos = async () => {
-    const data = await fetch (YOUTUBE_VIDEOS_API)
-    const json = await data.json();
-    console.log(json);
-    setVideos(json.items);
-    setIsLoading(false); // Set loading to false once data is loaded
-  }
+  const getVideos = useSelector((store) => store.videos.youtubevideo);
 
-  useEffect(() => {
-    getVideos();
-  }, []);
-
+  useEffect(()=>{
+    if(getVideos && getVideos.length > 0){
+      setVideos(getVideos)
+      setIsLoading(false)
+    }
+  },[getVideos])
+  
   return (
-    <div className="flex fixed -z-50 top-[7rem] overflow-y-auto max-h-screen  w-full left-[3rem] flex-wrap gap-2 justify-center">
+    <div className="flex fixed -z-50 top-[8rem] overflow-y-auto max-h-screen  w-full left-[3.2rem] flex-wrap gap-2 justify-center">
       {isLoading ? (
-          <ShimmerCard/>
+        <ShimmerCard />
       ) : (
         videos.map((video) => (
           <Link key={video.id} to={"/watch?v=" + video.id}>
@@ -33,7 +29,7 @@ const VideoContainer = () => {
         ))
       )}
     </div>
-  )
-}
+  );
+};
 
-export default VideoContainer
+export default VideoContainer;

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import ShimmerCard from "./ShimmerCard";
+import { GOOGLE_API_KEY } from "../utils/constants";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -13,12 +13,9 @@ const formatViewCount = (viewCount) => {
 };
 
 const VideoCard = ({ info }) => {
-  if(!info || !info.snippet || !info.statistics) {
-    console.log("rendering shimmer effect")
-    return <ShimmerCard/>;
-  }
+  const [channelLogo, setChannelLogo] = useState([]);
   const { snippet, statistics } = info;
-  const { channelTitle, publishedAt, localized, thumbnails } = snippet;
+  const { channelTitle, publishedAt, channelId, localized, thumbnails } = snippet;
   const { title } = localized;
   const titleStyle = {
     display: "-webkit-box",
@@ -27,10 +24,8 @@ const VideoCard = ({ info }) => {
     textOverflow: "ellipsis",
     WebkitLineClamp: 2,
   };
-
-  const {medium, maxres} = thumbnails;
-  const thumbnail = maxres || medium ;
-
+  const { medium, maxres } = thumbnails;
+  const thumbnail = maxres || medium;
   const formattedViewCount = formatViewCount(statistics.viewCount);
   const publishedDate = new Date(publishedAt);
   let relativeTime = formatDistanceToNow(publishedDate, { addSuffix: true });
@@ -39,10 +34,22 @@ const VideoCard = ({ info }) => {
     relativeTime = relativeTime.replace("about ", "");
   }
 
+  const getChannelLogos = async () => {
+    const data = await fetch(
+      `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${GOOGLE_API_KEY}`
+    );
+    const json = await data.json();
+    setChannelLogo(json.items[0].snippet.thumbnails.high.url);
+  };
+
+  useEffect(() => {
+    getChannelLogos();
+  }, []);
+
   return (
     <div className="h-[60vh] p-2 lg:w-[30vw] sm:w-[43vw]">
-         <img
-        className="rounded-xl h-[13rem] w-[100%]"
+      <img
+        className="rounded-xl h-[13rem] w-[98%]"
         alt="Thumbnails"
         src={thumbnail.url}
       />
@@ -50,7 +57,7 @@ const VideoCard = ({ info }) => {
         <img
           className="user-img rounded-full h-10 w-10"
           alt="Thumbnails"
-          src={thumbnails.medium.url}
+          src={channelLogo}
         />
         <div className="w-full">
           <div className="flex gap-5 justify-between w-full">
@@ -63,7 +70,7 @@ const VideoCard = ({ info }) => {
                 width="18"
                 height="18"
                 fill="currentColor"
-                class="bi bi-three-dots-vertical"
+                className="bi bi-three-dots-vertical"
                 viewBox="0 0 16 16"
               >
                 <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
@@ -81,7 +88,7 @@ const VideoCard = ({ info }) => {
                 width="14"
                 height="16"
                 fill="#5a5a5a"
-                class="bi bi-dot "
+                className="bi bi-dot "
                 viewBox="0 0 16 16"
               >
                 <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />

@@ -8,7 +8,7 @@ const ShimmerCard = () => {
         {Array(30)
           .fill(" ")
           .map((e, index) => (
-            <>
+            <div key={index}>
               <div>
                 {/* img */}
                 <div className="shimmer h-[35vh] w-[28vw] rounded-xl bg-gray"></div>
@@ -23,7 +23,7 @@ const ShimmerCard = () => {
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ))}
       </div>
   )

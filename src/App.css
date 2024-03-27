@@ -122,6 +122,41 @@
     background-color: var(--darkblack);
   }
 
+          /* Watch Page */
+    [data-theme="light"] .user-info {
+      background-color: var(--lightgray);
+      color: var(--black);
+      fill: var(--svg-fill-dark);
+      stroke: var(--svg-fill-light);
+    }
+          
+    [data-theme="dark"] .user-info {
+      background-color: var(--darkblack);
+      color: white;
+      fill: var(--svg-fill-dark);
+      stroke: var(--svg-fill-dark);
+    }
+
+          /* subscirber */
+    [data-theme="light"] .subscriber {
+      background-color: var(--lightgray);
+      color: var(--black);
+      fill: var(--svg-fill-dark);
+      stroke: var(--svg-fill-light);
+    }
+          
+    [data-theme="dark"] .subscriber {
+      background-color: var(--darkblack);
+      color: white;
+      fill: var(--svg-fill-dark);
+      stroke: var(--svg-fill-dark);
+    }
+
+
+
+
+
+
         /* menu-icon */
 
      .menu-icon{
@@ -160,7 +195,7 @@
 
      .categories-icon{
         border-radius: 10px;
-        font-size:15px;
+        font-size:13px;
      }   
 
             /* normal .categories-icon */
@@ -281,3 +316,13 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
  }
+
+ .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

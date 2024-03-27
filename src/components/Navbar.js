@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import UseYoutubeVideos from "../hooks/UseYoutubeVideos";
 const Navbar = ({ setToggle }) => {
+  UseYoutubeVideos();
   const [inputValue, setInputValue] = useState("");
   const [showSetting, setShowSetting] = useState(false);
   const [theme, setTheme] = useState("light");
@@ -142,11 +144,11 @@ const Navbar = ({ setToggle }) => {
                       width="25"
                       height="25"
                       viewBox="0 0 24 24"
-                      stroke-width="1"
+                      strokeWidth="1"
                       stroke="#000000"
                       fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <path stroke="none" d="M0 0h24v24H0z" />
                       <path d="M18 6l-12 12" />
@@ -198,68 +200,73 @@ const Navbar = ({ setToggle }) => {
           </div>
           <div className="flex items-center">
             {/* Option-Btn */}
-          <div className="rounded-full p-2" onClick={settingHandler}>
-            <svg
-              viewBox="0 0 24 24"
-              preserveAspectRatio="xMidYMid meet"
-              focusable="false"
-              id="nav-icon"
-              className="style-scope yt-icon h-7 "
+            <div className="rounded-full p-2" onClick={settingHandler}>
+              <svg
+                viewBox="0 0 24 24"
+                preserveAspectRatio="xMidYMid meet"
+                focusable="false"
+                id="nav-icon"
+                className="style-scope yt-icon h-7 "
+              >
+                <g className="style-scope yt-icon">
+                  <path
+                    d="M12,16.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S11.17,16.5,12,16.5z M10.5,12 c0,0.83,0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5s-0.67-1.5-1.5-1.5S10.5,11.17,10.5,12z M10.5,6c0,0.83,0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S12.83,4.5,12,4.5S10.5,5.17,10.5,6z"
+                    className="style-scope yt-icon"
+                  ></path>
+                </g>
+              </svg>
+            </div>
+            {/* user-icon */}
+            <div
+              id="user-icon"
+              className="hover:bg-lightblue  px-3 py-2  text-blue  flex gap-x-1 items-center  rounded-3xl "
             >
-              <g className="style-scope yt-icon">
-                <path
-                  d="M12,16.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S11.17,16.5,12,16.5z M10.5,12 c0,0.83,0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5s-0.67-1.5-1.5-1.5S10.5,11.17,10.5,12z M10.5,6c0,0.83,0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S12.83,4.5,12,4.5S10.5,5.17,10.5,6z"
-                  class="style-scope yt-icon"
-                ></path>
-              </g>
-            </svg>
-          </div>
-          {/* user-icon */}
-          <div
-            id="user-icon"
-            className="hover:bg-lightblue  px-3 py-2  text-blue  flex gap-x-1 items-center  rounded-3xl "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-user-circle h-7 w-7"
-              width="44"
-              height="44"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="#0d64d5"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-              <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-              <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
-            </svg>
-            <p className="text-base">Sign in</p>
-          </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon icon-tabler icon-tabler-user-circle h-7 w-7"
+                width="44"
+                height="44"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="#0d64d5"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+              </svg>
+              <p className="text-base">Sign in</p>
+            </div>
           </div>
         </div>
         {showSetting && (
-          <div className="floting fixed bg-white right-40 top-[4rem] shadow-lg rounded-xl px-4 py-5">
-            <div className="border-b border-gray pb-2 mb-3">
-              <p className="text-sm m-0">
-                Setting applies to this browser only
-              </p>
-            </div>
-            <div>
-              <p
-                className="slider-icon text-sm  rounded-lg  p-3  w-max cursor-pointer"
-                onClick={() => toggleTheme("dark")}
-              >
-                Dark Theme
-              </p>
-              <p
-                className="slider-icon text-sm rounded-lg w-[99.9%]  p-3 w-max cursor-pointer"
-                onClick={() => toggleTheme("light")}
-              >
-                Light Theme
-              </p>
+          <div
+            className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0"
+            onClick={() => setShowSetting(false)}
+          >
+            <div className="floting fixed bg-white right-40 top-[4rem]  shadow-lg rounded-xl px-4 py-5">
+              <div className="border-b border-gray pb-2 mb-3">
+                <p className="text-sm m-0">
+                  Setting applies to this browser only
+                </p>
+              </div>
+              <div>
+                <p
+                  className="slider-icon text-sm  rounded-lg  p-3 my-2 w-max cursor-pointer"
+                  onClick={() => toggleTheme("dark")}
+                >
+                  Dark Theme
+                </p>
+                <p
+                  className="slider-icon text-sm rounded-lg w-[99.9%]  p-3 w-max cursor-pointer"
+                  onClick={() => toggleTheme("light")}
+                >
+                  Light Theme
+                </p>
+              </div>
             </div>
           </div>
         )}

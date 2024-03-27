@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const appSlice = createSlice({
+const AppSlice = createSlice({
   name: "app",
   initialState: {
     open: false,
@@ -12,4 +12,4 @@ const appSlice = createSlice({
   },
 });
 
-export default appSlice;
+export default AppSlice;

@@ -19,26 +19,24 @@ const Shimmer = () => {
     <div className="shimmer-bg flex flex-col gap-20 pl-20">
       {/* navbar container  */}
       <div className="shimmer-border flex pl-60 p-5 justify-between border-b border-[#E3E3E3]">
-      <div className="flex items-center">
-        {/* input-btn */}
-        <div className="relative">
-          <input
-            id="input"
-            type=""
-            className="w-[42vw] h-[2.5rem] border-r-none border-gray rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
-          />
-        </div>
+        <div className="flex items-center">
+          {/* input-btn */}
+          <div className="relative">
+            <input
+              id="input"
+              type=""
+              className="w-[42vw] h-[2.5rem] border-r-none border-gray rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
+            />
+          </div>
 
-        {/* Search-btn */}
-        <button
-          className="shimmer shimmer-input rounded-3xl rounded-l-none border bg-[#E3E3E3] border-gray h-[2.5rem] w-[5vw] flex justify-center items-center"
-        ></button>
-      </div>
-      <div className="flex justify-end items-center gap-3">
-        <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
-        <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
-        <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
-      </div>
+          {/* Search-btn */}
+          <button className="shimmer shimmer-input rounded-3xl rounded-l-none border bg-[#E3E3E3] border-gray h-[2.5rem] w-[5vw] flex justify-center items-center"></button>
+        </div>
+        <div className="flex justify-end items-center gap-3">
+          <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
+          <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
+          <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
+        </div>
       </div>
 
       {/* main container */}
@@ -48,7 +46,7 @@ const Shimmer = () => {
         {Array(30)
           .fill(" ")
           .map((e, index) => (
-            <>
+            <div key={index}>
               <div>
                 {/* img */}
                 <div className="shimmer h-[35vh] w-[28vw] rounded-xl bg-gray"></div>
@@ -63,7 +61,7 @@ const Shimmer = () => {
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ))}
       </div>
     </div>
