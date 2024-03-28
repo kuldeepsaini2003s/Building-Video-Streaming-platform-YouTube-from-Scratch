@@ -27,6 +27,7 @@ const WatchPage = () => {
   const videoId = searchParams.get("v");
   const [video, setVideo] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [channelLogo, setChannelLogo] = useState("")
   const dispatch = useDispatch();
 
   UseSingleVideo({ videoId });
@@ -53,14 +54,17 @@ const WatchPage = () => {
         `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${Id}&key=${GOOGLE_API_KEY}`
       );
       const json = await data.json();
-      console.log(json);
+      console.log(json.items[0].snippet.thumbnails.high.url);
+      setChannelLogo(json.items[0].snippet.thumbnails.high.url)
     } catch (error) {
       console.error("Error fetching channel data:", error);
     }
   };
   useEffect(() => {
-    getChannleLogo();
-  }, []);
+    if(Id) {
+      getChannleLogo();
+    }
+  }, [Id]);
 
   const formattedViewCount = statistics
     ? formatViewCount(statistics.viewCount)
@@ -116,7 +120,7 @@ const WatchPage = () => {
         <div className="">
           <iframe
             width="700"
-            height="390"
+            height="380"
             className="rounded-xl"
             src={`https://www.youtube.com/embed/${videoId}?&autoplay=1`}
             title="YouTube video player"
@@ -137,7 +141,7 @@ const WatchPage = () => {
               <div className="flex gap-5 items-center">
                 <img
                   className="h-12 w-12 rounded-full"
-                  src={require("../Images/thumbnail-1.jpeg")}
+                  src={channelLogo}
                   alt=""
                 />
                 <div>
