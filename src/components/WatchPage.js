@@ -22,7 +22,7 @@ const WatchPage = () => {
   const [searchParams] = useSearchParams();
   const [subscribed, setSubscribed] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+  const [disliked, setDisliked] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const videoId = searchParams.get("v");
   const [video, setVideo] = useState([]);
@@ -122,7 +122,7 @@ const WatchPage = () => {
             width="700"
             height="380"
             className="rounded-xl"
-            src={`https://www.youtube.com/embed/${videoId}?&autoplay=1`}
+            src={`https://www.youtube.com/embed/${videoId}`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -152,14 +152,14 @@ const WatchPage = () => {
               {/* subscribe-btn */}
               <button
                 onClick={subscriberHandler}
-                className="subscriber px-3 py-2 flex items-center text-sm cursor-pointer rounded-3xl"
+                className="watch-btn subscriber px-3 py-2 flex items-center text-sm cursor-pointer rounded-3xl"
               >
                 {subscribed && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="icon icon-tabler icon-tabler-bell h-6"
-                    width="28"
-                    height="28"
+                    className="like-btn icon icon-tabler icon-tabler-bell h-6 mr-1"
+                    width="21"
+                    height="21"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="#000000 "
@@ -172,20 +172,20 @@ const WatchPage = () => {
                     <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
                   </svg>
                 )}
-                Subscribe
+                {!subscribed ? "Subscribe" : "Subscribed"}
               </button>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium">
               {/* like-btn */}
-              <div className="user-info flex items-center bg-lightgray rounded-3xl px-3 py-2 ">
+              <div className="user-info flex items-center bg-lightgray rounded-3xl ">
                 <div
                   onClick={likeHandler}
-                  className="flex gap-1 items-center border-r pr-3 mr-2 cursor-pointer"
+                  className="watch-btn flex gap-1 items-center border-r  px-3 py-2 rounded-full rounded-r   cursor-pointer"
                 >
                   {!liked ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-thumb-up"
+                      className="like-btn icon icon-tabler icon-tabler-thumb-up"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -201,7 +201,7 @@ const WatchPage = () => {
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-thumb-up-filled"
+                      className="like-btn icon icon-tabler icon-tabler-thumb-up-filled"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -228,12 +228,12 @@ const WatchPage = () => {
                 </div>
                 <div
                   onClick={dislikeHandler}
-                  className="user-info cursor-pointer"
+                  className="cursor-pointer px-4 py-2 rounded-full rounded-l watch-btn"
                 >
                   {disliked ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-thumb-down"
+                      className="like-btn icon icon-tabler icon-tabler-thumb-down"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -249,7 +249,7 @@ const WatchPage = () => {
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-thumb-down-filled"
+                      className="like-btn icon icon-tabler icon-tabler-thumb-down-filled"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -276,12 +276,12 @@ const WatchPage = () => {
               </div>
               {/* share-btn */}
               <div
-                className="user-info flex items-center gap-1 bg-lightgray rounded-3xl px-3 py-2 cursor-pointer "
+                className="watch-btn user-info flex items-center gap-1 bg-lightgray rounded-3xl px-3 py-2 cursor-pointer "
                 onClick={handleShare}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="user-info icon icon-tabler icon-tabler-share-3"
+                  className="like-btn icon icon-tabler icon-tabler-share-3"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -297,10 +297,10 @@ const WatchPage = () => {
                 <p>Share</p>
               </div>
               {/* option-btn */}
-              <div className="user-info bg-lightgray rounded-3xl p-2 cursor-pointer ">
+              <div className="watch-btn bg-lightgray rounded-3xl p-2 cursor-pointer ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="user-info icon icon-tabler icon-tabler-dots"
+                  className="like-btn icon icon-tabler icon-tabler-dots"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
