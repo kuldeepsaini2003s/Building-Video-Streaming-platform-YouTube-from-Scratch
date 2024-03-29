@@ -40,7 +40,10 @@ const Navbar = ({ setToggle }) => {
         >
           {/* Menu-Bar-Btn */}
           <div id="menu-ba yt-icon" className="flex items-center gap-x-1 ">
-            <div className="rounded-full p-2 pb-1 sm:block mm:hidden" onClick={togglehandler}>
+            <div
+              className="rounded-full p-2 pb-1 sm:block ms:hidden"
+              onClick={togglehandler}
+            >
               <svg
                 viewBox="0 0 26 26"
                 preserveAspectRatio="xMidYMid meet"
@@ -124,7 +127,7 @@ const Navbar = ({ setToggle }) => {
           >
             <div className="flex items-center">
               {/* input-btn */}
-              <div className="relative sm:block mm:hidden">
+              <div className="relative sm:block ms:hidden">
                 <input
                   id="input"
                   type="text"
@@ -181,7 +184,10 @@ const Navbar = ({ setToggle }) => {
             </div>
             <div className="flex items-center">
               {/* audio-btn */}
-              <button id="audioBtn" className="rounded-full m-0 sm:block mm:hidden">
+              <button
+                id="audioBtn"
+                className="rounded-full m-0 sm:block ms:hidden"
+              >
                 <svg
                   viewBox="0 0 24 24"
                   preserveAspectRatio="xMidYMid meet"
@@ -242,9 +248,15 @@ const Navbar = ({ setToggle }) => {
             {/* user-icon */}
             <div
               id="user-icon"
-              className="px-3 py-2 flex gap-x-1 items-center  rounded-3xl sm:block mm:hidden "
+              className="px-3 py-2 flex gap-x-1 items-center  rounded-3xl sm:block ms:hidden "
             >
-              <div className="h-9 w-9 rounded-full" style={{backgroundImage:`url(${UserImage})`, backgroundSize:'cover'}}></div>
+              <div
+                className="h-9 w-9 rounded-full"
+                style={{
+                  backgroundImage: `url(${UserImage})`,
+                  backgroundSize: "cover",
+                }}
+              ></div>
             </div>
           </div>
         </div>
