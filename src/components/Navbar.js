@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UseYoutubeVideos from "../hooks/UseYoutubeVideos";
+import UserImage from "../Images/user-img.jpg";
 const Navbar = ({ setToggle }) => {
   UseYoutubeVideos();
   const [inputValue, setInputValue] = useState("");
@@ -35,22 +36,22 @@ const Navbar = ({ setToggle }) => {
       <div>
         <div
           id="navbar"
-          className="navbar screen  flex fixed z-10 h-14 px-3  py-8 items-center w-full justify-between"
+          className="navbar screen flex fixed z-10 h-14 px-2  py-6 items-center w-full justify-between"
         >
           {/* Menu-Bar-Btn */}
-          <div id="menu-ba yt-icon" className="flex items-center gap-x-4">
-            <div className="rounded-full p-2" onClick={togglehandler}>
+          <div id="menu-ba yt-icon" className="flex items-center gap-x-1 ">
+            <div className="rounded-full p-2 pb-1 sm:block mm:hidden" onClick={togglehandler}>
               <svg
-                viewBox="0 0 24 24"
+                viewBox="0 0 26 26"
                 preserveAspectRatio="xMidYMid meet"
                 focusable="false"
                 id="nav-icon"
-                className="style-scope yt-icon h-6"
+                className="style-scope yt-icon h-1"
               >
-                <g className="style-scope yt-icon h-10">
+                <g className="style-scope yt-icon h-1">
                   <path
                     d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"
-                    className="style-scope yt-icon h-10"
+                    className="style-scope yt-icon h-5"
                   ></path>
                 </g>
               </svg>
@@ -123,7 +124,7 @@ const Navbar = ({ setToggle }) => {
           >
             <div className="flex items-center">
               {/* input-btn */}
-              <div className="relative">
+              <div className="relative sm:block mm:hidden">
                 <input
                   id="input"
                   type="text"
@@ -161,13 +162,13 @@ const Navbar = ({ setToggle }) => {
               {/* Search-btn */}
               <button
                 id="search-btn"
-                className="rounded-3xl rounded-l-none border h-[2.5rem] w-[5vw] flex justify-center items-center"
+                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] flex justify-center items-center "
               >
                 <svg
                   viewBox="0 0 24 24"
                   preserveAspectRatio="xMidYMid meet"
                   focusable="false"
-                  className="style-scope yt-icon h-6"
+                  className="style-scope yt-icon h-6 block"
                 >
                   <g className="style-scope yt-icon h-10">
                     <path
@@ -180,7 +181,7 @@ const Navbar = ({ setToggle }) => {
             </div>
             <div className="flex items-center">
               {/* audio-btn */}
-              <button id="audioBtn" className="rounded-full m-0 ">
+              <button id="audioBtn" className="rounded-full m-0 sm:block mm:hidden">
                 <svg
                   viewBox="0 0 24 24"
                   preserveAspectRatio="xMidYMid meet"
@@ -198,9 +199,9 @@ const Navbar = ({ setToggle }) => {
               </button>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center pr-2">
             {/* Option-Btn */}
-            <div className="rounded-full p-2" onClick={settingHandler}>
+            <div className="rounded-full p-2 " onClick={settingHandler}>
               <svg
                 viewBox="0 0 24 24"
                 preserveAspectRatio="xMidYMid meet"
@@ -216,29 +217,34 @@ const Navbar = ({ setToggle }) => {
                 </g>
               </svg>
             </div>
+            {/* video upload btn */}
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="like-btn icon icon-tabler icon-tabler-video-plus"
+                width="40"
+                height="40"
+                id="nav-icon"
+                viewBox="0 0 22 22"
+                stroke-width="1.5"
+                stroke="#2c3e50"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
+                <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
+                <path d="M7 12l4 0" />
+                <path d="M9 10l0 4" />
+              </svg>
+            </div>
             {/* user-icon */}
             <div
               id="user-icon"
-              className="hover:bg-lightblue  px-3 py-2  text-blue  flex gap-x-1 items-center  rounded-3xl "
+              className="px-3 py-2 flex gap-x-1 items-center  rounded-3xl sm:block mm:hidden "
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-user-circle h-7 w-7"
-                width="44"
-                height="44"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="#0d64d5"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
-              </svg>
-              <p className="text-base">Sign in</p>
+              <div className="h-9 w-9 rounded-full" style={{backgroundImage:`url(${UserImage})`, backgroundSize:'cover'}}></div>
             </div>
           </div>
         </div>

@@ -47,21 +47,21 @@ const VideoCard = ({ info }) => {
   }, []);
 
   return (
-    <div className="h-[60vh] p-2 lg:w-[30vw] sm:w-[43vw]">
+    <div className="h-[60vh] p-2 lg:w-[30vw] sm:w-[43vw] mm:w-full  sm:text-base mm:text-sm">
       <img
-        className="rounded-xl h-[13rem] w-[98%]"
+        className="rounded-xl sm:h-[13rem] mm:h-[12rem] sm:w-[98%] mm:w-full"
         alt="Thumbnails"
         src={thumbnail.url}
       />
       <div className="yt-details pt-4 py-2 flex gap-x-3">
         <img
-          className="user-img rounded-full h-10 w-10"
+          className="user-img rounded-full sm:h-10 sm:w-10 mm:h-8 mm:w-8"
           alt="Thumbnails"
           src={channelLogo}
         />
         <div className="w-full">
           <div className="flex gap-5 justify-between w-full">
-            <p className="font-semibold text-base" style={titleStyle}>
+            <p className="font-semibold sm:text-base mm:text-sm " style={titleStyle}>
               {title}
             </p>
             <p className="three-dots-container ">
@@ -77,7 +77,8 @@ const VideoCard = ({ info }) => {
               </svg>
             </p>
           </div>
-          <p className="text-Lightblack text-sm">{channelTitle}</p>
+         <div className="mm:flex gap-2">
+         <p className="text-Lightblack text-sm">{channelTitle}</p>
           <p className="flex items-center ">
             <span className="text-Lightblack text-sm">
               {formattedViewCount} views
@@ -96,6 +97,7 @@ const VideoCard = ({ info }) => {
             </span>
             <span className="text-Lightblack text-sm">{relativeTime}</span>
           </p>
+         </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ const Menu = () => {
   return (
     <div
       id="sideMenu"
-      className="w-[5rem] fixed  -z-40 left-1 top-[3rem] h-full flex flex-col items-center py-5 p-2  "
+      className="sm:w-[5rem] mm:w-full fixed  -z-40 sm:left-1 sm:top-[3rem] mm:bottom-0 sm:h-full flex sm:flex-col items-center sm:py-5 sm:p-2 mm:bg-black  "
     >
       {/* home-btn */}
       <div
@@ -15,7 +15,7 @@ const Menu = () => {
           viewBox="0 0 24 24"
           preserveAspectRatio="xMidYMid meet"
           focusable="false"
-          className="style-scope yt-icon h-6"
+          className="style-scope yt-icon h-5"
         >
           <g>
             <path 
