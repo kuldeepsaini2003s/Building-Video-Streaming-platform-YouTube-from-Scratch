@@ -16,10 +16,10 @@ const Shimmer = () => {
     localStorage.setItem("theme", theme);
   };
   return (
-    <div className="shimmer-bg flex flex-col gap-20 pl-20">
+    <div className="shimmer-bg flex flex-col sm:gap-20 ms:gap-12 sm:pl-20">
       {/* navbar container  */}
-      <div className="shimmer-border flex pl-60 p-5 justify-between border-b border-[#E3E3E3]">
-        <div className="flex items-center">
+      <div className="shimmer-border flex sm:pl-60 p-5 sm:justify-between ms:justify-end border-b border-[#E3E3E3]">
+        <div className="flex items-center sm:block ms:hidden">
           {/* input-btn */}
           <div className="relative">
             <input
@@ -40,7 +40,7 @@ const Shimmer = () => {
       </div>
 
       {/* main container */}
-      <div className="shimmer-border flex border-t pl-6 flex-wrap gap-x-4 gap-y-8  border-[#E3E3E3] p-4">
+      <div className="shimmer-border flex sm:flex-row ms:flex-col border-t sm:pl-6 flex-wrap sm:gap-x-4 sm:gap-y-8 ms:gap-y-4   border-[#E3E3E3] sm:p-4 ms:py-4">
         {/* video-container */}
 
         {Array(30)
@@ -49,9 +49,9 @@ const Shimmer = () => {
             <div key={index}>
               <div>
                 {/* img */}
-                <div className="shimmer h-[35vh] w-[28vw] rounded-xl bg-gray"></div>
+                <div className="shimmer sm:h-[35vh] sm:w-[28vw] ms:h-[11rem]  sm:rounded-xl bg-gray"></div>
 
-                <div className="flex p-2 gap-3">
+                <div className="flex sm:p-2 sm:px-0 sm:py-0 ms:px-4 ms:py-4 gap-3">
                   {/* channdel */}
                   <div className="shimmer bg-[#E3E3E3] rounded-full p-4 w-5 h-5"></div>
                   {/* title */}

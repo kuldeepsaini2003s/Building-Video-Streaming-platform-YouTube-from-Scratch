@@ -5,7 +5,7 @@ const Menu = () => {
   return (
     <div
       id="sideMenu"
-      className="sm:w-[5rem] ms:w-full fixed  -z-40 sm:left-1 sm:top-[3rem] ms:-bottom-2 sm:h-full flex sm:flex-col items-center sm:py-5 sm:p-2  ms:h-14  ms:justify-between ms:px-2 ms:pb-2 ms:left-0 sm:bg-white ms:text-white ms:bg-black"
+      className="sm:w-[5rem] ms:w-full fixed  -z-40 sm:left-1 sm:top-[3rem] ms:-bottom-2 sm:h-full flex sm:flex-col items-center sm:py-5 sm:p-2  ms:h-16  ms:justify-between ms:px-2 ms:pb-3 ms:py-2 ms:left-0 sm:bg-white ms:text-white ms:bg-black"
     >
       {/* home-btn */}
       <div
