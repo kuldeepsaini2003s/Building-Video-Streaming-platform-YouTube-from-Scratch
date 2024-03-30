@@ -113,16 +113,16 @@ const WatchPage = () => {
     setInputValue("");
   };
   return (
-    <div className="mt-20 w-full flex gap-16">
+    <div className="sm:mt-20 w-full flex gap-16">
       {/* left  */}
-      <div className="ml-20 w-[700px] ">
+      <div className="sm:ml-20 sm:w-[700px] ms:w-full ">
         {/* video */}
         <div className="">
           <iframe
             width="700"
             height="380"
-            className="rounded-xl"
-            src={`https://www.youtube.com/embed/${videoId}`}
+            className="sm:rounded-xl sm:w-[700px] ms:w-full sm:h-[380px] ms:h-[200px]"
+            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -135,8 +135,8 @@ const WatchPage = () => {
           <h1 className=" text-xl font-semibold w-[95%] overflow-hidden whitespace-nowrap text-ellipsis">
             {video.snippet?.title}
           </h1>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
+          <div className="flex sm:flex-row ms:flex-col sm:items-center sm:gap-0 ms:gap-0 sm:justify-between">
+            <div className="flex sm:justify-normal ms:justify-between items-center gap-5 sm:p-0 ms:p-2">
               {/* user-profile */}
               <div className="flex gap-5 items-center">
                 <img
@@ -144,7 +144,7 @@ const WatchPage = () => {
                   src={channelLogo}
                   alt=""
                 />
-                <div>
+                <div >
                   <p className="font-medium">{video?.snippet?.channelTitle}</p>
                   <p className="text-xs text-[#656565]">23M subscribers</p>
                 </div>
@@ -175,7 +175,7 @@ const WatchPage = () => {
                 {!subscribed ? "Subscribe" : "Subscribed"}
               </button>
             </div>
-            <div className="flex items-center gap-2 text-sm font-medium">
+            <div className="flex items-center gap-2 text-sm font-medium sm:justify-normal ms:justify-between sm:p-0 ms:p-2">
               {/* like-btn */}
               <div className="user-info flex items-center bg-lightgray rounded-3xl ">
                 <div
@@ -319,7 +319,7 @@ const WatchPage = () => {
             </div>
           </div>
 
-          <div className="user-info gap-2 flex flex-col mt-2 text-sm bg-lightgray rounded-2xl p-3">
+          <div className="user-info gap-2 flex flex-col mt-2 sm:m-0 ms:m-2 text-sm bg-lightgray rounded-2xl p-3">
             {/* views */}
             <div className="flex items-center gap-x-2 font-semibold flex-wrap ">
               <p className="p-0 m-0">{formattedViewCount} views</p>
@@ -360,7 +360,7 @@ const WatchPage = () => {
         </div>
       </div>
       {/* right */}
-      <div className="border flex flex-col justify-between w-[30%] h-fit rounded-lg ">
+      <div className="border sm:flex flex-col justify-between w-[30%] h-fit rounded-lg ms:hidden ">
         <div className="flex justify-between items-center border-b p-4">
           <p>Top Chats</p>
           <svg

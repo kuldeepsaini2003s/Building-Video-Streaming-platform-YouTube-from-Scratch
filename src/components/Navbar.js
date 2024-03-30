@@ -166,7 +166,7 @@ const Navbar = ({ setToggle }) => {
               {/* Search-btn */}
               <button
                 id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] flex justify-center items-center sm:block ms:hidden"
+                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] pl-4 flex justify-center items-center sm:block ms:hidden"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -251,7 +251,7 @@ const Navbar = ({ setToggle }) => {
             <div>
               <button
                 id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 ">
+                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden ">
                 <svg
                   viewBox="0 0 24 24"
                   preserveAspectRatio="xMidYMid meet"
@@ -290,7 +290,7 @@ const Navbar = ({ setToggle }) => {
             className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0 "
             onClick={() => setShowSetting(false)}
           >
-            <div className="floting fixed bg-white right-40 top-[4rem] ms:right-0 shadow-lg rounded-xl px-4 py-5">
+            <div className="floting fixed bg-white sm:right-36 top-[4rem] ms:right-0 shadow-lg rounded-xl px-4 py-5">
               <div className="border-b border-gray pb-2 mb-3">
                 <p className="text-sm m-0">
                   Setting applies to this browser only

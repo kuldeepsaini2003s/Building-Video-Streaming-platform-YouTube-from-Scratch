@@ -45,7 +45,9 @@ function App() {
     <Provider store={store}>
       {loading ? (<Shimmer/>) : (
         <>
+        <div className='navbar-show'>
         <Navbar setToggle={setToggle}/>
+        </div>
         {toggle && <Slider setToggle={setToggle}/>}
         <RouterProvider router={AppRouter}/>
         </>

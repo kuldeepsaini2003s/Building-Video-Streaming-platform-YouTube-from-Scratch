@@ -5,12 +5,12 @@ const Menu = () => {
   return (
     <div
       id="sideMenu"
-      className="sm:w-[5rem] ms:w-full fixed  -z-40 sm:left-1 sm:top-[3rem] ms:-bottom-2 sm:h-full flex sm:flex-col items-center sm:py-5 sm:p-2  ms:h-16  ms:justify-between ms:px-2 ms:pb-3 ms:py-2 ms:left-0 sm:bg-white ms:text-white ms:bg-black"
+      className="side-menu sm:w-[5rem] ms:w-full fixed  -z-40 sm:left-1 sm:top-[2.5rem] sm:bottom-0 ms:-bottom-2 sm:h-full flex sm:flex-col items-center sm:gap-2 sm:py-5 sm:p-2  ms:h-16  sm:justify-normal ms:justify-between ms:px-2 ms:pb-3 ms:py-2 ms:left-0 sm:bg-white ms:text-white ms:bg-black"
     >
       {/* home-btn */}
       <div
         id="HomeBtn menu-items"
-        className="menu-icon active flex flex-col items-center ms:m-0 ms:p-1 ms:w-fit "
+        className="menu-icon active flex flex-col items-center ms:m-0 sm:py-3 ms:p-1 sm:w-full ms:w-fit "
       >
         <svg
           viewBox="0 0 24 24"
@@ -25,26 +25,28 @@ const Menu = () => {
         <p className="sm:text-xs ms:text-[12px] pt-1">Home</p>
       </div>
       {/* explore-btn */}
-      <div
+      {/* <div
         id="ExplorBtn menu-items"
         className="menu-icon flex flex-col items-center sm:block ms:hidden"
       >
-        <svg
-          viewBox="0 0 24 24"
-          preserveAspectRatio="xMidYMid meet"
-          focusable="false"
-          className="style-scope yt-icon h-6"
-        >
-          <g>
-            <path d="M9.8,9.8l-3.83,8.23l8.23-3.83l3.83-8.23L9.8,9.8z M13.08,12.77c-0.21,0.29-0.51,0.48-0.86,0.54 c-0.07,0.01-0.15,0.02-0.22,0.02c-0.28,0-0.54-0.08-0.77-0.25c-0.29-0.21-0.48-0.51-0.54-0.86c-0.06-0.35,0.02-0.71,0.23-0.99 c0.21-0.29,0.51-0.48,0.86-0.54c0.35-0.06,0.7,0.02,0.99,0.23c0.29,0.21,0.48,0.51,0.54,0.86C13.37,12.13,13.29,12.48,13.08,12.77z M12,3c4.96,0,9,4.04,9,9s-4.04,9-9,9s-9-4.04-9-9S7.04,3,12,3 M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2 L12,2z"></path>
-          </g>
-        </svg>
-        <p className="text-xs pt-1">Explore</p>
-      </div>
+        <div className="flex flex-col items-center">
+          <svg
+            viewBox="0 0 24 24"
+            preserveAspectRatio="xMidYMid meet"
+            focusable="false"
+            className="style-scope yt-icon h-6"
+          >
+            <g>
+              <path d="M9.8,9.8l-3.83,8.23l8.23-3.83l3.83-8.23L9.8,9.8z M13.08,12.77c-0.21,0.29-0.51,0.48-0.86,0.54 c-0.07,0.01-0.15,0.02-0.22,0.02c-0.28,0-0.54-0.08-0.77-0.25c-0.29-0.21-0.48-0.51-0.54-0.86c-0.06-0.35,0.02-0.71,0.23-0.99 c0.21-0.29,0.51-0.48,0.86-0.54c0.35-0.06,0.7,0.02,0.99,0.23c0.29,0.21,0.48,0.51,0.54,0.86C13.37,12.13,13.29,12.48,13.08,12.77z M12,3c4.96,0,9,4.04,9,9s-4.04,9-9,9s-9-4.04-9-9S7.04,3,12,3 M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2 L12,2z"></path>
+            </g>
+          </svg>
+          <p className="text-xs pt-1">Explore</p>
+        </div>
+      </div> */}
       {/* shorts-btn */}
       <div
         id="ShortsBtn menu-items"
-        className="menu-icon flex flex-col items-center ms:m-0 ms:p-1 ms:w-fit "
+        className="menu-icon flex flex-col items-center sm:py-3 sm:w-full ms:m-0 ms:p-1  ms:w-fit "
       >
         <svg
           viewBox="0 0 24 24"
@@ -85,7 +87,7 @@ const Menu = () => {
       {/* subscribers-btn */}
       <div
         id="SubscribersBtn menu-items"
-        className="menu-icon flex flex-col items-center ms:m-0 ms:p-1 ms:w-fit  "
+        className="menu-icon flex flex-col items-center sm:py-3 sm:w-full sm:px-2 ms:m-0 ms:p-1 ms:w-fit  "
       >
         <svg
           viewBox="0 0 24 24"
@@ -104,6 +106,7 @@ const Menu = () => {
         id="yourvideosBtn menu-items"
         className="menu-icon flex flex-col items-center sm:block ms:hidden"
       >
+        <div className="flex flex-col items-center">
         <svg
           viewBox="0 0 24 24"
           preserveAspectRatio="xMidYMid meet"
@@ -115,12 +118,14 @@ const Menu = () => {
           </g>
         </svg>
         <p className="text-xs pt-1">You</p>
+        </div>
       </div>
-      {/* history-btn */}
+      {/* history-btn
       <div
         id="HistoryBtn menu-items"
         className="menu-icon flex flex-col items-center sm:block ms:hidden"
       >
+        <div className="flex flex-col items-center">
         <svg
           viewBox="0 0 24 24"
           preserveAspectRatio="xMidYMid meet"
@@ -132,7 +137,8 @@ const Menu = () => {
           </g>
         </svg>
         <p className="text-xs pt-1">History</p>
-      </div>
+        </div>
+      </div> */}
       {/* user-icon */}
       <div
         id="user-icon"
