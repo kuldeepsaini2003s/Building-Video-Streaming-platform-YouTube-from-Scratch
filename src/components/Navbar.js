@@ -36,10 +36,11 @@ const Navbar = ({ setToggle }) => {
       <div>
         <div
           id="navbar"
-          className="navbar screen flex fixed z-10 h-14 px-2  py-6 items-center w-full justify-between"
+          className="navbar screen flex fixed z-10 h-14 px-2  sm:py-6 items-center w-full justify-between"
         >
-          {/* Menu-Bar-Btn */}
+          {/* Menu-Bar-Btn && Youtube-Logo */}
           <div id="menu-ba yt-icon" className="flex items-center gap-x-1 ">
+            {/* Menu-btn */}
             <div
               className="rounded-full p-2 pb-1 sm:block ms:hidden"
               onClick={togglehandler}
@@ -120,13 +121,14 @@ const Navbar = ({ setToggle }) => {
               </svg>
             </div>
           </div>
+
           {/* search-bar container  */}
           <div
             id="searchBar"
             className="flex justify-between items-center w-[52vw] "
           >
+            {/* input-btn */}
             <div className="flex items-center">
-              {/* input-btn */}
               <div className="relative sm:block ms:hidden">
                 <input
                   id="input"
@@ -161,11 +163,10 @@ const Navbar = ({ setToggle }) => {
                   </button>
                 )}
               </div>
-
               {/* Search-btn */}
               <button
                 id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] flex justify-center items-center "
+                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] flex justify-center items-center sm:block ms:hidden"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -182,8 +183,8 @@ const Navbar = ({ setToggle }) => {
                 </svg>
               </button>
             </div>
+            {/* audio-btn */}
             <div className="flex items-center">
-              {/* audio-btn */}
               <button
                 id="audioBtn"
                 className="rounded-full m-0 sm:block ms:hidden"
@@ -205,9 +206,10 @@ const Navbar = ({ setToggle }) => {
               </button>
             </div>
           </div>
-          <div className="flex items-center pr-2">
+
+          <div className="flex items-center sm:pr-2">
             {/* Option-Btn */}
-            <div className="rounded-full p-2 " onClick={settingHandler}>
+            <div className="rounded-full sm:p-2 " onClick={settingHandler}>
               <svg
                 viewBox="0 0 24 24"
                 preserveAspectRatio="xMidYMid meet"
@@ -245,6 +247,27 @@ const Navbar = ({ setToggle }) => {
                 <path d="M9 10l0 4" />
               </svg>
             </div>
+            {/* search btn for mobile screen */}
+            <div>
+              <button
+                id="search-btn"
+                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 ">
+                <svg
+                  viewBox="0 0 24 24"
+                  preserveAspectRatio="xMidYMid meet"
+                  focusable="false"
+                  className="style-scope yt-icon sm:h-5 ms:h-7 block"
+                >
+                  <g className="style-scope yt-icon h-10">
+                    <path
+                      d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
+                      className="style-scope yt-icon h-10"
+                    ></path>
+                  </g>
+                </svg>
+              </button>
+            </div>
+
             {/* user-icon */}
             <div
               id="user-icon"
@@ -260,12 +283,14 @@ const Navbar = ({ setToggle }) => {
             </div>
           </div>
         </div>
+
+        {/* Theme Toggler */}
         {showSetting && (
           <div
-            className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0"
+            className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0 "
             onClick={() => setShowSetting(false)}
           >
-            <div className="floting fixed bg-white right-40 top-[4rem]  shadow-lg rounded-xl px-4 py-5">
+            <div className="floting fixed bg-white right-40 top-[4rem] ms:right-0 shadow-lg rounded-xl px-4 py-5">
               <div className="border-b border-gray pb-2 mb-3">
                 <p className="text-sm m-0">
                   Setting applies to this browser only

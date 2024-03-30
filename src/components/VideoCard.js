@@ -48,13 +48,13 @@ const VideoCard = ({ info }) => {
   }, []);
 
   return (
-    <div className="sm:h-[60vh] ms:h-fit p-2 lg:w-[30vw] sm:w-[43vw] ms:w-full  sm:text-base ms:text-sm">
+    <div className="sm:h-[60vh] ms:h-fit sm:p-2  lg:w-[30vw] sm:w-[43vw] ms:w-full  sm:text-base ms:text-sm sm:pb-0 ms:pb-2">
       <img
-        className="rounded-xl sm:h-[13rem] ms:h-[13rem] sm:w-[98%] ms:w-full"
+        className="sm:rounded-xl sm:h-[13rem] ms:h-[12rem] sm:w-[98%] ms:w-full"
         alt="Thumbnails"
         src={thumbnail.url}
       />
-      <div className="yt-details pt-4 py-2 flex gap-x-3">
+      <div className="yt-details sm:pt-4 py-2 sm:px-0 ms:px-4 ms:py-3 flex gap-x-3">
         <img
           className="user-img rounded-full sm:h-10 sm:w-10 ms:h-8 ms:w-8"
           alt="Thumbnails"

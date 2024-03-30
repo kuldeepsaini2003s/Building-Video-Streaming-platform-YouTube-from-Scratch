@@ -76,20 +76,35 @@
 }
 
 /* search-btn theme */
-
-[data-theme="light"] #search-btn {
-  background-color: #e3e3e3;
-  color: var(--black);
-  fill: var(--svg-fill-light);
-  border: 1px solid var(--gray);
+@media (min-width: 640px) { 
+  [data-theme="light"] #search-btn {
+    background-color: #e3e3e3;
+    color: var(--black);
+    fill: var(--svg-fill-light);
+    border: 1px solid var(--gray);
+  }
+  
+  [data-theme="dark"] #search-btn {
+    background-color: #292929;
+    color: white;
+    fill: var(--svg-fill-dark);
+    border: 1px solid #353535;
+  }
 }
 
-[data-theme="dark"] #search-btn {
-  background-color: #292929;
-  color: white;
-  fill: var(--svg-fill-dark);
-  border: 1px solid #353535;
+@media (min-width: 640px) { 
+  [data-theme="light"] #search-btn {
+    color: var(--black);
+    fill: var(--svg-fill-light);
+  }
+  
+  [data-theme="dark"] #search-btn {
+    color: white;
+    fill: var(--svg-fill-dark);
+  }
 }
+
+
 
 /* search-btn hover theme */
 
@@ -207,6 +222,7 @@
 .categories-icon {
   border-radius: 10px;
   font-size: 13px;
+  width: fit-content;
 }
 
 /* normal .categories-icon */

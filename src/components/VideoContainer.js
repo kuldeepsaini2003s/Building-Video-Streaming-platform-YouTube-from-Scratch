@@ -21,7 +21,7 @@ const VideoContainer = () => {
   console.log(videos)
 
   return (
-    <div className="flex fixed -z-50 sm:top-[8rem] overflow-y-auto max-h-screen  w-full sm:left-[3.2rem] flex-wrap sm:gap-2 ms:gap-5 justify-center ms:top-16 ms:left-0 ">
+    <div className="sm:flex fixed -z-50 sm:top-[8rem] overflow-y-auto max-h-screen  w-full sm:left-[3.2rem] ms:left-0 flex-wrap sm:gap-2 ms:gap-0 sm:justify-center ms:top-28 ms:left-0 ms:w-full">
       {isLoading ? (
         <ShimmerCard />
       ) : (
