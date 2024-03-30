@@ -9,6 +9,7 @@ const VideoContainer = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const getVideos = useSelector((store) => store.videos.youtubevideo);
+  console.log(getVideos)
 
   useEffect(() => {
     if (getVideos && getVideos.length > 0) {
@@ -16,6 +17,8 @@ const VideoContainer = () => {
       setIsLoading(false);
     }
   }, [getVideos]);
+
+  console.log(videos)
 
   return (
     <div className="flex fixed -z-50 sm:top-[8rem] overflow-y-auto max-h-screen  w-full sm:left-[3.2rem] flex-wrap sm:gap-2 ms:gap-5 justify-center ms:top-16 ms:left-0 ">
