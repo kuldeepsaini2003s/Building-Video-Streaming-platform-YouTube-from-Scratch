@@ -370,7 +370,7 @@
   scrollbar-width: none; /* Firefox */
 }
 
-@media (min-width: 375px) {
+/* @media (min-width: 375px) {
   #navbar{
     display: none;
   }
@@ -379,4 +379,4 @@
   #navbar{
     display: flex;
   }
-}
+} */
