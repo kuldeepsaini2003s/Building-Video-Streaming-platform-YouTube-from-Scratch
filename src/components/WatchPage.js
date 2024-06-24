@@ -122,7 +122,7 @@ const WatchPage = () => {
             width="700"
             height="380"
             className="sm:rounded-xl sm:w-[700px] ms:w-full sm:h-[380px] ms:h-[200px]"
-            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
+            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1?autoplay=1`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
