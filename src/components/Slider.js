@@ -99,7 +99,6 @@ const Slider = ({ setToggle }) => {
         </div>
         <div id="sideMenu" className="flex flex-col items-center py-5 px-0 ">
           {/* home-btn */}
-          <Link to={'/'}>
           <div
             id="HomeBtn menu-items"
             className="slider-icon active w-full flex  items-center px-3 rounded-xl h-10"
@@ -116,7 +115,6 @@ const Slider = ({ setToggle }) => {
             </svg>
             <p className="text-sm font-semibold pl-6">Home</p>
           </div>
-          </Link>
 
           {/* shorts-btn */}
           <div
