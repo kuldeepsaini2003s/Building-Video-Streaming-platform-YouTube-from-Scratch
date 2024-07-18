@@ -72,11 +72,11 @@ const Menu = () => {
           id="ShortsBtn menu-items"
           height="32"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           stroke="#2c3e50"
           fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
@@ -107,17 +107,17 @@ const Menu = () => {
         className="menu-icon flex flex-col items-center sm:block ms:hidden"
       >
         <div className="flex flex-col items-center">
-        <svg
-          viewBox="0 0 24 24"
-          preserveAspectRatio="xMidYMid meet"
-          focusable="false"
-          className="style-scope yt-icon h-6"
-        >
-          <g>
-            <path d="M11,7l6,3.5L11,14V7L11,7z M18,20H4V6H3v15h15V20z M21,18H6V3h15V18z M7,17h13V4H7V17z"></path>
-          </g>
-        </svg>
-        <p className="text-xs pt-1">You</p>
+          <svg
+            viewBox="0 0 24 24"
+            preserveAspectRatio="xMidYMid meet"
+            focusable="false"
+            className="style-scope yt-icon h-6"
+          >
+            <g>
+              <path d="M11,7l6,3.5L11,14V7L11,7z M18,20H4V6H3v15h15V20z M21,18H6V3h15V18z M7,17h13V4H7V17z"></path>
+            </g>
+          </svg>
+          <p className="text-xs pt-1">You</p>
         </div>
       </div>
       {/* history-btn

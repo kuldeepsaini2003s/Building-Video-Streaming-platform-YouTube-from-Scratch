@@ -3,10 +3,12 @@ import { useSearchParams } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import UseSingleVideo from "../hooks/UseSingleVideo";
 import { useDispatch, useSelector } from "react-redux";
-import { GOOGLE_API_KEY } from "../utils/constants";
+import { YOUTUBE_API_KEY } from "../utils/constants";
 import Image from "../Images/user.avif";
 import LiveChats from "./LiveChats";
 import { setMessages } from "../utils/ChatSlice";
+import UseYoutubeComments from "../hooks/UseYoutubeComments";
+import likeBtn from "../Icons/thumbs-up.svg";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -27,23 +29,33 @@ const WatchPage = () => {
   const videoId = searchParams.get("v");
   const [video, setVideo] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [channelLogo, setChannelLogo] = useState("")
+  const [channelLogo, setChannelLogo] = useState("");
+  const [youtubecomments, setYoutubeComments] = useState([]);
   const dispatch = useDispatch();
 
   UseSingleVideo({ videoId });
+  UseYoutubeComments({ videoId });
   const getSignleVideo = useSelector((store) => store.videos.singlevideo);
+  const getYoutubeComments = useSelector(
+    (store) => store.videos.youtubecomments
+  );
+  // console.log(getYoutubeComments);
 
   useEffect(() => {
+    if (getYoutubeComments) {
+      setYoutubeComments(getYoutubeComments);
+    }
     if (getSignleVideo) {
       setVideo(getSignleVideo);
     }
   }, [getSignleVideo]);
+  console.log(youtubecomments);
 
   // console.log(video)
 
   const { snippet, statistics } = video;
   const Id = video?.snippet?.channelId;
-  console.log(Id);
+  // console.log(Id);
   const tags = video?.snippet?.tags;
   // console.log(tags);
   const publishedAt = snippet ? snippet.publishedAt : null;
@@ -51,17 +63,17 @@ const WatchPage = () => {
   const getChannleLogo = async () => {
     try {
       const data = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${Id}&key=${GOOGLE_API_KEY}`
+        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${Id}&key=${YOUTUBE_API_KEY}`
       );
       const json = await data.json();
-      console.log(json.items[0].snippet.thumbnails.high.url);
-      setChannelLogo(json.items[0].snippet.thumbnails.high.url)
+      // console.log(json.items[0].snippet.thumbnails.high.url);
+      setChannelLogo(json?.items[0]?.snippet?.thumbnails?.high?.url);
     } catch (error) {
       console.error("Error fetching channel data:", error);
     }
   };
   useEffect(() => {
-    if(Id) {
+    if (Id) {
       getChannleLogo();
     }
   }, [Id]);
@@ -144,7 +156,7 @@ const WatchPage = () => {
                   src={channelLogo}
                   alt=""
                 />
-                <div >
+                <div>
                   <p className="font-medium">{video?.snippet?.channelTitle}</p>
                   <p className="text-xs text-[#656565]">23M subscribers</p>
                 </div>
@@ -177,33 +189,36 @@ const WatchPage = () => {
             </div>
             <div className="flex items-center gap-2 text-sm font-medium sm:justify-normal ms:justify-between sm:p-0 ms:p-2">
               {/* like-btn */}
-              <div className="user-info flex items-center bg-lightgray rounded-3xl ">
+              <div className="user-info flex items-center bg-lightgray rounded-full ">
                 <div
                   onClick={likeHandler}
-                  className="watch-btn flex gap-1 items-center border-r  px-3 py-2 rounded-full rounded-r   cursor-pointer"
+                  className="watch-btn flex gap-1 items-center border-r-2 px-3 select-none  cursor-pointer"
+                  style={{
+                    borderTopLeftRadius: "20px",
+                    borderBottomLeftRadius: "20px",
+                  }}
                 >
                   {!liked ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="like-btn icon icon-tabler icon-tabler-thumb-up"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="#000000"
                       fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="like-btn feather feather-thumbs-up"
                     >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3" />
+                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
                     </svg>
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="like-btn icon icon-tabler icon-tabler-thumb-up-filled"
-                      width="24"
-                      height="24"
+                      width="22"
+                      height="22"
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="#5a5a5a"
@@ -228,7 +243,7 @@ const WatchPage = () => {
                 </div>
                 <div
                   onClick={dislikeHandler}
-                  className="cursor-pointer px-4 py-2 rounded-full rounded-l watch-btn"
+                  className="cursor-pointer px-4 py-2 rounded-full  watch-btn"
                 >
                   {disliked ? (
                     <svg
@@ -356,6 +371,38 @@ const WatchPage = () => {
           {/* comments-container */}
           <div>
             <h1>{video?.statistics?.commentCount} Comments</h1>
+            <div>
+              {youtubecomments.map((items, index) => (
+                <div key={index} className="flex gap-4 items-start my-3">
+                  <img
+                    className="rounded-full w-10"
+                    src={
+                      items?.snippet?.topLevelComment?.snippet
+                        ?.authorProfileImageUrl
+                    }
+                    alt=""
+                  />
+                  <div>
+                    <h1 className="text-xs mb-1 font-medium">
+                      {
+                        items?.snippet?.topLevelComment?.snippet
+                          ?.authorDisplayName
+                      }
+                    </h1>
+                    <p className="text-sm">
+                      {items?.snippet?.topLevelComment?.snippet?.textOriginal}
+                    </p>
+                    <div className="flex items-center mt-2 gap-5">
+                      <div className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="like-btn feather feather-thumbs-up"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                      {items?.snippet?.topLevelComment?.snippet?.likeCount}
+                      </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-down"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -365,15 +412,15 @@ const WatchPage = () => {
           <p>Top Chats</p>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-dots-vertical"
+            className="icon icon-tabler icon-tabler-dots-vertical"
             width="20"
             height="20"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="#ffffff"
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
@@ -393,8 +440,8 @@ const WatchPage = () => {
             placeholder="Chat..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) =>{
-              if(e.key === 'Enter'){
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
                 sendMessage();
               }
             }}
@@ -407,11 +454,11 @@ const WatchPage = () => {
             width="28"
             height="28"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="#ffffff"
             fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M4.698 4.034l16.302 7.966l-16.302 7.966a.503 .503 0 0 1 -.546 -.124a.555 .555 0 0 1 -.12 -.568l2.468 -7.274l-2.468 -7.274a.555 .555 0 0 1 .12 -.568a.503 .503 0 0 1 .546 -.124z" />

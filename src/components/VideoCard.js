@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { GOOGLE_API_KEY } from "../utils/constants";
+import { YOUTUBE_API_KEY } from "../utils/constants";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -37,7 +37,7 @@ const VideoCard = ({ info }) => {
 
   const getChannelLogos = async () => {
     const data = await fetch(
-      `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${GOOGLE_API_KEY}`
+      `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${YOUTUBE_API_KEY}`
     );
     const json = await data.json();
     setChannelLogo(json.items[0].snippet.thumbnails.high.url);

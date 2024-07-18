@@ -234,11 +234,11 @@ const Navbar = ({ setToggle }) => {
                 height="40"
                 id="nav-icon"
                 viewBox="0 0 22 22"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="#2c3e50"
                 fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
@@ -251,7 +251,8 @@ const Navbar = ({ setToggle }) => {
             <div>
               <button
                 id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden ">
+                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden "
+              >
                 <svg
                   viewBox="0 0 24 24"
                   preserveAspectRatio="xMidYMid meet"

@@ -167,12 +167,10 @@
 
 [data-theme="light"] .watch-btn {
   background-color: var(--lightgray);
-  border-radius: 20px;
 }
 
 [data-theme="dark"] .watch-btn {
   background-color: var(--darkblack);
-
 }
 
 /* hover .categories-icon */
