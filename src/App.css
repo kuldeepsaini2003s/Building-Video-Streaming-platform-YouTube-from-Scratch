@@ -31,3 +31,7 @@ body{
 .active{
   left: 0%;
 }
+
+.dark .yt-icon{  
+  fill: white;
+}
