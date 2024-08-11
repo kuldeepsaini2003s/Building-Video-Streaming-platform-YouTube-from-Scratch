@@ -1,320 +1,225 @@
 import React, { useEffect, useState } from "react";
 import UseYoutubeVideos from "../hooks/UseYoutubeVideos";
 import UserImage from "../Images/user-img.jpg";
-const Navbar = ({ setToggle }) => {
+import UseVideoCategories from "../hooks/UseVideoCategories";
+import UseSearchSuggestions from "../hooks/UseSearchSuggestions";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchQuary } from "../utils/SearchSlice";
+import { toggleSlider } from "../utils/appSlice";
+import { IoMenu, IoSearchOutline } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { MdOutlineMic, MdOutlineVideoCall } from "react-icons/md";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import Youtube_Logo from "../Images/YouTube-Logo.wine.svg";
+
+const Navbar = () => {
   UseYoutubeVideos();
+  UseSearchSuggestions();
+  UseVideoCategories();
+
   const [inputValue, setInputValue] = useState("");
   const [showSetting, setShowSetting] = useState(false);
   const [theme, setTheme] = useState("light");
+  const [searchResult, setSearchResult] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const dispatch = useDispatch();
+
+  const getSuggestion = useSelector(
+    (store) => store.searchSuggestion.searchQuery
+  );
+  console.log(searchResult);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (getSuggestion && Array.isArray(getSuggestion)) {
+        setSearchResult(getSuggestion);
+      }
+    }, 200);
+    return () => clearInterval(timer);
+  }, [getSuggestion]);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    dispatch(setSearchQuary(value));
+  };
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
-    document.body.setAttribute("data-theme", savedTheme);
+    document.body.classList.add("className", savedTheme);
   }, []);
 
   const toggleTheme = (theme) => {
     setShowSetting(false);
     window.location.reload();
     setTheme(theme);
-    document.body.setAttribute("data-theme", theme);
+    document.body.setAttribute("className", theme);
     localStorage.setItem("theme", theme);
   };
 
   const settingHandler = () => {
     setShowSetting((prevShowSetting) => !prevShowSetting);
   };
-  const togglehandler = () => {
-    setToggle(true);
+  const handleToggle = () => {
+    dispatch(toggleSlider());
   };
 
   const clearInput = () => {
     setInputValue("");
   };
+
   return (
     <>
-      <div>
+      <div
+        id="navbar"
+        className="flex fixed z-10 h-14 px-4 sm:py-6 items-center w-full justify-between"
+      >
+        <div className="flex items-center gap-x-1 ml-2 ">
+          {/* Menu-btn */}
+          <IoMenu
+            onClick={handleToggle}
+            className="text-[2.7rem] hover:bg-lightgray dark:hover:bg-icon_black p-2 rounded-full"
+          />
+          {/* Youtube-logo */}
+          {/* <img src={Youtube_Logo} alt="youtube"  className="h-fit"/> */}
+        </div>
+
+        {/* search-bar container  */}
         <div
-          id="navbar"
-          className="navbar screen flex fixed z-10 h-14 px-2  sm:py-6 items-center w-full justify-between"
+          id="searchBar"
+          className="flex items-center justify-between w-[52vw] relative"
         >
-          {/* Menu-Bar-Btn && Youtube-Logo */}
-          <div id="menu-ba yt-icon" className="flex items-center gap-x-1 ">
-            {/* Menu-btn */}
-            <div
-              className="rounded-full p-2 pb-1 sm:block ms:hidden"
-              onClick={togglehandler}
-            >
-              <svg
-                viewBox="0 0 26 26"
-                preserveAspectRatio="xMidYMid meet"
-                focusable="false"
-                id="nav-icon"
-                className="style-scope yt-icon h-1"
-              >
-                <g className="style-scope yt-icon h-1">
-                  <path
-                    d="M21,6H3V5h18V6z M21,11H3v1h18V11z M21,17H3v1h18V17z"
-                    className="style-scope yt-icon h-5"
-                  ></path>
-                </g>
-              </svg>
-            </div>
-            {/* Youtube-logo */}
-            <div id="YT-logo">
-              <svg
-                viewBox="0 0 90 20"
-                preserveAspectRatio="xMidYMid meet"
-                focusable="false"
-                className="style-scope yt-icon h-5"
-              >
-                <g
-                  viewBox="0 0 90 20"
-                  preserveAspectRatio="xMidYMid meet"
-                  className="style-scope yt-icon h-10"
-                >
-                  <g className="style-scope yt-icon h-10">
-                    <path
-                      d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5677 5.35042 27.9727 3.12324Z"
-                      fill="#FF0000"
-                      className="style-scope yt-icon h-10"
-                    ></path>
-                    <path
-                      d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z"
-                      fill="white"
-                      className="style-scope yt-icon h-10"
-                    ></path>
-                  </g>
-                  <g className="style-scope yt-icon h-10">
-                    <g id="youtube-paths" className="style-scope yt-icon h-10">
-                      <path
-                        d="M34.6024 13.0036L31.3945 1.41846H34.1932L35.3174 6.6701C35.6043 7.96361 35.8136 9.06662 35.95 9.97913H36.0323C36.1264 9.32532 36.3381 8.22937 36.665 6.68892L37.8291 1.41846H40.6278L37.3799 13.0036V18.561H34.6001V13.0036H34.6024Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                      <path
-                        d="M41.4697 18.1937C40.9053 17.8127 40.5031 17.22 40.2632 16.4157C40.0257 15.6114 39.9058 14.5437 39.9058 13.2078V11.3898C39.9058 10.0422 40.0422 8.95805 40.315 8.14196C40.5878 7.32588 41.0135 6.72851 41.592 6.35457C42.1706 5.98063 42.9302 5.79248 43.871 5.79248C44.7976 5.79248 45.5384 5.98298 46.0981 6.36398C46.6555 6.74497 47.0647 7.34234 47.3234 8.15137C47.5821 8.96275 47.7115 10.0422 47.7115 11.3898V13.2078C47.7115 14.5437 47.5845 15.6161 47.3329 16.4251C47.0812 17.2365 46.672 17.8292 46.1075 18.2031C45.5431 18.5771 44.7764 18.7652 43.8098 18.7652C42.8126 18.7675 42.0342 18.5747 41.4697 18.1937ZM44.6353 16.2323C44.7905 15.8231 44.8705 15.1575 44.8705 14.2309V10.3292C44.8705 9.43077 44.7929 8.77225 44.6353 8.35833C44.4777 7.94206 44.2026 7.7351 43.8074 7.7351C43.4265 7.7351 43.156 7.94206 43.0008 8.35833C42.8432 8.77461 42.7656 9.43077 42.7656 10.3292V14.2309C42.7656 15.1575 42.8408 15.8254 42.9914 16.2323C43.1419 16.6415 43.4123 16.8461 43.8074 16.8461C44.2026 16.8461 44.4777 16.6415 44.6353 16.2323Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                      <path
-                        d="M56.8154 18.5634H54.6094L54.3648 17.03H54.3037C53.7039 18.1871 52.8055 18.7656 51.6061 18.7656C50.7759 18.7656 50.1621 18.4928 49.767 17.9496C49.3719 17.4039 49.1743 16.5526 49.1743 15.3955V6.03751H51.9942V15.2308C51.9942 15.7906 52.0553 16.188 52.1776 16.4256C52.2999 16.6631 52.5045 16.783 52.7914 16.783C53.036 16.783 53.2712 16.7078 53.497 16.5573C53.7228 16.4067 53.8874 16.2162 53.9979 15.9858V6.03516H56.8154V18.5634Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                      <path
-                        d="M64.4755 3.68758H61.6768V18.5629H58.9181V3.68758H56.1194V1.42041H64.4755V3.68758Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                      <path
-                        d="M71.2768 18.5634H69.0708L68.8262 17.03H68.7651C68.1654 18.1871 67.267 18.7656 66.0675 18.7656C65.2373 18.7656 64.6235 18.4928 64.2284 17.9496C63.8333 17.4039 63.6357 16.5526 63.6357 15.3955V6.03751H66.4556V15.2308C66.4556 15.7906 66.5167 16.188 66.639 16.4256C66.7613 16.6631 66.9659 16.783 67.2529 16.783C67.4974 16.783 67.7326 16.7078 67.9584 16.5573C68.1842 16.4067 68.3488 16.2162 68.4593 15.9858V6.03516H71.2768V18.5634Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                      <path
-                        d="M80.609 8.0387C80.4373 7.24849 80.1621 6.67699 79.7812 6.32186C79.4002 5.96674 78.8757 5.79035 78.2078 5.79035C77.6904 5.79035 77.2059 5.93616 76.7567 6.23014C76.3075 6.52412 75.9594 6.90747 75.7148 7.38489H75.6937V0.785645H72.9773V18.5608H75.3056L75.5925 17.3755H75.6537C75.8724 17.7988 76.1993 18.1304 76.6344 18.3774C77.0695 18.622 77.554 18.7443 78.0855 18.7443C79.038 18.7443 79.7412 18.3045 80.1904 17.4272C80.6396 16.5476 80.8653 15.1765 80.8653 13.3092V11.3266C80.8653 9.92722 80.7783 8.82892 80.609 8.0387ZM78.0243 13.1492C78.0243 14.0617 77.9867 14.7767 77.9114 15.2941C77.8362 15.8115 77.7115 16.1808 77.5328 16.3971C77.3564 16.6158 77.1165 16.724 76.8178 16.724C76.585 16.724 76.371 16.6699 76.1734 16.5594C75.9759 16.4512 75.816 16.2866 75.6937 16.0702V8.96062C75.7877 8.6196 75.9524 8.34209 76.1852 8.12337C76.4157 7.90465 76.6697 7.79646 76.9401 7.79646C77.2271 7.79646 77.4481 7.90935 77.6034 8.13278C77.7609 8.35855 77.8691 8.73485 77.9303 9.26636C77.9914 9.79787 78.022 10.5528 78.022 11.5335V13.1492H78.0243Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>{" "}
-                      <path
-                        d="M84.8657 13.8712C84.8657 14.6755 84.8892 15.2776 84.9363 15.6798C84.9833 16.0819 85.0821 16.3736 85.2326 16.5594C85.3831 16.7428 85.6136 16.8345 85.9264 16.8345C86.3474 16.8345 86.639 16.6699 86.7942 16.343C86.9518 16.0161 87.0365 15.4705 87.0506 14.7085L89.4824 14.8519C89.4965 14.9601 89.5035 15.1106 89.5035 15.3011C89.5035 16.4582 89.186 17.3237 88.5534 17.8952C87.9208 18.4667 87.0247 18.7536 85.8676 18.7536C84.4777 18.7536 83.504 18.3185 82.9466 17.446C82.3869 16.5735 82.1094 15.2259 82.1094 13.4008V11.2136C82.1094 9.33452 82.3987 7.96105 82.9772 7.09558C83.5558 6.2301 84.5459 5.79736 85.9499 5.79736C86.9165 5.79736 87.6597 5.97375 88.1771 6.32888C88.6945 6.684 89.059 7.23433 89.2707 7.98457C89.4824 8.7348 89.5882 9.76961 89.5882 11.0913V13.2362H84.8657V13.8712ZM85.2232 7.96811C85.0797 8.14449 84.9857 8.43377 84.9363 8.83593C84.8892 9.2381 84.8657 9.84722 84.8657 10.6657V11.5641H86.9283V10.6657C86.9283 9.86133 86.9001 9.25221 86.846 8.83593C86.7919 8.41966 86.6931 8.12803 86.5496 7.95635C86.4062 7.78702 86.1851 7.7 85.8864 7.7C85.5854 7.70235 85.3643 7.79172 85.2232 7.96811Z"
-                        className="style-scope yt-icon h-10"
-                      ></path>
-                    </g>
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          {/* search-bar container  */}
-          <div
-            id="searchBar"
-            className="flex justify-between items-center w-[52vw] "
-          >
+          <div className="flex items-center">
             {/* input-btn */}
-            <div className="flex items-center">
-              <div className="relative sm:block ms:hidden">
-                <input
-                  id="input"
-                  type="text"
-                  placeholder="Search"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="w-[42vw] h-[2.5rem]  border  border-r-0 rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
-                />
-                {/* X-btn */}
-                {inputValue && (
-                  <button
-                    onClick={clearInput}
-                    className="absolute right-0 top-0 flex items-center  hover:bg-lightgray rounded-full p-1 my-1"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-x"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1"
-                      stroke="#000000"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <path d="M18 6l-12 12" />
-                      <path d="M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {/* Search-btn */}
-              <button
-                id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border h-[2.5rem] w-[5vw] pl-4 flex justify-center items-center sm:block ms:hidden"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  preserveAspectRatio="xMidYMid meet"
-                  focusable="false"
-                  className="style-scope yt-icon h-6 block"
+            <div className="relative sm:block ms:hidden">
+              <input
+                id="input"
+                type="text"
+                autoComplete="off"
+                placeholder="Search"
+                value={inputValue}
+                onChange={handleChange}
+                className="group w-[42vw] h-[2.5rem] dark:bg-black  border border-gray dark:border-hover_icon_black  border-r-0 rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
+              />
+              {/* X-btn */}
+              {inputValue && (
+                <button
+                  onClick={clearInput}
+                  className="absolute right-0 top-0 flex items-center hover:bg-gray hover:bg-hover_icon_black rounded-full p-1 my-1"
                 >
-                  <g className="style-scope yt-icon h-10">
-                    <path
-                      d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
-                      className="style-scope yt-icon h-10"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
+                  <RxCross2 className="text-[1.4rem]" />
+                </button>
+              )}
             </div>
-            {/* audio-btn */}
-            <div className="flex items-center">
-              <button
-                id="audioBtn"
-                className="rounded-full m-0 sm:block ms:hidden"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  preserveAspectRatio="xMidYMid meet"
-                  focusable="false"
-                  id="nav-icon"
-                  className="style-scope yt-icon h-6"
-                >
-                  <g className="style-scope yt-icon h-10 ">
-                    <path
-                      d="M12 3C10.34 3 9 4.37 9 6.07V11.93C9 13.63 10.34 15 12 15C13.66 15 15 13.63 15 11.93V6.07C15 4.37 13.66 3 12 3ZM18.5 12H17.5C17.5 15.03 15.03 17.5 12 17.5C8.97 17.5 6.5 15.03 6.5 12H5.5C5.5 15.24 7.89 17.93 11 18.41V21H13V18.41C16.11 17.93 18.5 15.24 18.5 12Z"
-                      className="style-scope yt-icon h-10"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
-            </div>
+            {/* Search-btn */}
+            <button
+              id="search-btn"
+              className="sm:rounded-3xl sm:rounded-l-none border-gray bg-lightgray hover:bg-gray dark:bg-icon_black dark:border-hover_icon_black sm:border h-[2.5rem] w-[5vw] pl-5 flex justify-center items-center sm:block ms:hidden"
+            >
+              <IoSearchOutline className="text-[1.3rem]" />
+            </button>
           </div>
+          {/* audio-btn */}
+          <div className="flex items-center">
+            <button
+              id="audioBtn"
+              className="rounded-full m-0 sm:block ms:hidden p-2 bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black"
+            >
+              <MdOutlineMic className="text-[1.4rem]" />
+            </button>
+          </div>
+          {inputValue && (
+            <div
+              id="searchSuggestion"
+              className="fixed font-medium dark:bg-black top-14 shadow-lg z-50 rounded-md w-[42vw]  py-4 bg-white"
+            >
+              {searchResult.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center dark:text-white font-semibold mb-2 gap-2 px-4 py-1 hover:bg-icon_black hover:text-black"
+                >
+                  <IoSearchOutline className="text-[1.2rem] mr-1" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-          <div className="flex items-center sm:pr-2">
-            {/* Option-Btn */}
-            <div className="rounded-full sm:p-2 " onClick={settingHandler}>
+        <div className="flex items-center gap-2 sm:pr-2">
+          <BsThreeDotsVertical
+            onClick={settingHandler}
+            className="text-[2.2rem] bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2"
+          />
+          <MdOutlineVideoCall className="text-[2.4rem] bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2" />
+          {/* search btn for mobile screen */}
+          <div className="sm:hidden">
+            <button
+              id="search-btn"
+              className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden "
+            >
               <svg
                 viewBox="0 0 24 24"
                 preserveAspectRatio="xMidYMid meet"
                 focusable="false"
-                id="nav-icon"
-                className="style-scope yt-icon h-7 "
+                className="style-scope yt-icon sm:h-5 ms:h-7 block"
               >
-                <g className="style-scope yt-icon">
+                <g className="style-scope yt-icon h-10">
                   <path
-                    d="M12,16.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S11.17,16.5,12,16.5z M10.5,12 c0,0.83,0.67,1.5,1.5,1.5s1.5-0.67,1.5-1.5s-0.67-1.5-1.5-1.5S10.5,11.17,10.5,12z M10.5,6c0,0.83,0.67,1.5,1.5,1.5 s1.5-0.67,1.5-1.5S12.83,4.5,12,4.5S10.5,5.17,10.5,6z"
-                    className="style-scope yt-icon"
+                    d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
+                    className="style-scope yt-icon h-10"
                   ></path>
                 </g>
               </svg>
-            </div>
-            {/* video upload btn */}
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="like-btn icon icon-tabler icon-tabler-video-plus"
-                width="40"
-                height="40"
-                id="nav-icon"
-                viewBox="0 0 22 22"
-                strokeWidth="1.5"
-                stroke="#2c3e50"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
-                <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
-                <path d="M7 12l4 0" />
-                <path d="M9 10l0 4" />
-              </svg>
-            </div>
-            {/* search btn for mobile screen */}
-            <div>
-              <button
-                id="search-btn"
-                className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden "
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  preserveAspectRatio="xMidYMid meet"
-                  focusable="false"
-                  className="style-scope yt-icon sm:h-5 ms:h-7 block"
-                >
-                  <g className="style-scope yt-icon h-10">
-                    <path
-                      d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
-                      className="style-scope yt-icon h-10"
-                    ></path>
-                  </g>
-                </svg>
-              </button>
-            </div>
+            </button>
+          </div>
 
-            {/* user-icon */}
+          {/* user-icon */}
+          <div
+            id="user-icon"
+            className=" py-2 flex gap-x-1 items-center  rounded-3xl sm:block ms:hidden "
+          >
             <div
-              id="user-icon"
-              className="px-3 py-2 flex gap-x-1 items-center  rounded-3xl sm:block ms:hidden "
-            >
-              <div
-                className="h-9 w-9 rounded-full"
-                style={{
-                  backgroundImage: `url(${UserImage})`,
-                  backgroundSize: "cover",
-                }}
-              ></div>
+              className="h-9 w-9 rounded-full"
+              style={{
+                backgroundImage: `url(${UserImage})`,
+                backgroundSize: "cover",
+              }}
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Theme Toggler */}
+      {showSetting && (
+        <div
+          className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0 "
+          onClick={() => setShowSetting(false)}
+        >
+          <div className="floting fixed bg-white dark:bg-black sm:right-36 top-[4rem] ms:right-0 shadow-lg rounded-xl py-5">
+            <div className="border-b border-gray pb-2 px-4 mb-3">
+              <p className="text-sm m-0">
+                Setting applies to this browser only
+              </p>
+            </div>
+            <div>
+              <h1
+                className="slider-icon text-sm dark:hover:bg-icon_black px-4 py-2 my-2 w-max cursor-pointer"
+                onClick={() => toggleTheme("dark")}
+              >
+                Dark Theme
+              </h1>
+              <p
+                className="slider-icon text-sm  w-[99.9%] dark:hover:bg-icon_black px-4 py-2  w-max cursor-pointer"
+                onClick={() => toggleTheme("light")}
+              >
+                Light Theme
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Theme Toggler */}
-        {showSetting && (
-          <div
-            className=" w-[100vw] fixed z-20 h-[100vh] bg-black bg-opacity-40 top-0 "
-            onClick={() => setShowSetting(false)}
-          >
-            <div className="floting fixed bg-white sm:right-36 top-[4rem] ms:right-0 shadow-lg rounded-xl px-4 py-5">
-              <div className="border-b border-gray pb-2 mb-3">
-                <p className="text-sm m-0">
-                  Setting applies to this browser only
-                </p>
-              </div>
-              <div>
-                <p
-                  className="slider-icon text-sm  rounded-lg  p-3 my-2 w-max cursor-pointer"
-                  onClick={() => toggleTheme("dark")}
-                >
-                  Dark Theme
-                </p>
-                <p
-                  className="slider-icon text-sm rounded-lg w-[99.9%]  p-3 w-max cursor-pointer"
-                  onClick={() => toggleTheme("light")}
-                >
-                  Light Theme
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </>
   );
 };

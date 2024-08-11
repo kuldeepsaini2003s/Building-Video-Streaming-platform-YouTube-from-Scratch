@@ -6,6 +6,8 @@ const initialState = {
   singlevideo: null,
   youtubelogo: null,
   youtubecomments: null,
+  fetchcategories:"",
+  categories: null,
 };
 const videoSlice = createSlice({
   name: "vidoes",
@@ -25,10 +27,16 @@ const videoSlice = createSlice({
     },
     setYoutubeComments: ( state, action)=>{
       state.youtubecomments = action.payload;
+    },
+    setFetchCategories: (state, action) =>{
+      state.fetchcategories = action.payload
+    },
+    setCategories: (state, action) =>{
+      state.categories = action.payload
     }
   },
 });
 
-export const { videoslist, setYoutubeVideo, setSingleVideo, setYoutubeLogo, setYoutubeComments } =videoSlice.actions;
+export const { videoslist, setYoutubeVideo, setSingleVideo, setYoutubeLogo, setYoutubeComments, setFetchCategories, setCategories } =videoSlice.actions;
 
 export default videoSlice.reducer;

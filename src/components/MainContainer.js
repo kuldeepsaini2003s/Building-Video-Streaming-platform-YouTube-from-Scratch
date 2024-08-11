@@ -10,6 +10,7 @@ const MainContainer = () => {
     >
       <Menu/>
       <div>
+
       <Categories />
       <VideoContainer />
       </div>

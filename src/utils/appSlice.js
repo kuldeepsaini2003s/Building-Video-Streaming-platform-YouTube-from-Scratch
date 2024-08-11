@@ -12,4 +12,6 @@ const AppSlice = createSlice({
   },
 });
 
-export default AppSlice;
+export const {toggleSlider} = AppSlice.actions
+
+export default AppSlice.reducer;

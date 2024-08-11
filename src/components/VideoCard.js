@@ -9,22 +9,21 @@ const formatViewCount = (viewCount) => {
     return (viewCount / 1e3).toFixed(1) + "K";
   } else {
     return viewCount.toString();
-  }
+  }  
 };
 
 const VideoCard = ({ info }) => {
   const [channelLogo, setChannelLogo] = useState([]);
   const { snippet, statistics } = info;
-  const { channelTitle, publishedAt, channelId, localized, thumbnails } =
+  const { channelTitle, publishedAt, channelId, localized, title, thumbnails } =
     snippet;
-  const { title } = localized;
-  const titleStyle = {
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    WebkitLineClamp: 2,
-  };
+  // const titleStyle = {
+  //   display: "-webkit-box",
+  //   WebkitBoxOrient: "vertical",
+  //   overflow: "hidden",
+  //   textOverflow: "ellipsis",
+  //   WebkitLineClamp: 2,
+  // };
   const { medium, maxres } = thumbnails;
   const thumbnail = maxres || medium;
   const formattedViewCount = formatViewCount(statistics.viewCount);
@@ -63,8 +62,8 @@ const VideoCard = ({ info }) => {
         <div className="w-full">
           <div className="flex gap-5 justify-between w-full">
             <p
-              className="font-semibold sm:text-base ms:text-sm "
-              style={titleStyle}
+              className="line-clamp-2 font-semibold sm:text-base ms:text-sm "
+              // style={title}
             >
               {title}
             </p>
@@ -85,7 +84,7 @@ const VideoCard = ({ info }) => {
             <p className="text-Lightblack text-sm">{channelTitle}</p>
             <p className="flex items-center ">
               <span className="text-Lightblack text-sm">
-                {formattedViewCount} views
+                {formatViewCount} views
               </span>
               <span>
                 <svg

@@ -1,20 +1,20 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
-  theme: {
-    colors: {
-      transparent: "transparent",
-      current: "currentColor",
-      white: "#fdfdff",
-      black: "#000000",
-      lightblack: "#292929",
-      Lightblack: "#5a5a5a",
-      gray: "#cccccc",
-      lightgray: "#f2f2f2",
-      Lightgray: "#3b3b3b",
-      blue: "#0d64d5",
-      lightblue: "#9fc1ee",
-    },
+  theme: {    
     extend: {
+      colors: {
+        transparent: "transparent",
+        current: "currentColor",
+        white: "#fdfdff",
+        black: "#000000",
+        icon_black: "#292929",
+        Lightblack: "#5a5a5a",
+        gray: "#cccccc",
+        lightgray: "#f2f2f2",
+        hover_icon_black: "#3b3b3b",
+        blue: "#0d64d5",
+        lightblue: "#9fc1ee",
+      },
       screens: {
         ms: "320px",
         // => @media (min-width: 320px) { ... }
@@ -46,4 +46,5 @@ module.exports = {
     },
   },
   plugins: [],
-}
+  darkMode:'class'
+};

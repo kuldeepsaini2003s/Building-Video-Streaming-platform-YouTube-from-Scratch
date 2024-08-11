@@ -1,12 +1,16 @@
-import React from 'react'
-import { Outlet } from 'react-router'
-import Menu from './Menu'
-const Body = () => {
-  return (
-    <div className='flex'>
-      <Outlet/>
-    </div>
-  )
-}
+import React from "react";
+import { Outlet } from "react-router";
+import Slider from "./Slider";
+import { useSelector } from "react-redux";
 
-export default Body
+const Body = () => {
+  const isSliderOpen = useSelector((store) => store.app.open);
+  return (
+    <div className="flex">
+      <Outlet />
+      {isSliderOpen && <Slider />}      
+    </div>
+  );
+};
+
+export default Body;
