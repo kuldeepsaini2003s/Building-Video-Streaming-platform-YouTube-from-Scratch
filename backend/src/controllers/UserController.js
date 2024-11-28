@@ -2,6 +2,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { uploadOnCloudinary } from "../utils/cloudinaryUpload.js";
 import { generateToken } from "../utils/generateToken.js";
+import jwt from "jsonwebtoken";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -11,6 +12,12 @@ const generateAccessAndRefreshToken = (userId) => {
   const refreshToken = generateToken(userId, "30d");
   return { accessToken, refreshToken };
 };
+
+const option = {
+  httpOnly: true,
+  secure: true,
+};
+
 const registerUser = async (req, res) => {
   const { userName, fullName, email, password } = req.body;
 
@@ -73,12 +80,10 @@ const registerUser = async (req, res) => {
       const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
         user._id
       );
+
       user.refreshToken = refreshToken;
       await user.save();
-      const option = {
-        httpOnly: true,
-        secure: true,
-      };
+
       return res
         .status(201)
         .cookie("accessToken", accessToken, option)
@@ -122,15 +127,14 @@ const loginUser = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid password" });
     }
+
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
       user._id
     );
-    const option = {
-      httpOnly: true,
-      secure: true,
-    };
+
     user.refreshToken = refreshToken;
     await user.save();
+
     const userData = await User.findById(user._id).select(
       "-password -refreshToken"
     );
@@ -160,10 +164,6 @@ const logoutUser = async (req, res) => {
     { refreshToken: "" },
     { new: true }
   );
-  const option = {
-    httpOnly: true,
-    secure: true,
-  };
   return res
     .status(200)
     .clearCookie("accessToken", option)
@@ -171,4 +171,42 @@ const logoutUser = async (req, res) => {
     .json({ success: true, message: "User logged out successfully" });
 };
 
-export { registerUser, loginUser, logoutUser };
+const refreshAccessToken = async (req, res) => {
+  const token =
+    req.cookies.refreshToken || req.header("authorization").split(" ")[1];
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "unauthorized request" });
+  }
+
+  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (token !== user.refreshToken) {
+    return res
+      .status(401)
+      .json({ success: false, message: "refresh token is not valid" });
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id
+  );
+
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, option)
+    .cookie("refreshToken", refreshToken, option)
+    .json({ success: true, accessToken, refreshToken });
+};
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken };
