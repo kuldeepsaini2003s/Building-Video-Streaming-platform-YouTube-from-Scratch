@@ -7,7 +7,6 @@ import jwt from "jsonwebtoken";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const generateAccessAndRefreshToken = (userId) => {
-  console.log(userId);
   const accessToken = generateToken(userId, "10d");
   const refreshToken = generateToken(userId, "30d");
   return { accessToken, refreshToken };
@@ -82,7 +81,7 @@ const registerUser = async (req, res) => {
       );
 
       user.refreshToken = refreshToken;
-      await user.save();
+      await user.save({ validateBeforeSave: false });
 
       return res
         .status(201)
@@ -133,7 +132,7 @@ const loginUser = async (req, res) => {
     );
 
     user.refreshToken = refreshToken;
-    await user.save();
+    await user.save({ validateBeforeSave: false });
 
     const userData = await User.findById(user._id).select(
       "-password -refreshToken"
@@ -172,41 +171,99 @@ const logoutUser = async (req, res) => {
 };
 
 const refreshAccessToken = async (req, res) => {
-  const token =
-    req.cookies.refreshToken || req.header("authorization").split(" ")[1];
+  try {
+    const token =
+      req.cookies.refreshToken || req.header("authorization");
 
-  if (!token) {
+    if (!token) {
+      return res
+        .status(401)
+        .json({ success: false, message: "unauthorized request" });
+    }
+
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (token !== user.refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "refresh token is not valid" });
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      user._id
+    );
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
     return res
-      .status(401)
-      .json({ success: false, message: "unauthorized request" });
-  }
-
-  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-
-  const user = await User.findById(decoded.id);
-
-  if (!user) {
-    return res.status(404).json({ success: false, message: "User not found" });
-  }
-
-  if (token !== user.refreshToken) {
+      .status(200)
+      .cookie("accessToken", accessToken, option)
+      .cookie("refreshToken", refreshToken, option)
+      .json({ success: true, accessToken, refreshToken });
+  } catch (error) {
+    console.log("Error refreshing access token", error);
     return res
-      .status(401)
-      .json({ success: false, message: "refresh token is not valid" });
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
   }
-
-  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    user._id
-  );
-
-  user.refreshToken = refreshToken;
-  await user.save();
-
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, option)
-    .cookie("refreshToken", refreshToken, option)
-    .json({ success: true, accessToken, refreshToken });
 };
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+const updatePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  try {
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid current password" });
+    }
+
+    user.password = bcrypt.hashSync(newPassword, 10);
+
+    await user.save({ validateBeforeSave: false });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.log("Error updating password", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  updatePassword,
+};
