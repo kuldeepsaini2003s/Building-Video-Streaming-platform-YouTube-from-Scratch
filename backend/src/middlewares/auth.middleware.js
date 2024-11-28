@@ -5,10 +5,7 @@ console.log(process.env.JWT_SECRET);
 
 const verifyToken = async (req, res, next) => {
   try {
-    const token =
-      req.cookies?.accessToken || req.header("authorization").split(" ")[1];
-    console.log(token);
-
+    const token = req.cookies?.accessToken || req.header("authorization");    
     if (!token) {
       return res
         .status(401)
