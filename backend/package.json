@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "backend": "nodemon index.js",    
+    "backend": "nodemon index.js",
     "build": "react-scripts build"
   },
   "author": "kuldeep saini",
@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "json-web-token": "^3.2.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",
     "multer": "^1.4.5-lts.1",
     "react-scripts": "^5.0.1"

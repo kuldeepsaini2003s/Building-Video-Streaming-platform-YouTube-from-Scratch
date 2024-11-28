@@ -6,9 +6,9 @@ import { generateToken } from "../utils/generateToken.js";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const generateAccessAndRefreshToken = (userId) => {
+  console.log(userId);
   const accessToken = generateToken(userId, "10d");
   const refreshToken = generateToken(userId, "30d");
-
   return { accessToken, refreshToken };
 };
 const registerUser = async (req, res) => {
@@ -51,7 +51,6 @@ const registerUser = async (req, res) => {
     if (avatarFile.path) {
       avatarURL = await uploadOnCloudinary(avatarFile.path);
     }
-    console.log("cloudinary file upload", avatarURL);
 
     let coverURL = "";
 
@@ -66,7 +65,6 @@ const registerUser = async (req, res) => {
       password: bcryptPassword,
       avatar: avatarURL,
       cover: coverURL || "",
-      refreshToken,
     };
 
     const user = await User.create(userData);
@@ -75,8 +73,8 @@ const registerUser = async (req, res) => {
       const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
         user._id
       );
-      user.refreshToken = refreshToken.save({ validateBeforeSave: false });
-      console.log("User data after adding refresh token", user);
+      user.refreshToken = refreshToken;
+      await user.save();
       const option = {
         httpOnly: true,
         secure: true,
@@ -98,11 +96,79 @@ const registerUser = async (req, res) => {
         });
     }
   } catch (error) {
-    // console.error("Error creating user", error);
+    console.error("Error creating user", error);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });
   }
 };
 
-export { registerUser };
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found with this email" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid password" });
+    }
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      user._id
+    );
+    const option = {
+      httpOnly: true,
+      secure: true,
+    };
+    user.refreshToken = refreshToken;
+    await user.save();
+    const userData = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, option)
+      .cookie("refreshToken", refreshToken, option)
+      .json({
+        success: true,
+        userData,
+        accessToken,
+        refreshToken,
+        message: "User logged in successfully",
+      });
+  } catch (error) {
+    console.log("Error logging in user", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const logoutUser = async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { refreshToken: "" },
+    { new: true }
+  );
+  const option = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", option)
+    .clearCookie("refreshToken", option)
+    .json({ success: true, message: "User logged out successfully" });
+};
+
+export { registerUser, loginUser, logoutUser };
