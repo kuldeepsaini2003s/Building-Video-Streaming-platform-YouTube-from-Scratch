@@ -1,11 +1,9 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
 
-console.log(process.env.JWT_SECRET);
-
 const verifyToken = async (req, res, next) => {
   try {
-    const token = req.cookies?.accessToken || req.header("authorization");    
+    const token = req.cookies?.accessToken || req.header("authorization");
     if (!token) {
       return res
         .status(401)

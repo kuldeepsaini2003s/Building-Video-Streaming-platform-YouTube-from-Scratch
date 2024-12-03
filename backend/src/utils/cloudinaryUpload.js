@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
+import { log } from "console";
+import { join } from "path";
 
 dotenv.config();
 
@@ -11,7 +13,7 @@ cloudinary.config({
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
-  try {
+  try {    
     const response = await cloudinary.uploader.upload(localFilePath, {
       public_id: "Youtube",
     });

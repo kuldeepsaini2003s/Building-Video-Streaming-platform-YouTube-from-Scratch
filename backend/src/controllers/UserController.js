@@ -12,15 +12,21 @@ const generateAccessAndRefreshToken = (userId) => {
   return { accessToken, refreshToken };
 };
 
+const extractPublicId = (url) => {
+  const parts = url.split("/");
+  const publicIdWithExtension = parts.slice(-2).join("/").split(".")[0]; // "v1234567890/image_name"
+  return publicIdWithExtension;
+};
+
 const option = {
   httpOnly: true,
   secure: true,
 };
 
 const registerUser = async (req, res) => {
-  const { userName, fullName, email, password } = req.body;
+  const { userName, channelName, email, password } = req.body;
 
-  if (!userName || !fullName || !email || !password) {
+  if (!userName || !channelName || !email || !password) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
@@ -51,26 +57,29 @@ const registerUser = async (req, res) => {
 
     const avatarFile = req.files.avatar[0];
 
-    const coverFile = req.files.cover;
-
     let avatarURL = "";
     if (avatarFile.path) {
       avatarURL = await uploadOnCloudinary(avatarFile.path);
     }
 
-    let coverURL = "";
-
-    if (coverFile) {
-      coverURL = await uploadOnCloudinary(coverFile.tempFilePath);
-    }
-
     const userData = {
       userName: userName.toLowerCase(),
-      fullName,
+      channelName,
       email,
       password: bcryptPassword,
       avatar: avatarURL,
-      cover: coverURL || "",
+      draftDetails: {
+        userName: userName.toLowerCase(),
+        channelName,
+        email,
+        avatar: avatarURL,
+      },
+      publishedDetails: {
+        userName: userName.toLowerCase(),
+        channelName,
+        email,
+        avatar: avatarURL,
+      },
     };
 
     const user = await User.create(userData);
@@ -79,9 +88,13 @@ const registerUser = async (req, res) => {
       const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
         user._id
       );
-
-      user.refreshToken = refreshToken;
-      await user.save({ validateBeforeSave: false });
+      const _user = await User.findByIdAndUpdate(
+        user._id,
+        {
+          refreshToken: refreshToken,
+        },
+        { new: true }
+      ).select("-password -refreshToken -publishedDetails -draftDetails");
 
       return res
         .status(201)
@@ -89,11 +102,7 @@ const registerUser = async (req, res) => {
         .cookie("refreshToken", refreshToken, option)
         .json({
           success: true,
-          userName,
-          fullName,
-          email,
-          avatar: avatarURL,
-          cover: coverURL,
+          data: _user,
           accessToken,
           refreshToken,
           message: "User registered successfully",
@@ -144,7 +153,7 @@ const loginUser = async (req, res) => {
       .cookie("refreshToken", refreshToken, option)
       .json({
         success: true,
-        userData,
+        data: userData,
         accessToken,
         refreshToken,
         message: "User logged in successfully",
@@ -172,8 +181,7 @@ const logoutUser = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const token =
-      req.cookies.refreshToken || req.header("authorization");
+    const token = req.cookies.refreshToken || req.header("authorization");
 
     if (!token) {
       return res
@@ -234,10 +242,7 @@ const updatePassword = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
+    const isPasswordValid = await User.isPasswordValid(currentPassword);
 
     if (!isPasswordValid) {
       return res
@@ -260,10 +265,180 @@ const updatePassword = async (req, res) => {
   }
 };
 
+const draftDetails = async (req, res) => {
+  const { userName, channelName, description } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const files = req.files;
+
+    let updateAvatar = user?.avatar;
+    let updateCoverImage = user?.coverImage;
+
+    if (!files.avatar) {
+      if (user.avatar) {
+        const public_id = extractPublicId(user?.avatar);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateAvatar = null;
+    } else {
+      if (user.avatar) {
+        const public_id = extractPublicId(user?.avatar);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateAvatar = await uploadOnCloudinary(files.avatar[0].path);
+    }
+
+    if (!files.coverImage) {
+      if (user.coverImage) {
+        const public_id = extractPublicId(user?.coverImage);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateCoverImage = null;
+    } else {
+      if (user.coverImage) {
+        const public_id = extractPublicId(user?.coverImage);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateCoverImage = await uploadOnCloudinary(files.coverImage[0].path);
+    }
+
+    const savedDraft = user.draftDetails;
+
+    if (userName) savedDraft.userName = userName;
+    if (channelName) savedDraft.channelName = channelName;
+    if (description) savedDraft.description = description;
+    if (updateAvatar !== undefined) savedDraft.avatar = updateAvatar;
+    if (updateCoverImage !== undefined)
+      savedDraft.coverImage = updateCoverImage;
+
+    user.draftDetails = savedDraft;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      success: true,
+      message: "User details saved successfully",
+    });
+  } catch (error) {
+    console.log("Error while saving user details", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const publishedDetails = async (req, res) => {
+  const { userName, channelName, description } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const files = req.files;
+
+    let updateAvatar = user?.avatar;
+    let updateCoverImage = user?.coverImage;
+
+    if (!files.avatar) {
+      if (user.avatar) {
+        const public_id = extractPublicId(user?.avatar);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateAvatar = null;
+    } else {
+      if (user.avatar) {
+        const public_id = extractPublicId(user?.avatar);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateAvatar = await uploadOnCloudinary(files.avatar[0].path);
+    }
+
+    if (!files.coverImage) {
+      if (user.coverImage) {
+        const public_id = extractPublicId(user?.coverImage);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateCoverImage = null;
+    } else {
+      if (user.coverImage) {
+        const public_id = extractPublicId(user?.coverImage);
+        await cloudinary.uploader.destroy(public_id);
+      }
+
+      updateCoverImage = await uploadOnCloudinary(files.coverImage[0].path);
+    }
+
+    const savedDraft = user.draftDetails;
+
+    if (userName) savedDraft.userName = userName;
+    if (channelName) savedDraft.channelName = channelName;
+    if (description) savedDraft.description = description;
+    if (updateAvatar !== undefined) savedDraft.avatar = updateAvatar;
+    if (updateCoverImage !== undefined)
+      savedDraft.coverImage = updateCoverImage;
+
+    user.draftDetails = savedDraft;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      success: true,
+      message: "User details published successfully",
+    });
+  } catch (error) {
+    console.log("Error while saving user details", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const getUserDetails = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const userData = user.publishedDetails;
+  return res.status(200).json({
+    success: true,
+    data: userData,
+    message: "user data fetched successfully",
+  });
+};
+
+const getSavedDetails = async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const userData = user.draftDetails;
+  return res.status(200).json({
+    success: true,
+    data: userData,
+    message: "user data fetched successfully",
+  });
+};
+
 export {
   registerUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
   updatePassword,
+  draftDetails,
+  publishedDetails,
+  getUserDetails,
+  getSavedDetails,
 };

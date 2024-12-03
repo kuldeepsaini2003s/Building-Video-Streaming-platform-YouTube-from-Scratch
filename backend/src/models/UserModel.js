@@ -9,7 +9,7 @@ const userSchema = new Schema(
       trim: true,
       lowercase: true,
     },
-    fullName: {
+    channelName: {
       type: String,
       required: true,
       trim: true,
@@ -32,7 +32,29 @@ const userSchema = new Schema(
     coverImage: {
       type: String,
     },
-    watchHistory: [{ type: Schema.Types.ObjectId, ref: "Video" }],
+    description: {
+      type: String,
+    },
+    draftDetails: {
+      userName: { type: String },
+      channelName: { type: String },
+      description: { type: String },
+      avatar: { type: String },
+      coverImage: { type: String },
+    },
+    publishedDetails: {
+      userName: { type: String },
+      channelName: { type: String },
+      description: { type: String },
+      avatar: { type: String },
+      coverImage: { type: String },
+    },
+    watchHistory: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
     refreshToken: { type: String },
   },
   { timestamps: true }
