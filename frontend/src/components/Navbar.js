@@ -51,8 +51,7 @@ const Navbar = () => {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    window.location.reload();
+    const newTheme = theme === "light" ? "dark" : "light";    
     setTheme(newTheme);
     document.body.setAttribute("className", newTheme);
     localStorage.setItem("theme", newTheme);
