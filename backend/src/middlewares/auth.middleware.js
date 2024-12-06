@@ -3,7 +3,9 @@ import { User } from "../models/userModel.js";
 
 const verifyToken = async (req, res, next) => {
   try {
-    const token = req.cookies?.accessToken || req.header("authorization");
+    const token =
+      req.cookies?.accessToken || req.header("authorization")?.split(" ")[1];
+
     if (!token) {
       return res
         .status(401)

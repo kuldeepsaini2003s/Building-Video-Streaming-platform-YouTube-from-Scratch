@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { uploadOnCloudinary } from "../utils/cloudinaryUpload.js";
 import { generateToken } from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
+import mongoose from "mongoose";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,6 +18,24 @@ const extractPublicId = (url) => {
   const parts = url.split("/");
   const publicIdWithExtension = parts.slice(-2).join("/").split(".")[0]; // "v1234567890/image_name"
   return publicIdWithExtension;
+};
+
+const handleImageUpload = async (user, file, type) => {
+  let updatedImage = user[type];
+  if (!file) {
+    if (user[type]) {
+      const public_id = extractPublicId(user[type]);
+      await cloudinary.uploader.destroy(public_id);
+    }
+    updatedImage = null;
+  } else {
+    if (user[type]) {
+      const public_id = extractPublicId(user[type]);
+      await cloudinary.uploader.destroy(public_id);
+    }
+    updatedImage = await uploadOnCloudinary(file.path);
+  }
+  return updatedImage;
 };
 
 const option = {
@@ -38,24 +58,33 @@ const registerUser = async (req, res) => {
       message: "Email is not valid",
     });
   }
+
   try {
     const bcryptPassword = await bcrypt.hash(password, 10);
 
-    const existingUser = await User.findOne({ email });
+    const existingEmail = await User.findOne({ email });
+    const existingUserName = await User.findOne({ userName });
 
-    if (existingUser) {
+    if (existingUserName) {
+      return res.status(409).json({
+        success: false,
+        message: "User name already exists",
+      });
+    }
+
+    if (existingEmail) {
       return res
         .status(409)
         .json({ success: false, message: "User already exists" });
     }
 
-    if (!req.files || !req.files.avatar) {
+    if (!req.file) {
       return res
         .status(400)
         .json({ success: false, message: "Please upload a avatar image" });
     }
 
-    const avatarFile = req.files.avatar[0];
+    const avatarFile = req.file;
 
     let avatarURL = "";
     if (avatarFile.path) {
@@ -153,7 +182,7 @@ const loginUser = async (req, res) => {
       .cookie("refreshToken", refreshToken, option)
       .json({
         success: true,
-        data: userData,
+        data: userData.publishedDetails,
         accessToken,
         refreshToken,
         message: "User logged in successfully",
@@ -242,12 +271,24 @@ const updatePassword = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const isPasswordValid = await User.isPasswordValid(currentPassword);
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
 
     if (!isPasswordValid) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid current password" });
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password cannot be the same as old password",
+      });
     }
 
     user.password = bcrypt.hashSync(newPassword, 10);
@@ -265,7 +306,7 @@ const updatePassword = async (req, res) => {
   }
 };
 
-const draftDetails = async (req, res) => {
+const saveDetails = async (req, res) => {
   const { userName, channelName, description } = req.body;
 
   try {
@@ -278,52 +319,23 @@ const draftDetails = async (req, res) => {
     }
 
     const files = req.files;
+    user.draftDetails.userName = userName || user.draftDetails.userName;
+    user.draftDetails.channelName =
+      channelName || user.draftDetails.channelName;
+    user.draftDetails.description =
+      description || user.draftDetails.description;
 
-    let updateAvatar = user?.avatar;
-    let updateCoverImage = user?.coverImage;
+    user.draftDetails.avatar = await handleImageUpload(
+      user,
+      files.avatar?.[0],
+      "avatar"
+    );
+    user.draftDetails.coverImage = await handleImageUpload(
+      user,
+      files.coverImage?.[0],
+      "coverImage"
+    );
 
-    if (!files.avatar) {
-      if (user.avatar) {
-        const public_id = extractPublicId(user?.avatar);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateAvatar = null;
-    } else {
-      if (user.avatar) {
-        const public_id = extractPublicId(user?.avatar);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateAvatar = await uploadOnCloudinary(files.avatar[0].path);
-    }
-
-    if (!files.coverImage) {
-      if (user.coverImage) {
-        const public_id = extractPublicId(user?.coverImage);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateCoverImage = null;
-    } else {
-      if (user.coverImage) {
-        const public_id = extractPublicId(user?.coverImage);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateCoverImage = await uploadOnCloudinary(files.coverImage[0].path);
-    }
-
-    const savedDraft = user.draftDetails;
-
-    if (userName) savedDraft.userName = userName;
-    if (channelName) savedDraft.channelName = channelName;
-    if (description) savedDraft.description = description;
-    if (updateAvatar !== undefined) savedDraft.avatar = updateAvatar;
-    if (updateCoverImage !== undefined)
-      savedDraft.coverImage = updateCoverImage;
-
-    user.draftDetails = savedDraft;
     await user.save({ validateBeforeSave: false });
 
     return res.status(200).json({
@@ -341,6 +353,12 @@ const draftDetails = async (req, res) => {
 const publishedDetails = async (req, res) => {
   const { userName, channelName, description } = req.body;
 
+  if (!userName || !channelName || !description) {
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields are required" });
+  }
+
   try {
     const user = await User.findById(req.user._id);
 
@@ -351,52 +369,27 @@ const publishedDetails = async (req, res) => {
     }
 
     const files = req.files;
+    user.userName = userName || user.userName;
+    user.channelName = channelName || user.channelName;
+    user.publishedDetails.userName = userName || user.publishedDetails.userName;
+    user.publishedDetails.channelName =
+      channelName || user.publishedDetails.channelName;
+    user.publishedDetails.description =
+      description || user.publishedDetails.description;
 
-    let updateAvatar = user?.avatar;
-    let updateCoverImage = user?.coverImage;
+    user.publishedDetails.avatar = await handleImageUpload(
+      user,
+      files.avatar?.[0],
+      "avatar"
+    );
+    user.publishedDetails.coverImage = await handleImageUpload(
+      user,
+      files.coverImage?.[0],
+      "coverImage"
+    );
 
-    if (!files.avatar) {
-      if (user.avatar) {
-        const public_id = extractPublicId(user?.avatar);
-        await cloudinary.uploader.destroy(public_id);
-      }
+    user.draftDetails = user.publishedDetails;
 
-      updateAvatar = null;
-    } else {
-      if (user.avatar) {
-        const public_id = extractPublicId(user?.avatar);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateAvatar = await uploadOnCloudinary(files.avatar[0].path);
-    }
-
-    if (!files.coverImage) {
-      if (user.coverImage) {
-        const public_id = extractPublicId(user?.coverImage);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateCoverImage = null;
-    } else {
-      if (user.coverImage) {
-        const public_id = extractPublicId(user?.coverImage);
-        await cloudinary.uploader.destroy(public_id);
-      }
-
-      updateCoverImage = await uploadOnCloudinary(files.coverImage[0].path);
-    }
-
-    const savedDraft = user.draftDetails;
-
-    if (userName) savedDraft.userName = userName;
-    if (channelName) savedDraft.channelName = channelName;
-    if (description) savedDraft.description = description;
-    if (updateAvatar !== undefined) savedDraft.avatar = updateAvatar;
-    if (updateCoverImage !== undefined)
-      savedDraft.coverImage = updateCoverImage;
-
-    user.draftDetails = savedDraft;
     await user.save({ validateBeforeSave: false });
 
     return res.status(200).json({
@@ -431,14 +424,154 @@ const getSavedDetails = async (req, res) => {
   });
 };
 
+const getChannelDetails = async (req, res) => {
+  const { channelName } = req.params;
+
+  if (!channelName)
+    return res
+      .status(400)
+      .json({ success: false, message: "Channel name is required" });
+
+  const user = await User.aggregate([
+    {
+      $match: {
+        channelName: channelName,
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscribers",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribedTo",
+      },
+    },
+    {
+      $addFields: {
+        subscribersCount: {
+          $size: "$subscribers",
+        },
+        channelsSubscribedTo: {
+          $size: "$subscribedTo",
+        },
+        subscribed: {
+          $cond: {
+            if: {
+              $in: [req.user._id, "$subscribers.subscriber"],
+            },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        userName: "$publishedDetails.userName",
+        channelName: "$publishedDetails.channelName",
+        description: "$publishedDetails.description",
+        avatar: "$publishedDetails.avatar",
+        coverImage: "$publishedDetails.coverImage",
+        subscribersCount: 1,
+        channelsSubscribedTo: 1,
+        subscribed: 1,
+      },
+    },
+  ]);
+
+  if (!user.length > 0) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: user[0],
+    message: "channel data fetched successfully",
+  });
+};
+
+const getWatchHistory = async (req, res) => {
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+            },
+          },
+          {
+            $addFields: {
+              owner: { $arrayElemAt: ["$owner", 0] },
+            },
+          },
+          {
+            $project: {
+              "owner.avatar": 1,
+              "owner.channelName": 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$watchHistory", // flatten the watchHistory array
+        preserveNullAndEmptyArrays: true, // keep documents with no watch history
+      },
+    },
+    {
+      $project: {
+        "watchHistory._id": 1,
+        "watchHistory.title": 1,
+        "watchHistory.thumbnail": 1,
+        "watchHistory.description": 1,
+        "watchHistory.owner.avatar": 1,
+        "watchHistory.owner.channelName": 1,
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+    message: "watch history fetched successfully",
+  });
+};
+
 export {
   registerUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
   updatePassword,
-  draftDetails,
+  saveDetails,
   publishedDetails,
   getUserDetails,
   getSavedDetails,
+  getChannelDetails,
+  getWatchHistory,
 };

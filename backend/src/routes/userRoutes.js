@@ -1,11 +1,14 @@
 import {
-  draftDetails,
+  getChannelDetails,
   getSavedDetails,
   getUserDetails,
+  getWatchHistory,
   loginUser,
   logoutUser,
+  publishedDetails,
   refreshAccessToken,
   registerUser,
+  saveDetails,
   updatePassword,
 } from "../controllers/UserController.js";
 import { Router } from "express";
@@ -14,11 +17,8 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post(
-  "/register",
-  upload.fields([{ name: "avatar", maxCount: 1 }]),
-  registerUser
-);
+
+router.post("/register", upload.single("avatar"), registerUser);
 router.post("/login", loginUser);
 router.get("/logout", verifyToken, logoutUser);
 router.get("/refresh_token", refreshAccessToken);
@@ -30,7 +30,7 @@ router.post(
     { name: "coverImage", maxCount: 1 },
   ]),
   verifyToken,
-  draftDetails
+  saveDetails
 );
 router.post(
   "/publishDetails",
@@ -39,10 +39,12 @@ router.post(
     { name: "coverImage", maxCount: 1 },
   ]),
   verifyToken,
-  draftDetails
+  publishedDetails
 );
 
 router.get("/getUserDetails", verifyToken, getUserDetails);
 router.get("/getSavedDetails", verifyToken, getSavedDetails);
+router.get("/getChannelDetails/:channelName", verifyToken, getChannelDetails);
+router.get("/getWatchHistory", verifyToken, getWatchHistory);
 
 export default router;

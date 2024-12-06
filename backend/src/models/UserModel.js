@@ -13,6 +13,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -36,15 +37,15 @@ const userSchema = new Schema(
       type: String,
     },
     draftDetails: {
-      userName: { type: String },
-      channelName: { type: String },
+      userName: { type: String, unique: true },
+      channelName: { type: String, unique: true },
       description: { type: String },
       avatar: { type: String },
       coverImage: { type: String },
     },
     publishedDetails: {
-      userName: { type: String },
-      channelName: { type: String },
+      userName: { type: String, unique: true },
+      channelName: { type: String, unique: true },
       description: { type: String },
       avatar: { type: String },
       coverImage: { type: String },

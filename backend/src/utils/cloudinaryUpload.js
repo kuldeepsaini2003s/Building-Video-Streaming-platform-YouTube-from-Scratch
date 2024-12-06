@@ -13,7 +13,7 @@ cloudinary.config({
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
-  try {    
+  try {
     const response = await cloudinary.uploader.upload(localFilePath, {
       public_id: "Youtube",
     });
@@ -21,6 +21,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     return response.secure_url;
   } catch (error) {
     fs.unlinkSync(localFilePath);
+    console.log("Error while uploading the files to cloudinary", error);
     return null;
   }
 };
