@@ -14,9 +14,9 @@ const generateAccessAndRefreshToken = (userId) => {
   return { accessToken, refreshToken };
 };
 
-const extractPublicId = (url) => {
+export const extractPublicId = (url) => {
   const parts = url.split("/");
-  const publicIdWithExtension = parts.slice(-2).join("/").split(".")[0]; // "v1234567890/image_name"
+  const publicIdWithExtension = parts.slice(-2).join("/").split(".")[0];
   return publicIdWithExtension;
 };
 
@@ -35,7 +35,7 @@ const handleImageUpload = async (user, file, type) => {
     }
     updatedImage = await uploadOnCloudinary(file.path);
   }
-  return updatedImage;
+  return updatedImage.secure_url;
 };
 
 const option = {
@@ -96,18 +96,18 @@ const registerUser = async (req, res) => {
       channelName,
       email,
       password: bcryptPassword,
-      avatar: avatarURL,
+      avatar: avatarURL.secure_url,
       draftDetails: {
         userName: userName.toLowerCase(),
         channelName,
         email,
-        avatar: avatarURL,
+        avatar: avatarURL.secure_url,
       },
       publishedDetails: {
         userName: userName.toLowerCase(),
         channelName,
         email,
-        avatar: avatarURL,
+        avatar: avatarURL.secure_url,
       },
     };
 
@@ -548,6 +548,7 @@ const getWatchHistory = async (req, res) => {
         "watchHistory._id": 1,
         "watchHistory.title": 1,
         "watchHistory.thumbnail": 1,
+        "watchHistory.video_id" : 1,
         "watchHistory.description": 1,
         "watchHistory.owner.avatar": 1,
         "watchHistory.owner.channelName": 1,

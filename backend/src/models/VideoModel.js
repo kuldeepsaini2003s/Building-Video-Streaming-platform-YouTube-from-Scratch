@@ -34,9 +34,13 @@ const videoSchema = new Schema(
       type: String,
       required: true,
     },
-    tags : {
+    tags: {
       type: [String],
-      required: true
+      required: true,
+    },
+    video_id: {
+      type: String,
+      require: true,
     },
     user: {
       type: Schema.Types.ObjectId,
