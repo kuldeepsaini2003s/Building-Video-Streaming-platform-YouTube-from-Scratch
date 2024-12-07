@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./src/routes/userRoutes.js";
 import videoRouter from "./src/routes/videoRoutes.js";
+import playlistRouter from "./src/routes/playlistRoutes.js";
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/api/users", userRouter);
 app.use("/api/videos", videoRouter);
+app.use("/api/playlists", playlistRouter);
 
 export { app };

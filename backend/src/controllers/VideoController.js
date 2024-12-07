@@ -66,7 +66,7 @@ const createVideo = async (req, res) => {
         .json({ success: false, message: "uploading files failed" });
     }
 
-    const videoData = new Video({
+    const videoData = {
       title,
       description,
       category,
@@ -77,7 +77,7 @@ const createVideo = async (req, res) => {
       published: status,
       thumbnail: thumbnailUrl.secure_url,
       videoUrl: videoUrl.secure_url,
-    });
+    };
 
     const video = await Video.create(videoData);
 
@@ -180,6 +180,42 @@ const updateVideo = async (req, res) => {
   }
 };
 
+const getAllVideos = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const videos = await Video.find({ owner: user._id, published: true });
+
+    if (!videos || videos.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No videos found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: videos,
+      message: "Videos fetched successfully",
+    });
+  } catch (error) {
+    console.log("Error while getting all videos", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
 const deleteVideo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -203,7 +239,6 @@ const deleteVideo = async (req, res) => {
       success: true,
       message: "Video deleted successfully",
     });
-
   } catch (error) {
     console.log("Error while deleting video", error);
     return res.status(500).json({
@@ -213,4 +248,4 @@ const deleteVideo = async (req, res) => {
   }
 };
 
-export { createVideo, getVideoById, updateVideo, deleteVideo };
+export { createVideo, getVideoById, getAllVideos, updateVideo, deleteVideo };

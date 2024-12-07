@@ -44,6 +44,7 @@ const userSchema = new Schema(
       coverImage: { type: String },
     },
     publishedDetails: {
+      _id: { type: Schema.Types.ObjectId, ref: "User" },
       userName: { type: String, unique: true },
       channelName: { type: String, unique: true },
       description: { type: String },

@@ -121,6 +121,10 @@ const registerUser = async (req, res) => {
         user._id,
         {
           refreshToken: refreshToken,
+          publishedDetails: {
+            ...user.publishedDetails,
+            _id: user._id,
+          },
         },
         { new: true }
       ).select("-password -refreshToken -publishedDetails -draftDetails");
@@ -548,7 +552,7 @@ const getWatchHistory = async (req, res) => {
         "watchHistory._id": 1,
         "watchHistory.title": 1,
         "watchHistory.thumbnail": 1,
-        "watchHistory.video_id" : 1,
+        "watchHistory.video_id": 1,
         "watchHistory.description": 1,
         "watchHistory.owner.avatar": 1,
         "watchHistory.owner.channelName": 1,
