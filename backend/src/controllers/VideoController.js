@@ -98,7 +98,70 @@ const createVideo = async (req, res) => {
 const getVideoById = async (req, res) => {
   try {
     const { id } = req.params;
-    const video = await Video.findOne({ video_id: id });
+    const video = await Video.aggregate([
+      {
+        $match: {
+          video_id: id,
+        },
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "video_id",
+          foreignField: "video",
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "user",
+          foreignField: "channel",
+          as: "subscribers",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $addFields: {
+          likesCount: {
+            $size: "$likes",
+          },
+          subscribersCount: {
+            $size: "$subscribers",
+          },
+          channelName: {
+            $arrayElemAt: ["$userDetails.publishedDetails.channelName", 0],
+          },
+          userAvatar: {
+            $arrayElemAt: ["$userDetails.publishedDetails.avatar", 0],
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          category: 1,
+          tags: 1,
+          video_id: 1,
+          duration: 1,
+          user: 1,
+          videoUrl: 1,
+          views: 1,
+          channelName: 1,
+          userAvatar: 1,
+          subscribersCount: 1,
+          likesCount: 1,
+        },
+      },
+    ]);
 
     if (!video) {
       return res.status(404).json({
@@ -109,7 +172,7 @@ const getVideoById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: video,
+      data: video[0],
       message: "Video fetched successfully",
     });
   } catch (error) {
@@ -123,7 +186,6 @@ const getVideoById = async (req, res) => {
 
 const updateVideo = async (req, res) => {
   const { title, description, category, tags, status } = req.body;
-  console.log(req.body);
 
   if (!title || !description || !category || !tags || !status) {
     return res
@@ -180,7 +242,7 @@ const updateVideo = async (req, res) => {
   }
 };
 
-const getAllVideos = async (req, res) => {
+const getUserAllVideos = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -209,6 +271,56 @@ const getAllVideos = async (req, res) => {
     });
   } catch (error) {
     console.log("Error while getting all videos", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
+const getAllVideo = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const videos = await Video.find({ published: true })
+      .select(
+        "title thumbnail views duration likesCount video_id videoUrl category"
+      )
+      .populate("user", "publishedDetails.channelName publishedDetails.avatar")     
+
+    if (!videos || videos.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No videos found",
+      });
+    }
+
+    const filteredVideos = videos.map((video) => ({
+      title: video.title,
+      thumbnail: video.thumbnail,
+      views: video.views,
+      duration: video.duration,
+      video_id: video.video_id,
+      videoUrl: video.videoUrl,
+      category: video.category,
+      channelName: video.user?.publishedDetails?.channelName || "",
+      avatar: video.user?.publishedDetails?.avatar || "",
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: filteredVideos[0],
+      message: "Videos fetched successfully",
+    });
+  } catch (error) {
+    console.log("Error while getting all video", error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -248,4 +360,11 @@ const deleteVideo = async (req, res) => {
   }
 };
 
-export { createVideo, getVideoById, getAllVideos, updateVideo, deleteVideo };
+export {
+  createVideo,
+  getVideoById,
+  getUserAllVideos,
+  updateVideo,
+  deleteVideo,
+  getAllVideo,
+};

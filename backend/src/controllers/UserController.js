@@ -92,26 +92,18 @@ const registerUser = async (req, res) => {
     }
 
     const userData = {
-      userName: userName.toLowerCase(),
-      channelName,
-      email,
-      password: bcryptPassword,
-      avatar: avatarURL.secure_url,
-      draftDetails: {
-        userName: userName.toLowerCase(),
-        channelName,
-        email,
-        avatar: avatarURL.secure_url,
-      },
       publishedDetails: {
         userName: userName.toLowerCase(),
         channelName,
-        email,
         avatar: avatarURL.secure_url,
       },
     };
 
-    const user = await User.create(userData);
+    const user = await User.create({
+      ...userData,
+      email,
+      password: bcryptPassword,
+    });
 
     if (user) {
       const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -127,7 +119,7 @@ const registerUser = async (req, res) => {
           },
         },
         { new: true }
-      ).select("-password -refreshToken -publishedDetails -draftDetails");
+      );
 
       return res
         .status(201)
@@ -135,7 +127,7 @@ const registerUser = async (req, res) => {
         .cookie("refreshToken", refreshToken, option)
         .json({
           success: true,
-          data: _user,
+          data: _user.publishedDetails,
           accessToken,
           refreshToken,
           message: "User registered successfully",
@@ -313,6 +305,13 @@ const updatePassword = async (req, res) => {
 const saveDetails = async (req, res) => {
   const { userName, channelName, description } = req.body;
 
+  if (!userName || !channelName) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide user and channel name",
+    });
+  }
+
   try {
     const user = await User.findById(req.user._id);
 
@@ -323,14 +322,12 @@ const saveDetails = async (req, res) => {
     }
 
     const files = req.files;
-    user.draftDetails.userName = userName || user.draftDetails.userName;
-    user.draftDetails.channelName =
-      channelName || user.draftDetails.channelName;
-    user.draftDetails.description =
-      description || user.draftDetails.description;
+    user.draftDetails.userName = userName;
+    user.draftDetails.channelName = channelName;
+    user.draftDetails.description = description;
 
     user.draftDetails.avatar = await handleImageUpload(
-      user,
+      user.draftDetails,
       files.avatar?.[0],
       "avatar"
     );
@@ -479,6 +476,7 @@ const getChannelDetails = async (req, res) => {
     },
     {
       $project: {
+        _id : "$publishedDetails._id",
         userName: "$publishedDetails.userName",
         channelName: "$publishedDetails.channelName",
         description: "$publishedDetails.description",

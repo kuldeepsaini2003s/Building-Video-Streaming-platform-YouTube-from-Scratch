@@ -2,19 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema(
   {
-    userName: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    channelName: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-    },
     email: {
       type: String,
       required: true,
@@ -26,30 +13,53 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    avatar: {
-      type: String,
-      required: true,
-    },
-    coverImage: {
-      type: String,
-    },
-    description: {
-      type: String,
+    publishedDetails: {
+      _id: {
+        type: String,        
+      },
+      userName: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+      },
+      channelName: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true,
+      },
+      description: {
+        type: String,
+      },
+      avatar: {
+        type: String,
+        require: true,
+      },
+      coverImage: {
+        type: String,
+      },
     },
     draftDetails: {
-      userName: { type: String, unique: true },
-      channelName: { type: String, unique: true },
-      description: { type: String },
-      avatar: { type: String },
-      coverImage: { type: String },
-    },
-    publishedDetails: {
-      _id: { type: Schema.Types.ObjectId, ref: "User" },
-      userName: { type: String, unique: true },
-      channelName: { type: String, unique: true },
-      description: { type: String },
-      avatar: { type: String },
-      coverImage: { type: String },
+      userName: {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+      channelName: {
+        type: String,
+        trim: true,
+      },
+      description: {
+        type: String,
+      },
+      avatar: {
+        type: String,
+      },
+      coverImage: {
+        type: String,
+      },
     },
     watchHistory: [
       {
@@ -57,7 +67,9 @@ const userSchema = new Schema(
         ref: "Video",
       },
     ],
-    refreshToken: { type: String },
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
