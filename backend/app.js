@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import userRouter from "./src/routes/userRoutes.js";
-import videoRouter from "./src/routes/videoRoutes.js";
-import playlistRouter from "./src/routes/playlistRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import videoRouter from "./routes/videoRoutes.js";
+import playlistRouter from "./routes/playlistRoutes.js";
 
 const app = express();
 
@@ -15,7 +15,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-console.log(process.env.CORS_ORIGIN);
 
 app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true }));

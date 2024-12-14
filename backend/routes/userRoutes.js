@@ -17,7 +17,6 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-
 router.post("/register", upload.single("avatar"), registerUser);
 router.post("/login", loginUser);
 router.get("/logout", verifyToken, logoutUser);
