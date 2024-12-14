@@ -40,7 +40,9 @@ const handleImageUpload = async (user, file, type) => {
 
 const option = {
   httpOnly: true,
-  secure: true,
+  // secure: true,
+  path: "/",
+  sameSite: "lax",
 };
 
 const registerUser = async (req, res) => {
@@ -63,7 +65,18 @@ const registerUser = async (req, res) => {
     const bcryptPassword = await bcrypt.hash(password, 10);
 
     const existingEmail = await User.findOne({ email });
-    const existingUserName = await User.findOne({ userName });
+    const existingUserName = await User.findOne({
+      "publishedDetails.userName": userName,
+    });
+    const existingChannelName = await User.findOne({
+      "publishedDetails.channelName": channelName,
+    });
+
+    if (existingEmail) {
+      return res
+        .status(409)
+        .json({ success: false, message: "User already exists" });
+    }
 
     if (existingUserName) {
       return res.status(409).json({
@@ -72,10 +85,11 @@ const registerUser = async (req, res) => {
       });
     }
 
-    if (existingEmail) {
-      return res
-        .status(409)
-        .json({ success: false, message: "User already exists" });
+    if (existingChannelName) {
+      return res.status(409).json({
+        success: false,
+        message: "Channel name already exists",
+      });
     }
 
     if (!req.file) {
@@ -122,7 +136,7 @@ const registerUser = async (req, res) => {
       );
 
       return res
-        .status(201)
+        .status(200)
         .cookie("accessToken", accessToken, option)
         .cookie("refreshToken", refreshToken, option)
         .json({
@@ -194,7 +208,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
-    { refreshToken: "" },
+    { refreshToken: undefined },
     { new: true }
   );
   return res
@@ -476,7 +490,7 @@ const getChannelDetails = async (req, res) => {
     },
     {
       $project: {
-        _id : "$publishedDetails._id",
+        _id: "$publishedDetails._id",
         userName: "$publishedDetails.userName",
         channelName: "$publishedDetails.channelName",
         description: "$publishedDetails.description",
