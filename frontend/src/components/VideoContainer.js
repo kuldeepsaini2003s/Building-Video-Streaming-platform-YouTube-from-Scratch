@@ -11,20 +11,20 @@ const VideoContainer = () => {
 
   const { youtubevideo, categories, fetchcategories } = useSelector(
     (store) => store.videos
-  );  
+  );
 
   useEffect(() => {
     if (fetchcategories === "") {
       setVideos(youtubevideo);
-      setIsLoading(false)
-    } else {      
+      setIsLoading(false);
+    } else {
       setVideos(categories);
       setIsLoading(false);
     }
   }, [categories, youtubevideo, fetchcategories]);
 
   return (
-    <div className="sm:flex fixed -z-50 sm:top-[8rem] overflow-y-auto max-h-screen bottom-0 pb-10 w-full sm:left-[3.2rem] ms:left-0 flex-wrap sm:gap-2 ms:gap-0 sm:justify-center ms:top-28 ms:left-0 ms:w-full">
+    <div id="main" className="grid grid-cols-3 grid-flow-row">
       {isLoading ? (
         <ShimmerCard />
       ) : (

@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import UseYoutubeVideos from "../hooks/UseYoutubeVideos";
-import UserImage from "../Images/user-img.jpg";
 import UseVideoCategories from "../hooks/UseVideoCategories";
 import UseSearchSuggestions from "../hooks/UseSearchSuggestions";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuary } from "../utils/SearchSlice";
 import { toggleSlider } from "../utils/appSlice";
-import { IoMenu, IoSearchOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
+import { IoMenu, IoSearchOutline } from "react-icons/io5";
 import { MdOutlineMic, MdOutlineVideoCall } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import Youtube_Logo from "../Images/YouTube-Logo.wine.svg";
+import { Link, useNavigate } from "react-router-dom";
+import { BACKEND_USER } from "../utils/constants";
+import { setUser } from "../utils/userSlice";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   UseYoutubeVideos();
@@ -23,11 +25,12 @@ const Navbar = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((store) => store.user.user);
 
   const getSuggestion = useSelector(
     (store) => store.searchSuggestion.searchQuery
   );
-  console.log(searchResult);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,9 +54,10 @@ const Navbar = () => {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";    
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    document.body.setAttribute("className", newTheme);
+    document.body.classList.remove(theme);
+    document.body.classList.add(newTheme);
     localStorage.setItem("theme", newTheme);
   };
 
@@ -64,21 +68,54 @@ const Navbar = () => {
     dispatch(toggleSlider());
   };
 
+  const handleLogout = async () => {
+    const toastId = toast.loading("Logging out...");
+    try {
+      const response = await fetch(BACKEND_USER + "/logout", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        setShowSetting(false);
+        dispatch(setUser(null));
+        toast.update(toastId, {
+          render: data.message,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+      }
+    } catch (error) {
+      toast.update(toastId, {
+        render: "Error while logging out",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+      console.log("error while logging out", error);
+    }
+  };
+
   const clearInput = () => {
     setInputValue("");
   };
 
   return (
     <>
-      <div
-        id="navbar"
-        className="flex fixed z-10 h-14 px-4 sm:py-6 items-center w-full justify-between"
-      >
-        <div className="flex items-center gap-x-1 ml-2 ">
+      <div id="navbar" className="flex px-4 items-center justify-between">
+        <div className="flex items-center gap-x-1 ml-2">
           {/* Menu-btn */}
           <IoMenu
             onClick={handleToggle}
-            className="text-[2.6rem] hover:bg-lightgray dark:hover:bg-icon_black p-2 rounded-full mr-2"
+            className="text-[2.6rem] hover:bg-Gray dark:hover:bg-icon_black p-2 rounded-full mr-2"
           />
           {/* Youtube-logo */}
           <svg
@@ -155,13 +192,13 @@ const Navbar = () => {
                 placeholder="Search"
                 value={inputValue}
                 onChange={handleChange}
-                className="group w-[42vw] h-[2.5rem] dark:bg-black  border border-gray dark:border-hover_icon_black  border-r-0 rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
+                className="group w-[42vw] h-[2.5rem] dark:bg-black  border border-Gray dark:border-hover_icon_black  border-r-0 rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
               />
               {/* X-btn */}
               {inputValue && (
                 <button
                   onClick={clearInput}
-                  className="absolute right-0 top-0 flex items-center hover:bg-gray hover:bg-hover_icon_black rounded-full p-1 my-1"
+                  className="absolute right-0 top-0 flex items-center hover:bg-Gray hover:bg-hover_icon_black rounded-full p-1 my-1"
                 >
                   <RxCross2 className="text-[1.4rem]" />
                 </button>
@@ -170,7 +207,7 @@ const Navbar = () => {
             {/* Search-btn */}
             <button
               id="search-btn"
-              className="sm:rounded-3xl sm:rounded-l-none border-gray bg-lightgray hover:bg-gray dark:bg-icon_black dark:border-hover_icon_black sm:border h-[2.5rem] w-[5vw] pl-5 flex justify-center items-center sm:block ms:hidden"
+              className="sm:rounded-3xl sm:rounded-l-none border-Gray bg-Gray hover:bg-Gray dark:bg-icon_black dark:border-hover_icon_black sm:border h-[2.5rem] w-[5vw] pl-5 flex justify-center items-center sm:block ms:hidden"
             >
               <IoSearchOutline className="text-[1.3rem]" />
             </button>
@@ -179,7 +216,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <button
               id="audioBtn"
-              className="rounded-full m-0 sm:block ms:hidden p-2 bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black"
+              className="rounded-full m-0 sm:block ms:hidden p-2 bg-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black"
             >
               <MdOutlineMic className="text-[1.4rem]" />
             </button>
@@ -187,12 +224,12 @@ const Navbar = () => {
           {inputValue && (
             <div
               id="searchSuggestion"
-              className="fixed font-medium dark:bg-black top-14 shadow-lg z-50 rounded-md w-[42vw]  py-4 bg-white"
+              className="fixed font-mediu top-14 shadow-lg z-50 rounded-md w-[42vw]  py-4"
             >
               {searchResult.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-center dark:text-white font-semibold mb-2 gap-2 px-4 py-1 hover:bg-icon_black hover:text-black"
+                  className="flex items-center font-semibold mb-2 gap-2 px-4 py-1 hover:bg-icon_black hover:text-black"
                 >
                   <IoSearchOutline className="text-[1.2rem] mr-1" />
                   {item}
@@ -204,12 +241,14 @@ const Navbar = () => {
         <div className="flex items-center gap-2 sm:pr-2">
           <h1
             onClick={toggleTheme}
-            className="mr-2 dark:bg-icon_black dark:hover:bg-hover_icon_black bg-lightgray hover:bg-gray px-2 py-1 rounded-md"
+            className="mr-2 dark:bg-icon_black dark:hover:bg-hover_icon_black bg-Gray hover:bg-Gray px-2 py-1 rounded-md"
           >
             {theme == "light" ? "Dark" : "Light"} Theme
           </h1>
-          <BsThreeDotsVertical className="text-[2.2rem] bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2" />
-          <MdOutlineVideoCall className="text-[2.4rem] bg-lightgray hover:bg-gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2" />
+          <BsThreeDotsVertical className="text-[2.2rem] bg-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2" />
+          <Link to={"/create-video"}>
+            <MdOutlineVideoCall className="text-[2.4rem] bg-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-full p-2" />
+          </Link>
           {/* search btn for mobile screen */}
           <div className="sm:hidden">
             <button
@@ -237,14 +276,31 @@ const Navbar = () => {
             id="user-icon"
             className=" py-2 flex gap-x-1 items-center  rounded-3xl sm:block ms:hidden "
           >
-            <div
-              className="h-9 w-9 rounded-full"
-              style={{
-                backgroundImage: `url(${UserImage})`,
-                backgroundSize: "cover",
-              }}
-            ></div>
+            {user ? (
+              <button onClick={settingHandler}>
+                <img
+                  className="w-10 h-10 rounded-full object-cover object-center"
+                  src={user?.avatar}
+                  alt=""
+                />
+              </button>
+            ) : (
+              <button onClick={() => navigate("/login")}>Signin</button>
+            )}
           </div>
+          {showSetting && (
+            <div className="fixed z-50 top-[56px] flex flex-col w-[8rem] rounded-md shadow-lg right-2">
+              <button className="bg-Gray rounded-t-md border-b border-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black p-2">
+                Profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black p-2"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div></div>
