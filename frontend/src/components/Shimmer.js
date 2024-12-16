@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const Shimmer = () => {  
-
+const Shimmer = () => {
   return (
     <div className="shimmer-bg flex flex-col sm:gap-20 ms:gap-12 sm:pl-20">
       {/* navbar container  */}
@@ -13,12 +12,12 @@ const Shimmer = () => {
               <input
                 id="input"
                 type=""
-                className="w-[42vw] h-[2.5rem] border-r-none border-[#E3E3E3] dark:bg-black dark:border-icon_black dark:border-icon_black rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
+                className="w-[42vw] h-[2.5rem] border border-r-none border-[#E3E3E3] dark:bg-black dark:border-icon_black dark:border-icon_black rounded-r-none rounded-3xl p-1 pl-5 focus:outline-none"
               />
             </div>
 
             {/* Search-btn */}
-            <button className="shimmer shimmer-input rounded-3xl rounded-l-none border bg-[#E3E3E3] dark:border-icon_black dark:bg-black border-gray dark:border-icon_black h-[2.5rem] w-[5vw] flex justify-center items-center"></button>
+            <button className="shimmer shimmer-input rounded-3xl rounded-l-none border bg-[#E3E3E3] dark:border-icon_black dark:bg-black border-Gray dark:border-icon_black h-[2.5rem] w-[5vw] flex justify-center items-center"></button>
           </div>
         </div>
         <div className="flex justify-end items-center gap-3">
@@ -38,7 +37,7 @@ const Shimmer = () => {
             <div key={index}>
               <div>
                 {/* img */}
-                <div className="shimmer sm:h-[35vh] sm:w-[28vw] ms:h-[11rem]  sm:rounded-xl bg-gray dark:bg-icon_black"></div>
+                <div className="shimmer sm:h-[35vh] sm:w-[28vw] ms:h-[11rem]  sm:rounded-xl bg-Gray dark:bg-icon_black"></div>
 
                 <div className="flex sm:p-2 sm:px-0 sm:py-2 ms:px-4 ms:py-4 gap-3">
                   {/* channdel */}
