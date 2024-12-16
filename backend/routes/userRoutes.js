@@ -43,7 +43,7 @@ router.post(
 
 router.get("/getUserDetails", verifyToken, getUserDetails);
 router.get("/getSavedDetails", verifyToken, getSavedDetails);
-router.get("/getChannelDetails/:channelName", verifyToken, getChannelDetails);
+router.get("/getChannelDetails/:userName", verifyToken, getChannelDetails);
 router.get("/getWatchHistory", verifyToken, getWatchHistory);
 
 export default router;

@@ -440,17 +440,16 @@ const getSavedDetails = async (req, res) => {
 };
 
 const getChannelDetails = async (req, res) => {
-  const { channelName } = req.params;
-
-  if (!channelName)
+  const { userName } = req.params;
+  if (!userName)
     return res
       .status(400)
-      .json({ success: false, message: "Channel name is required" });
+      .json({ success: false, message: "User name is required" });
 
   const user = await User.aggregate([
     {
       $match: {
-        channelName: channelName,
+        "publishedDetails.userName": userName,
       },
     },
     {
@@ -502,7 +501,6 @@ const getChannelDetails = async (req, res) => {
       },
     },
   ]);
-
   if (!user.length > 0) {
     return res.status(404).json({
       success: false,
