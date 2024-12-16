@@ -244,9 +244,9 @@ const updateVideo = async (req, res) => {
 
 const getUserAllVideos = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userName } = req.params;
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({ "publishedDetails.userName": userName });
 
     if (!user) {
       return res.status(404).json({
@@ -293,7 +293,7 @@ const getAllVideo = async (req, res) => {
       .select(
         "title thumbnail views duration likesCount video_id videoUrl category"
       )
-      .populate("user", "publishedDetails.channelName publishedDetails.avatar")     
+      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
 
     if (!videos || videos.length === 0) {
       return res.status(404).json({
