@@ -1,0 +1,265 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { BACKEND_USER } from "../utils/constants";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/userSlice";
+
+const SignUp = () => {
+  const [formInput, setFormInput] = useState({
+    userName: "",
+    channelName: "",
+    email: "",
+    password: "",
+    avatar: "",
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [submissionDisable, setSubmissionDisable] = useState(false);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormInput({ ...formInput, [name]: value });
+    if (name === "name") {
+      setFormInput({ ...formInput, name: value });
+    }
+  };
+
+  const handleFile = ({ target: { files } }) => {
+    if (files.length > 0 && files[0]) {
+      const newImage = URL.createObjectURL(files[0]);
+      setFormInput({ ...formInput, avatar: newImage });
+      setImageFile(files[0]);
+    } else {
+      setFormInput({ ...formInput, avatar: "" });
+      setImageFile(null);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { userName, channelName, email, password } = formInput;
+    if (!userName) {
+      toast.error("Please enter your user name");
+      setSubmissionDisable(true);
+      return;
+    }
+    if (!channelName) {
+      toast.error("Please enter your channel name");
+      setSubmissionDisable(true);
+      return;
+    }
+    if (!email) {
+      toast.error("Please enter your email");
+      setSubmissionDisable(true);
+      return;
+    }
+    if (!password) {
+      toast.error("Please enter your password");
+      setSubmissionDisable(true);
+      return;
+    }
+    if (!imageFile) {
+      toast.error("Please upload your avatar");
+      setSubmissionDisable(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userName", userName);
+    formData.append("channelName", channelName);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("avatar", imageFile);
+    const toastId = toast.loading("Signing up...");
+    try {
+      const response = await fetch(BACKEND_USER + "/register", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (
+        response.status === 409 ||
+        response.status === 403 ||
+        response.status === 404 ||
+        response.status === 500 ||
+        response.status === 400
+      ) {
+        toast.update(toastId, {
+          render: data.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+          pauseOnFocusLoss: false,
+          closeOnClick: true,
+        });
+      }
+      if (response.status === 200) {
+        toast.update(toastId, {
+          render: data.message,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+          pauseOnFocusLoss: false,
+          closeOnClick: true,
+        });
+        localStorage.setItem("token", data.data.accessToken);
+        navigate("/");
+        dispatch(setUser(data.data));
+        setSubmissionDisable(false);
+      }
+    } catch (error) {
+      console.log("Error in signup", error);
+      toast.update(toastId, {
+        render: "Error in signup",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+        pauseOnFocusLoss: false,
+        closeOnClick: true,
+      });
+      setSubmissionDisable(false);
+    }
+  };
+
+  return (
+    <div
+      id="login-container"
+      className="flex items-center justify-center bg-gray-50 dark:bg-black py-12 px-4 sm:px-6 lg:px-8"
+    >
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold">
+            Create your account
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="userName" className="sr-only">
+                User Name
+              </label>
+              <div className="relative">
+                <input
+                  id="userName"
+                  name="userName"
+                  type="text"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  placeholder="User Name"
+                  value={formInput.userName}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    if (!value.startsWith("@")) {
+                      value = "@" + value;
+                    }
+                    setFormInput({ ...formInput, userName: value });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="channelName" className="sr-only">
+                Channel Name
+              </label>
+              <div className="relative">
+                <input
+                  id="channelName"
+                  name="channelName"
+                  type="text"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  placeholder="Channel Name"
+                  value={formInput.channelName}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <div className="relative">
+                <input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  placeholder="Email address"
+                  value={formInput.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type="text"
+                  autoComplete="new-password"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  placeholder="Password"
+                  value={formInput.password}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800">
+              <input
+                name="avatar"
+                onChange={handleFile}
+                id="avatar"
+                type="file"
+              />
+              {formInput.avatar && (
+                <img
+                  className="w-14 h-14 object-cover object-center rounded-full"
+                  src={formInput.avatar}
+                  alt=""
+                />
+              )}
+            </div>
+          </div>
+
+          <div>
+            <button
+              onClick={handleSubmit}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Sign up
+            </button>
+          </div>
+        </form>
+
+        <div className="text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              disabled={submissionDisable}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SignUp;

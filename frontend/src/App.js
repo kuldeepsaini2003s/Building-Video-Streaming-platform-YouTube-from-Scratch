@@ -1,34 +1,81 @@
-import { createBrowserRouter, Outlet, Router, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import Body from "./components/Body";
-import MainContainer from "./components/MainContainer";
 import WatchPage from "./components/WatchPage";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Shimmer from "./components/Shimmer";
+import VideoContainer from "./components/VideoContainer";
+import { useDispatch } from "react-redux";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import { BACKEND_USER } from "./utils/constants";
+import { setUser } from "./utils/userSlice";
+import CreateVideo from "./components/CreateVideo";
+import Channel from "./components/Channel";
+import Navbar from "./components/Navbar";
 
-const AppRouter = createBrowserRouter([
+export const AppRouter = createBrowserRouter([
   {
     path: "/",
     element: <Body />,
     children: [
       {
         path: "/",
-        element: <MainContainer />,
+        element: <VideoContainer />,
       },
       {
-        path: "watch",
-        element: <WatchPage />,
+        path: "/create-video",
+        element: <CreateVideo />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "/:id",
+        element: <Channel />,
       },
     ],
+  },
+  {
+    path: "watch",
+    element: <WatchPage />,
   },
 ]);
 
 function App() {
-  const [loading, setLoading] = useState(true);  
-    
+  const [loading, setLoading] = useState(true);
+
+  const userToken = localStorage.getItem("token");
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";    
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(BACKEND_USER + "/getUserDetails", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        const data = await response.json();
+        if (response.status === 200) {
+          dispatch(setUser(data.data));
+        }
+      } catch (error) {
+        console.log("error while checking token", error);
+      }
+    };
+    fetchUser();
+  }, [userToken]);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
     document.body.classList.add("className", savedTheme);
     const timer = setTimeout(() => {
       setLoading(false);
@@ -39,17 +86,16 @@ function App() {
 
   return (
     <>
-    {loading ? (
+      {loading ? (
         <Shimmer />
       ) : (
         <>
-          <div className="navbar-show">
+          <RouterProvider router={AppRouter}>
             <Navbar />
-          </div>          
-          <RouterProvider router={AppRouter}/>        
-          </>
-        )}        
-    </>              
+          </RouterProvider>
+        </>
+      )}
+    </>
   );
 }
 
