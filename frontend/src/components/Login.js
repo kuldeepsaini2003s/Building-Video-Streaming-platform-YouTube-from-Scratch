@@ -4,11 +4,13 @@ import { toast } from "react-toastify";
 import { BACKEND_USER } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/userSlice";
+import useResponseHandler from "../hooks/UseResponseHandler";
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const { handleResponse, handleError } = useResponseHandler();
   const [submissionDisable, setSubmissionDisable] = useState(false);
 
   const navigate = useNavigate();
@@ -41,63 +43,34 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-
-      if (
-        response.status === 409 ||
-        response.status === 403 ||
-        response.status === 404 ||
-        response.status === 500 ||
-        response.status === 400
-      ) {
-        toast.update(toastId, {
-          render: data.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-          pauseOnFocusLoss: false,
-          closeOnClick: true,
-        });
-      }
-      if (response.status === 200) {
-        toast.update(toastId, {
-          render: data.message,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          pauseOnFocusLoss: false,
-          closeOnClick: true,
-        });
-        navigate("/");
-        localStorage.setItem("token", data.accessToken);
-        dispatch(setUser(data.data));
-        setSubmissionDisable(false);
-      }
-    } catch (error) {
-      console.log("Error while logging in", error);
-      toast.update(toastId, {
-        render: error.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-        closeOnClick: true,
-        pauseOnFocusLoss: false,
+      handleResponse({
+        status: response.status,
+        message: data.message,
+        toastId,
+        onSuccess: () => {
+          localStorage.setItem("token", data.data.accessToken);
+          navigate("/");
+          dispatch(setUser(data.data));
+          setSubmissionDisable(false);
+        },
       });
-      setSubmissionDisable(false);
+    } catch (error) {
+      handleError({ error, toastId, message: "Error while login" });
     }
   };
   return (
     <div
-      id="login-container"
+      id="main"
       className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold">
+          <h2 className="mt-6 text-center ms:text-2xl sm:text-3xl font-extrabold">
             Sign in to your account
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md shadow-sm -space-y-px w-full">
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address
@@ -109,7 +82,7 @@ const Login = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  className="appearance-none rounded-none relative block w-full ms:px-2 sm:px-3 ms:py-1.5 sm:py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
@@ -127,7 +100,7 @@ const Login = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
+                  className="appearance-none rounded-none relative block w-full ms:px-2 ms:py-1.5 sm:px-3 sm:py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}

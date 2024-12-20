@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import VideoCard from "./VideoCard";
 import ShimmerCard from "./ShimmerCard";
 import { useSelector } from "react-redux";
-import { interval } from "date-fns/interval";
 
 const VideoContainer = () => {
   const [videos, setVideos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const user = useSelector((store) => store.user.user);
 
   const { youtubevideo, categories, fetchcategories } = useSelector(
     (store) => store.videos
@@ -24,15 +24,28 @@ const VideoContainer = () => {
   }, [categories, youtubevideo, fetchcategories]);
 
   return (
-    <div id="main" className="grid grid-cols-3 grid-flow-row">
-      {isLoading ? (
-        <ShimmerCard />
+    <div
+      id="main"
+      className="grid ml:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row "
+    >
+      {user ? (
+        isLoading ? (
+          <ShimmerCard />
+        ) : (
+          videos?.map((video) => (
+            <Link key={video.id} to={"/watch?v=" + video.id}>
+              <VideoCard info={video} />
+            </Link>
+          ))
+        )
       ) : (
-        videos?.map((video) => (
-          <Link key={video.id} to={"/watch?v=" + video.id}>
-            <VideoCard info={video} />
+        <div className="flex justify-center items-center">
+          <Link to={"/login"}>
+            <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 outline-none">
+              Please Sign in
+            </button>
           </Link>
-        ))
+        </div>
       )}
     </div>
   );

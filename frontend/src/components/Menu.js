@@ -46,19 +46,21 @@ const Menu = () => {
         </Link>
       ))}
       {/* user-icon */}
-      <div
-        id="user-icon"
-        className="flex flex-col justify-center items-center rounded-3xl sm:hidden ms:p-1"
-      >
-        <div
-          className="h-8 w-8 rounded-full"
-          style={{
-            backgroundImage: `url(${user?.avatar})`,
-            backgroundSize: "cover",
-          }}
-        ></div>
-        <p className="sm:text-xs ms:text-[12px]">You</p>
-      </div>
+      {user && (
+        <Link to={`/${user?.userName}`}>
+          <div
+            id="user-icon"
+            className="flex flex-col justify-center items-center rounded-3xl sm:hidden ms:p-1"
+          >
+            <img
+              src={user?.avatar}
+              className="w-8 h-8 rounded-full object-cover object-center"
+              alt=""
+            />
+            <p className="sm:text-xs ms:text-[12px]">You</p>
+          </div>
+        </Link>
+      )}
     </div>
   );
 };

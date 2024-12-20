@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { BACKEND_USER } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/userSlice";
+import useResponseHandler from "../hooks/UseResponseHandler";
 
 const SignUp = () => {
   const [formInput, setFormInput] = useState({
@@ -15,6 +16,7 @@ const SignUp = () => {
   });
   const [imageFile, setImageFile] = useState(null);
   const [submissionDisable, setSubmissionDisable] = useState(false);
+  const { handleResponse, handleError } = useResponseHandler();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -80,53 +82,25 @@ const SignUp = () => {
         body: formData,
       });
       const data = await response.json();
-      if (
-        response.status === 409 ||
-        response.status === 403 ||
-        response.status === 404 ||
-        response.status === 500 ||
-        response.status === 400
-      ) {
-        toast.update(toastId, {
-          render: data.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-          pauseOnFocusLoss: false,
-          closeOnClick: true,
-        });
-      }
-      if (response.status === 200) {
-        toast.update(toastId, {
-          render: data.message,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          pauseOnFocusLoss: false,
-          closeOnClick: true,
-        });
-        localStorage.setItem("token", data.data.accessToken);
-        navigate("/");
-        dispatch(setUser(data.data));
-        setSubmissionDisable(false);
-      }
-    } catch (error) {
-      console.log("Error in signup", error);
-      toast.update(toastId, {
-        render: "Error in signup",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
+      handleResponse({
+        status: response.status,
+        message: data.message,
+        toastId,
+        onSuccess: () => {
+          localStorage.setItem("token", data.data.accessToken);
+          navigate("/");
+          dispatch(setUser(data.data));
+          setSubmissionDisable(false);
+        },
       });
-      setSubmissionDisable(false);
+    } catch (error) {
+      handleError({ error, toastId, message: "Error while register" });
     }
   };
 
   return (
     <div
-      id="login-container"
+      id="main"
       className="flex items-center justify-center bg-gray-50 dark:bg-black py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-md w-full space-y-8">
@@ -148,7 +122,7 @@ const SignUp = () => {
                   type="text"
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-700 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800"
-                  placeholder="User Name"
+                  placeholder="@username"
                   value={formInput.userName}
                   onChange={(e) => {
                     let value = e.target.value;

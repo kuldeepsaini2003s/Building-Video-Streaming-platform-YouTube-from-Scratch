@@ -14,7 +14,6 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
-import Navbar from "./Navbar";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -151,7 +150,6 @@ const WatchPage = () => {
   };
   return (
     <>
-      <Navbar />
       <div className="mt-5 w-full flex gap-16">
         {/* left  */}
         <div className="sm:ml-20 sm:w-[700px] ms:w-full ">

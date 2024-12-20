@@ -58,14 +58,14 @@ const Slider = () => {
 
   return (
     <div
-      className={`slider fixed w-[100vw] h-[100vh] bg-black bg-opacity-40 top-0 ${
+      className={` fixed w-[100vw] h-[100vh] bg-black bg-opacity-40 top-0 ${
         isSliderOpen ? "active" : ""
       }`}
       onClick={handleToggle}
     >
       <div
         id="slider"
-        className={`w-full px-3 py-2 shadow-xl transition duration-700 ease-in-out`}
+        className={`bg-white dark:bg-black w-full px-1 py-2 shadow-xl transition duration-700 ease-in-out`}
         onClick={(e) => e.stopPropagation()}
       >
         <div id="menu-bar yt-icon" className="flex items-center ml-1 gap-x-4">
