@@ -93,10 +93,16 @@ body {
 }
 
 @media (max-width: 425px) {
+  body {
+    height: calc(100vh - 56px);
+    border: 2px solid rebeccapurple;
+  }
   .main-container {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: "main" "sidebar";
+    border: 1px solid red;
+    height: calc(100vh - 118px);
   }
   #sidebar {
     grid-area: sidebar;
@@ -112,6 +118,6 @@ body {
   }
   #main {
     grid-area: main;
-    height: calc(100vh - 145px);
+    height: 100%;
   }
 }
