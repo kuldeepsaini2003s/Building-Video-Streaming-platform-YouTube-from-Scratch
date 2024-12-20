@@ -12,12 +12,13 @@ import { BACKEND_USER } from "./utils/constants";
 import { setUser } from "./utils/userSlice";
 import CreateVideo from "./components/CreateVideo";
 import Channel from "./components/Channel";
-import Navbar from "./components/Navbar";
+import MainLayout from "./components/MainLayout";
+import CustomizeChannel from "./components/CustomizeChannel";
 
 export const AppRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Body />,
+    element: <MainLayout />,
     children: [
       {
         path: "/",
@@ -39,11 +40,15 @@ export const AppRouter = createBrowserRouter([
         path: "/:id",
         element: <Channel />,
       },
+      {
+        path: "/customize-channel",
+        element: <CustomizeChannel />,
+      },
+      {
+        path: "watch",
+        element: <WatchPage />,
+      },
     ],
-  },
-  {
-    path: "watch",
-    element: <WatchPage />,
   },
 ]);
 
@@ -91,7 +96,7 @@ function App() {
       ) : (
         <>
           <RouterProvider router={AppRouter}>
-            <Navbar />
+            <MainLayout />
           </RouterProvider>
         </>
       )}

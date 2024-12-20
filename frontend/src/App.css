@@ -44,7 +44,7 @@ body {
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: 1rem;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto;
   grid-template-areas: "navbar navbar" "sidebar category" "sidebar main";
 }
 
@@ -55,7 +55,7 @@ body {
 
 #sidebar {
   grid-area: sidebar;
-  height: calc(100vh - 58px)
+  height: calc(100vh - 58px);
 }
 
 #slider {
@@ -74,16 +74,13 @@ body {
 
 #main {
   grid-area: main;
-  height: calc(100vh - 112px);
   overflow-y: auto;
+  height: calc(100vh - 56px);
   scroll-behavior: smooth;
 }
 
-#login-container {
-  grid-area: main;
-  position: sticky;
-  top: 56px;
-  height: calc(100vh - 110px);
+#category + #main {
+  height: calc(100vh - 112px); /* Navbar + Category height */
 }
 
 #main::-webkit-scrollbar {
@@ -93,4 +90,28 @@ body {
 .toastBody {
   font-weight: 600;
   font-size: 1rem;
+}
+
+@media (max-width: 425px) {
+  .main-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "main" "sidebar";    
+  }
+  #sidebar {
+    grid-area: sidebar;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem 1rem;
+  }
+  #category {
+    grid-area: category;        
+    display: none;
+  }
+  #main {
+    grid-area: main;
+    height: calc(100vh - 112px);    
+  }
 }
