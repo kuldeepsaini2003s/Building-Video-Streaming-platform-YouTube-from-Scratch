@@ -112,6 +112,6 @@ body {
   }
   #main {
     grid-area: main;
-    height: calc(100vh - 112px);    
+    height: calc(100vh - 125px);    
   }
 }

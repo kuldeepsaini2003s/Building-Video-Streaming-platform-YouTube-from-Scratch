@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
 import "./App.css";
 import Body from "./components/Body";
 import WatchPage from "./components/WatchPage";
@@ -54,7 +58,6 @@ export const AppRouter = createBrowserRouter([
 
 function App() {
   const [loading, setLoading] = useState(true);
-
   const userToken = localStorage.getItem("token");
   const dispatch = useDispatch();
 
@@ -76,7 +79,9 @@ function App() {
         console.log("error while checking token", error);
       }
     };
-    fetchUser();
+    if (userToken) {
+      fetchUser();
+    }
   }, [userToken]);
 
   useEffect(() => {

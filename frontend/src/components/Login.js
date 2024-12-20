@@ -120,16 +120,18 @@ const Login = () => {
         </form>
 
         <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <button
+            onClick={() => navigate("/signup")}
+            className="text-sm text-gray-600 dark:text-gray-400"
+          >
             Don't have an account?{" "}
-            <button
-              onClick={() => navigate("/signup")}
+            <span
               disabled={submissionDisable}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign up
-            </button>
-          </p>
+            </span>
+          </button>
         </div>
       </div>
     </div>

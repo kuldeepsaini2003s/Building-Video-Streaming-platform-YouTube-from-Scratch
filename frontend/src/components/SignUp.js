@@ -220,16 +220,18 @@ const SignUp = () => {
         </form>
 
         <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <button
+            onClick={() => navigate("/login")}
+            className="text-sm text-gray-600 dark:text-gray-400"
+          >
             Already have an account?{" "}
-            <button
-              onClick={() => navigate("/login")}
+            <span
               disabled={submissionDisable}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign in
-            </button>
-          </p>
+            </span>
+          </button>
         </div>
       </div>
     </div>
