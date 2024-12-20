@@ -96,7 +96,7 @@ body {
   .main-container {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    grid-template-areas: "main" "sidebar";    
+    grid-template-areas: "main" "sidebar";
   }
   #sidebar {
     grid-area: sidebar;
@@ -107,11 +107,11 @@ body {
     padding: 0rem 1rem;
   }
   #category {
-    grid-area: category;        
+    grid-area: category;
     display: none;
   }
   #main {
     grid-area: main;
-    height: calc(100vh - 125px);    
+    height: calc(100vh - 135px);
   }
 }
