@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { FiBell, FiBellOff } from "react-icons/fi";
-import { Link, useParams } from "react-router-dom";
-import { BACKEND_USER } from "../utils/constants";
+import { Link, Outlet, useParams } from "react-router-dom";
+import { BACKEND_USER, BACKEND_VIDEO } from "../utils/constants";
 import { useSelector } from "react-redux";
+import { FaCircleUser } from "react-icons/fa6";
 
 const channelNavigation = [
   {
     name: "Videos",
-    path: "/channel/videos",
+    path: "videos",
   },
   {
     name: "Playlists",
-    path: "/channel/playlists",
+    path: "playlists",
   },
   {
     name: "Community",
-    path: "/channel/community",
+    path: "community",
   },
   {
     name: "About",
-    path: "/channel/about",
+    path: "about",
   },
 ];
+
 const Channel = () => {
   const { id } = useParams();
   const user = useSelector((store) => store.user.user);
@@ -54,13 +56,17 @@ const Channel = () => {
   useEffect(() => {
     const fetchUserVideos = async () => {
       try {
-        const response = await fetch();
+        const response = await fetch(BACKEND_VIDEO + `/getUserAllVideo/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = await response.json();
         if (response.status === 200) {
           setVideos(data?.data);
         }
       } catch (error) {
-        console.log("Error while fetching user videos", error);
+        console.error("Error while fetching user videos", error);
       }
     };
     fetchUserVideos();
@@ -71,16 +77,26 @@ const Channel = () => {
   return (
     <div id="main">
       {channelDetails?.coverImage && (
-        <img src="" className="h-36 rounded-xl" alt="" />
+        <img
+          src={channelDetails?.coverImage}
+          className="h-56 w-full object-cover object-center rounded-xl"
+          alt=""
+        />
       )}
       <div className="flex gap-5 my-5">
-        <div className="flex-shrink-0">
-          <img
-            src={channelDetails?.avatar}
-            className="w-40 h-40 object-cover object-center rounded-full border"
-            alt=""
-          />
-        </div>
+        {channelDetails?.avatar ? (
+          <div className="flex-shrink-0">
+            <img
+              src={channelDetails?.avatar}
+              className="w-40 h-40 object-cover object-center rounded-full border"
+              alt=""
+            />
+          </div>
+        ) : (
+          <div className="flex-shrink-0">
+            <FaCircleUser className="w-20 h-20" />
+          </div>
+        )}
         <div className="flex-grow space-y-2">
           <h1 className="text-2xl font-bold ">{channelDetails?.channelName}</h1>
           <div className="font-semibold flex gap-x-2 items-center">
@@ -126,7 +142,7 @@ const Channel = () => {
       </div>
       <nav className="flex gap-8 border-b dark:border-gray-700">
         {channelNavigation.map((item, index) => (
-          <Link>
+          <Link to={item?.path}>
             <p
               key={index}
               onClick={() => setIsActive(item?.name)}
@@ -141,6 +157,7 @@ const Channel = () => {
           </Link>
         ))}
       </nav>
+      <Outlet />
     </div>
   );
 };

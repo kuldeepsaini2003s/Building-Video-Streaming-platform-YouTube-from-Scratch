@@ -24,10 +24,7 @@ const VideoContainer = () => {
   }, [categories, youtubevideo, fetchcategories]);
 
   return (
-    <div
-      id="main"
-      className="grid ml:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row "
-    >
+    <div id="main" className="video-container  ">
       {user ? (
         isLoading ? (
           <ShimmerCard />
@@ -39,7 +36,7 @@ const VideoContainer = () => {
           ))
         )
       ) : (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center w-full">
           <Link to={"/login"}>
             <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 outline-none">
               Please Sign in

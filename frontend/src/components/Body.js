@@ -17,8 +17,12 @@ const Body = () => {
 
   return (
     <div className="main-container">
-      <Menu />
-      {user && <>{categoryVisible && <Categories />}</>}
+      {user && (
+        <>
+          <Menu />
+          {categoryVisible && <Categories />}
+        </>
+      )}
       {isSliderOpen && <Slider />}
       <Outlet />
     </div>

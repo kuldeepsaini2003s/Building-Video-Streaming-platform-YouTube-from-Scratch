@@ -8,7 +8,6 @@ import { toggleSlider } from "../utils/appSlice";
 import { RxCross2 } from "react-icons/rx";
 import { IoMenu, IoSearchOutline } from "react-icons/io5";
 import { MdOutlineMic, MdOutlineVideoCall } from "react-icons/md";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_USER } from "../utils/constants";
 import { setUser } from "../utils/userSlice";

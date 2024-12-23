@@ -47,7 +47,7 @@ const VideoCard = ({ info }) => {
   }, []);
 
   return (
-    <div className="sm:h-fit ms:h-fit lg:w-[30vw] sm:w-[43vw] ms:w-full sm:text-base ms:text-sm sm:pb-0 ms:pb-2">
+    <div className="ms:h-fit ms:w-full sm:w-[42vw] md:w-[43vw] lg:w-[29vw]  sm:text-base ms:text-sm sm:pb-0 ms:pb-2">
       <img
         className="sm:rounded-xl sm:h-[13rem] ms:h-[12rem] object-cover object-center sm:w-[98%] ms:w-full"
         alt="Thumbnails"

@@ -48,7 +48,7 @@ const Login = () => {
         message: data.message,
         toastId,
         onSuccess: () => {
-          localStorage.setItem("token", data.data.accessToken);
+          localStorage.setItem("token", data?.accessToken);
           navigate("/");
           dispatch(setUser(data.data));
           setSubmissionDisable(false);
@@ -122,6 +122,7 @@ const Login = () => {
         <div className="text-center">
           <button
             onClick={() => navigate("/signup")}
+            disabled={submissionDisable}
             className="text-sm text-gray-600 dark:text-gray-400"
           >
             Don't have an account?{" "}

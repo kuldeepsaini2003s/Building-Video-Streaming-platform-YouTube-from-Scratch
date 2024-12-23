@@ -18,6 +18,12 @@ import CreateVideo from "./components/CreateVideo";
 import Channel from "./components/Channel";
 import MainLayout from "./components/MainLayout";
 import CustomizeChannel from "./components/CustomizeChannel";
+import {
+  UserAbout,
+  UserAllVideo,
+  UserCommunity,
+  UserPlaylist,
+} from "./components/userChannelCollection";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -43,6 +49,24 @@ export const AppRouter = createBrowserRouter([
       {
         path: "/:id",
         element: <Channel />,
+        children: [
+          {
+            path: "videos",
+            element: <UserAllVideo />,
+          },
+          {
+            path: "playlists",
+            element: <UserPlaylist />,
+          },
+          {
+            path: "community",
+            element: <UserCommunity />,
+          },
+          {
+            path: "about",
+            element: <UserAbout />,
+          },
+        ],
       },
       {
         path: "/customize-channel",

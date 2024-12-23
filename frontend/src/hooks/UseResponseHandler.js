@@ -5,7 +5,6 @@ const useResponseHandler = () => {
     status,
     message,
     onSuccess = () => {},
-    onError = () => {},
     toastId,
   }) => {
     const errorStatusCodes = [400, 401, 402, 403, 404, 409, 500];
@@ -29,7 +28,6 @@ const useResponseHandler = () => {
         pauseOnFocusLoss: false,
         closeOnClick: true,
       });
-      onError();
     }
   };
 
