@@ -89,6 +89,10 @@ body {
   height: calc(100vh - 112px); /* Navbar + Category height */
 }
 
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 #main::-webkit-scrollbar {
   display: none;
 }
@@ -100,28 +104,32 @@ body {
 
 @media (max-width: 768px) {
   body {
-    height: calc(100vh - 56px);
+    height: 100%;
   }
+
   .main-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas: "main" "sidebar";
-    height: calc(100vh - 118px);
   }
+
+  #main {
+    grid-area: main;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    border: 2px solid red; 
+    height: calc(100vh - 112px);   
+  }
+
   #sidebar {
     grid-area: sidebar;
-    height: fit-content;
+    height: 56px;    
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0rem 1rem;
+    justify-content: space-around;
   }
+
   #category {
     grid-area: category;
     display: none;
-  }
-  #main {
-    grid-area: main;
-    height: 100%;
   }
 }

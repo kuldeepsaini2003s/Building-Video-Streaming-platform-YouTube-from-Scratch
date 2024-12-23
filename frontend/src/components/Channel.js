@@ -79,33 +79,35 @@ const Channel = () => {
       {channelDetails?.coverImage && (
         <img
           src={channelDetails?.coverImage}
-          className="h-56 w-full object-cover object-center rounded-xl"
+          className="h-56 max-md:h-28 w-full object-cover object-center md:rounded-xl"
           alt=""
         />
       )}
-      <div className="flex gap-5 my-5">
+      <div className="flex justify-center gap-5 my-5">
         {channelDetails?.avatar ? (
           <div className="flex-shrink-0">
             <img
               src={channelDetails?.avatar}
-              className="w-40 h-40 object-cover object-center rounded-full border"
+              className="w-40 h-40 max-sm:w-24 max-sm:h-24 object-cover object-center rounded-full border"
               alt=""
             />
           </div>
         ) : (
           <div className="flex-shrink-0">
-            <FaCircleUser className="w-20 h-20" />
+            <FaCircleUser className="sm:w-20 sm:h-20" />
           </div>
         )}
-        <div className="flex-grow space-y-2">
-          <h1 className="text-2xl font-bold ">{channelDetails?.channelName}</h1>
-          <div className="font-semibold flex gap-x-2 items-center">
+        <div className="flex-grow ms:space-y-1 sm:space-y-2">
+          <h1 className="sm:text-2xl font-bold ">
+            {channelDetails?.channelName}
+          </h1>
+          <div className="font-semibold max-ml:text-sm flex flex-wrap gap-x-2 items-center">
             <h1>{channelDetails?.userName}</h1>
             <p>{channelDetails?.subscribersCount} subscribers</p>
             <p>{videos?.length} videos</p>
           </div>
           <p>{channelDetails?.description}</p>
-          <div className="flex gap-x-5 text-sm items-center">
+          <div className="flex gap-x-5 ms:text-xs sm:text-sm items-center">
             {id === user.userName && (
               <>
                 <Link to={"/customize-channel"}>
@@ -114,7 +116,7 @@ const Channel = () => {
                   </button>
                 </Link>
                 <Link to={"/create-video"}>
-                  <button className="flex font-medium items-center gap-2 px-5 py-2 rounded-full hover:bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black">
+                  <button className="flex max-ml:hidden font-medium items-center gap-2 px-5 py-2 rounded-full hover:bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black">
                     Add Video
                   </button>
                 </Link>
@@ -140,7 +142,7 @@ const Channel = () => {
           </div>
         </div>
       </div>
-      <nav className="flex gap-8 border-b dark:border-gray-700">
+      <nav className="flex overflow-x-scroll remove-scrollbar gap-8 border-b dark:border-gray-700">
         {channelNavigation.map((item, index) => (
           <Link to={item?.path}>
             <p
