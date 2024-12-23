@@ -255,7 +255,7 @@ const getUserAllVideos = async (req, res) => {
       });
     }
 
-    const videos = await Video.find({ owner: user._id, published: true });
+    const videos = await Video.find({ user: user._id, published: true });
 
     if (!videos || videos.length === 0) {
       return res.status(404).json({
