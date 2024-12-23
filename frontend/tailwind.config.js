@@ -21,10 +21,10 @@ module.exports = {
         mm: "375px",
         // => @media (min-width: 375px) { ... }
 
-        ml: "425px",
+        ml: "429px",
         // => @media (min-width: 425px) { ... }
 
-        sm: "640px",
+        sm: "600px",
         // => @media (min-width: 640px) { ... }
 
         md: "768px",

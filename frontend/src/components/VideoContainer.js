@@ -24,7 +24,10 @@ const VideoContainer = () => {
   }, [categories, youtubevideo, fetchcategories]);
 
   return (
-    <div id="main" className="video-container  ">
+    <div
+      id="main"
+      className="grid max-sm:grid-cols-1 sm:grid-cols-2 ml:m-2 lg:m-0  lg:grid-cols-3"
+    >
       {user ? (
         isLoading ? (
           <ShimmerCard />

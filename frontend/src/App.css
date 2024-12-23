@@ -35,6 +35,12 @@ body {
   left: 0%;
 }
 
+.video-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
 .dark .yt-icon {
   fill: white;
 }
@@ -92,7 +98,7 @@ body {
   font-size: 1rem;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 768px) {
   body {
     height: calc(100vh - 56px);
   }
