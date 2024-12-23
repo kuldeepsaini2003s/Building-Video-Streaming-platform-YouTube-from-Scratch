@@ -6,6 +6,11 @@ import { BsSend } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { BACKEND_USER } from "../utils/constants";
+import useResponseHandler from "../hooks/UseResponseHandler";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/userSlice";
+
 const CustomizeChannel = () => {
   const user = useSelector((store) => store.user.user);
   const [formInput, setFormInput] = useState({
@@ -16,6 +21,7 @@ const CustomizeChannel = () => {
       "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&q=80",
     avatar:
       "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80",
+    status: "",
   });
   const [currentData, setCurrentData] = useState({});
   const coverImageRef = useRef();
@@ -24,12 +30,16 @@ const CustomizeChannel = () => {
     coverImageFile: null,
     avatarImageFile: null,
   });
+  const [submissionDisable, setSubmissionDisable] = useState(false);
+  const navigate = useNavigate();
+  const { handleResponse, handleError } = useResponseHandler();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) {
       const data = {
-        username: user?.username,
-        channelName: user?.username,
+        username: user?.userName,
+        channelName: user?.channelName,
         description: user?.description,
         coverImage:
           user?.coverImage ||
@@ -61,40 +71,56 @@ const CustomizeChannel = () => {
       }
     }
   };
-  const handleSave = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, channelName, description } = formInput;
+    setSubmissionDisable(true);
+    const { username, channelName, description, status } = formInput;
     const { coverImageFile, avatarImageFile } = imageFiles;
     if (currentData !== formInput) {
       const formData = new FormData();
-      formData.append("username", username);
+      formData.append("userName", username);
       formData.append("channelName", channelName);
       formData.append("description", description);
       formData.append("coverImage", coverImageFile);
       formData.append("avatar", avatarImageFile);
+      formData.append("status", status);
 
       const toastId = toast.loading("Updating channel information...");
       try {
-        const response = await fetch(BACKEND_USER + "/", {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await fetch(
+          BACKEND_USER + "/updateUserDetails",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         const data = await response.json();
-        // if (response.status === 200) {
+        handleResponse({
+          status: response.status,
+          message: data?.message,
+          onSuccess: () => {
+            navigate("/");
+            dispatch(setUser(data?.data));
+          },
+          toastId,
+        });
+        setSubmissionDisable(false);
       } catch (error) {
-        console.log("Error while updating channel information", error);
+        setSubmissionDisable(false);
+        handleError({
+          error,
+          toastId,
+          message: "Error while updating channel information",
+        });
       }
-      toast.success("Channel information updated successfully");
-      setFormInput(currentData);
     }
   };
-  const handlePublish = () => {};
 
   return (
-    <div id="main" className="p-6 space-y-8">
+    <form onSubmit={handleSubmit} id="main" className="p-6 space-y-8">
       <h1 className="text-3xl font-bold">Customize Channel</h1>
 
       {/* Cover Image Section */}
@@ -170,7 +196,7 @@ const CustomizeChannel = () => {
           </label>
           <input
             type="text"
-            id="channelName"
+            id="channelName"  
             name="channelName"
             value={formInput?.channelName}
             onChange={handleChange}
@@ -189,7 +215,7 @@ const CustomizeChannel = () => {
             value={formInput?.description}
             onChange={handleChange}
             rows={4}
-            className=" dark:bg-black mt-1 block w-full rounded-md border-gray-300 shadow-sm outline-none p-2 border"
+            className="resize-none dark:bg-black mt-1 block w-full rounded-md border-gray-300 shadow-sm outline-none p-2 border"
             placeholder="Tell viewers about your channel..."
           />
         </div>
@@ -197,14 +223,18 @@ const CustomizeChannel = () => {
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
           <button
-            onClick={handleSave}
+            onClick={() => setFormInput({ ...formInput, status: "save" })}
+            type="submit"
+            disabled={submissionDisable}
             className="inline-flex text-black items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium bg-white hover:bg-gray-50 outline-none"
           >
             <LuSave className="w-4 h-4 mr-2" />
             Save
           </button>
           <button
-            onClick={handlePublish}
+            onClick={() => setFormInput({ ...formInput, status: "publish" })}
+            type="submit"
+            disabled={submissionDisable}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 outline-none"
           >
             <BsSend className="w-4 h-4 mr-2" />
@@ -212,7 +242,7 @@ const CustomizeChannel = () => {
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
