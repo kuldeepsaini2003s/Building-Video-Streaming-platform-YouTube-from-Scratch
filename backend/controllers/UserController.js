@@ -316,8 +316,8 @@ const updatePassword = async (req, res) => {
   }
 };
 
-const saveDetails = async (req, res) => {
-  const { userName, channelName, description } = req.body;
+const updateUserDetails = async (req, res) => {
+  const { userName, channelName, description, status } = req.body;
 
   if (!userName || !channelName) {
     return res.status(400).json({
@@ -326,52 +326,11 @@ const saveDetails = async (req, res) => {
     });
   }
 
-  try {
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
-    }
-
-    const files = req.files;
-    user.draftDetails.userName = userName;
-    user.draftDetails.channelName = channelName;
-    user.draftDetails.description = description;
-
-    user.draftDetails.avatar = await handleImageUpload(
-      user.draftDetails,
-      files.avatar?.[0],
-      "avatar"
-    );
-    user.draftDetails.coverImage = await handleImageUpload(
-      user,
-      files.coverImage?.[0],
-      "coverImage"
-    );
-
-    await user.save({ validateBeforeSave: false });
-
-    return res.status(200).json({
-      success: true,
-      message: "User details saved successfully",
+  if (!status) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide status",
     });
-  } catch (error) {
-    console.log("Error while saving user details", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
-  }
-};
-
-const publishedDetails = async (req, res) => {
-  const { userName, channelName, description } = req.body;
-
-  if (!userName || !channelName || !description) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required" });
   }
 
   try {
@@ -384,38 +343,63 @@ const publishedDetails = async (req, res) => {
     }
 
     const files = req.files;
-    user.userName = userName || user.userName;
-    user.channelName = channelName || user.channelName;
-    user.publishedDetails.userName = userName || user.publishedDetails.userName;
-    user.publishedDetails.channelName =
-      channelName || user.publishedDetails.channelName;
-    user.publishedDetails.description =
-      description || user.publishedDetails.description;
 
-    user.publishedDetails.avatar = await handleImageUpload(
-      user,
-      files.avatar?.[0],
-      "avatar"
-    );
-    user.publishedDetails.coverImage = await handleImageUpload(
-      user,
-      files.coverImage?.[0],
-      "coverImage"
-    );
-
-    user.draftDetails = user.publishedDetails;
+    if (status === "save") {
+      user.draftDetails.userName = userName;
+      user.draftDetails.channelName = channelName;
+      user.draftDetails.description = description;
+      if (files?.avatar) {
+        user.draftDetails.avatar = await handleImageUpload(
+          user.draftDetails,
+          files?.avatar[0],
+          "avatar"
+        );
+      }
+      if (files?.coverImage) {
+        user.draftDetails.coverImage = await handleImageUpload(
+          user.draftDetails,
+          files?.coverImage[0],
+          "coverImage"
+        );
+      }
+    } else {
+      user.publishedDetails.userName = userName;
+      user.publishedDetails.channelName = channelName;
+      user.publishedDetails.description =
+        description || user?.draftDetails?.description;
+      if (files?.avatar) {
+        user.publishedDetails.avatar = await handleImageUpload(
+          user.publishedDetails,
+          files?.avatar[0],
+          "avatar"
+        );
+      } else {
+        user.publishedDetails.avatar = user?.draftDetails?.avatar;
+      }
+      if (files?.coverImage) {
+        user.publishedDetails.coverImage = await handleImageUpload(
+          user.publishedDetails,
+          files?.coverImage[0],
+          "coverImage"
+        );
+      } else {
+        user.publishedDetails.coverImage = user?.draftDetails?.coverImage;
+      }
+    }
 
     await user.save({ validateBeforeSave: false });
 
     return res.status(200).json({
       success: true,
-      message: "User details published successfully",
+      data: user?.publishedDetails,
+      message: "User details updated successfully",
     });
   } catch (error) {
-    console.log("Error while saving user details", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    console.log("Error while updating user details", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
   }
 };
 
@@ -583,10 +567,9 @@ export {
   logoutUser,
   refreshAccessToken,
   updatePassword,
-  saveDetails,
-  publishedDetails,
   getUserDetails,
   getSavedDetails,
   getChannelDetails,
   getWatchHistory,
+  updateUserDetails,
 };

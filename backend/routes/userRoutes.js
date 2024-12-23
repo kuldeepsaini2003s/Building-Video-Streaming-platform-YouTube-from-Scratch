@@ -4,12 +4,11 @@ import {
   getUserDetails,
   getWatchHistory,
   loginUser,
-  logoutUser,
-  publishedDetails,
+  logoutUser,  
   refreshAccessToken,
-  registerUser,
-  saveDetails,
+  registerUser,  
   updatePassword,
+  updateUserDetails,
 } from "../controllers/UserController.js";
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -22,24 +21,7 @@ router.post("/login", loginUser);
 router.get("/logout", verifyToken, logoutUser);
 router.get("/refresh_token", refreshAccessToken);
 router.post("/updatePassword", verifyToken, updatePassword);
-router.post(
-  "/saveDetails",
-  upload.fields([
-    { name: "avatar", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },
-  ]),
-  verifyToken,
-  saveDetails
-);
-router.post(
-  "/publishDetails",
-  upload.fields([
-    { name: "avatar", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },
-  ]),
-  verifyToken,
-  publishedDetails
-);
+router.post("/updateUserDetails", verifyToken, upload.fields([{name:"avatar", maxCount:1}, {name : "coverImage", maxCount:1}]), updateUserDetails);
 
 router.get("/getUserDetails", verifyToken, getUserDetails);
 router.get("/getSavedDetails", verifyToken, getSavedDetails);
