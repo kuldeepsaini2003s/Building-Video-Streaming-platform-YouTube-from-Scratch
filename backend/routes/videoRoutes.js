@@ -24,7 +24,7 @@ router.post("/updateVideo/:id", upload.single("thumbnail"), updateVideo);
 
 router.get("/getVideo/:id", getVideoById);
 router.get("/getUserAllVideo/:userName", getUserAllVideos);
-router.get("/getAllVideo/:userId", getAllVideo);
+router.get("/getAllVideo", verifyToken, getAllVideo);
 
 router.delete("/deleteVideo/:id", deleteVideo);
 
