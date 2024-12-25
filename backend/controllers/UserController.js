@@ -41,8 +41,9 @@ const handleImageUpload = async (user, file, type) => {
 const option = {
   httpOnly: true,
   // secure: true,
+  domain: ["http://localhost:3000", "https://youtube-kuldeep.vercel.app"],
   path: "/",
-  sameSite: "lax",
+  SameSite: "Lax",
 };
 
 const registerUser = async (req, res) => {
