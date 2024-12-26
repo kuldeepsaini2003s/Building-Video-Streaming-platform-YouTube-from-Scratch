@@ -5,7 +5,7 @@ import {
   IoEyeOffOutline,
   IoEyeOutline,
   IoImageOutline,
-  IoVideocamOutline ,
+  IoVideocamOutline,
 } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_VIDEO } from "../utils/constants";
@@ -16,6 +16,10 @@ const CreateVideo = () => {
     "Entertainment",
     "Gaming",
     "Music",
+    "Animal",
+    "Nature",
+    "Cartoon",
+    "Anime",
     "Tech",
     "Vlogs",
     "How-to & Style",
@@ -106,7 +110,7 @@ const CreateVideo = () => {
         videoName: file.name,
       }));
     }
-  };  
+  };
 
   const removeVideo = () => {
     setFormInput({ ...formInput, video: null, videoName: "" });
@@ -217,7 +221,7 @@ const CreateVideo = () => {
             {formInput.video ? (
               <div className="flex items-center justify-between p-4 border border-gray-300 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <IoVideocamOutline  className="w-5 h-5 text-blue-600" />
+                  <IoVideocamOutline className="w-5 h-5 text-blue-600" />
                   <span className="text-sm dark:text-blue-600">
                     {formInput.videoName}
                   </span>
@@ -235,7 +239,7 @@ const CreateVideo = () => {
                 onClick={() => fileInputRef.current?.click()}
                 className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors"
               >
-                <IoVideocamOutline  className="w-8 h-8 text-gray-400 mb-2" />
+                <IoVideocamOutline className="w-8 h-8 text-gray-400 mb-2" />
                 <p className="text-sm text-gray-600">
                   Click to upload or drag and drop
                 </p>
