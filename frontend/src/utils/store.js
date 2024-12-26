@@ -7,7 +7,7 @@ import userSlice from "./userSlice";
 
 const store = configureStore({
   reducer: {
-    user : userSlice,
+    user: userSlice,
     app: appSlice,
     videos: videoSlice,
     chat: ChatSlice,

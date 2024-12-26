@@ -103,6 +103,9 @@ body {
 }
 
 @media (max-width: 768px) {
+  html {
+    font-size: 62.5%;
+  }
   body {
     height: 100%;
   }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { YOUTUBE_API_KEY } from "../utils/constants";
+import { useSelector } from "react-redux";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -13,51 +14,21 @@ const formatViewCount = (viewCount) => {
 };
 
 const VideoCard = ({ info }) => {
-  const [channelLogo, setChannelLogo] = useState([]);
-  const { snippet, statistics } = info;
-  const { channelTitle, publishedAt, channelId, localized, title, thumbnails } =
-    snippet;
-  // const titleStyle = {
-  //   display: "-webkit-box",
-  //   WebkitBoxOrient: "vertical",
-  //   overflow: "hidden",
-  //   textOverflow: "ellipsis",
-  //   WebkitLineClamp: 2,
-  // };
-  const { medium, maxres } = thumbnails;
-  const thumbnail = maxres || medium;
-  const formattedViewCount = formatViewCount(statistics.viewCount);
-  const publishedDate = new Date(publishedAt);
-  let relativeTime = formatDistanceToNow(publishedDate, { addSuffix: true });
-
-  if (relativeTime.includes("about")) {
-    relativeTime = relativeTime.replace("about ", "");
-  }
-
-  const getChannelLogos = async () => {
-    const data = await fetch(
-      `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${channelId}&key=${YOUTUBE_API_KEY}`
-    );
-    const json = await data.json();
-    setChannelLogo(json.items[0].snippet.thumbnails.high.url);
-  };
-
-  useEffect(() => {
-    getChannelLogos();
-  }, []);
+  const user = useSelector((store) => store?.user?.user);
+  const { title, duration, thumbnail, views } = info;
 
   return (
     <div>
       <img
-        className="ml:rounded-md sm:h-[13rem] ms:h-[12rem] object-cover object-center sm:w-[98%] ms:w-full"
+        className="ml:rounded-md sm:h-[10rem] ms:h-[12rem] object-cover object-center w-full"
         alt="Thumbnails"
-        src={thumbnail.url}
+        src={thumbnail}
       />
       <div className="yt-details sm:pt-4 py-2 sm:px-0 ms:px-4 ms:py-3 flex gap-x-3">
         <img
-          className="user-img rounded-full sm:h-10 sm:w-10 ms:h-8 ms:w-8"
+          className="rounded-full sm:h-10 sm:w-10 ms:h-8 ms:w-8 object-cover object-center"
           alt="Thumbnails"
-          src={channelLogo}
+          src={user?.avatar}
         />
         <div className="w-full">
           <div className="flex gap-5 justify-between w-full">
@@ -81,11 +52,9 @@ const VideoCard = ({ info }) => {
             </p>
           </div>
           <div className="ms:flex gap-2">
-            <p className="text-Lightblack text-sm">{channelTitle}</p>
+            <p className="text-Lightblack text-sm">{user?.channelName}</p>
             <p className="flex items-center ">
-              <span className="text-Lightblack text-sm">
-                {formatViewCount} views
-              </span>
+              <span className="text-Lightblack text-sm">{views} views</span>
               <span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +67,7 @@ const VideoCard = ({ info }) => {
                   <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
                 </svg>
               </span>
-              <span className="text-Lightblack text-sm">{relativeTime}</span>
+              <span className="text-Lightblack text-sm">{duration}</span>
             </p>
           </div>
         </div>

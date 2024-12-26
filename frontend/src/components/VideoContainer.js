@@ -9,19 +9,19 @@ const VideoContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((store) => store.user.user);
 
-  const { youtubevideo, categories, fetchcategories } = useSelector(
+  const { allVideos, categories, fetchCategories } = useSelector(
     (store) => store.videos
   );
 
   useEffect(() => {
-    if (fetchcategories === "") {
-      setVideos(youtubevideo);
+    if (fetchCategories === "") {
+      setVideos(allVideos);
       setIsLoading(false);
     } else {
       setVideos(categories);
       setIsLoading(false);
     }
-  }, [categories, youtubevideo, fetchcategories]);
+  }, [categories, allVideos, fetchCategories]);
 
   return (
     <div

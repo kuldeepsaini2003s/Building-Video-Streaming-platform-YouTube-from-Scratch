@@ -150,30 +150,26 @@ const WatchPage = () => {
   };
   return (
     <>
-      <div className="mt-5 w-full flex gap-16">
+      <div className="sm:mt-5 w-[100vw] flex justify-between">
         {/* left  */}
-        <div className="sm:ml-20 sm:w-[700px] ms:w-full ">
+        <div className="xl:ml-20 max-xl:mx-2 xl:w-[700px] ms:w-full ">
           {/* video */}
-          <div className="">
-            <iframe
-              width="700"
-              height="380"
-              className="sm:rounded-xl sm:w-[700px] ms:w-full sm:h-[380px] ms:h-[200px]"
-              src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1?autoplay=1`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
-          </div>
+          <iframe
+            className="sm:rounded-xl w-full sm:h-[380px]"
+            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1?autoplay=1`}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
           {/* channel-info */}
-          <div className="flex flex-col gap-2  my-2 justify-center">
+          <div className="flex flex-col gap-2 my-2 justify-center">
             {/* Channel titile */}
             <h1 className=" text-xl font-semibold w-[95%] overflow-hidden whitespace-nowrap text-ellipsis">
               {video.snippet?.title}
             </h1>
-            <div className="flex sm:flex-row ms:flex-col sm:items-center sm:gap-0 ms:gap-0 sm:justify-between">
-              <div className="flex sm:justify-normal ms:justify-between items-center gap-5 sm:p-0 ms:p-2">
+            <div className="flex max-sm:flex-col sm:items-center sm:justify-between">
+              <div className="flex max-sm:justify-between items-center max-sm:gap-3 gap-5 max-sm:p-2">
                 {/* user-profile */}
                 <div className="flex gap-5 items-center">
                   <img
@@ -197,7 +193,7 @@ const WatchPage = () => {
                   {!subscribed ? "Subscribe" : "Subscribed"}
                 </button>
               </div>
-              <div className="flex items-center gap-2  text-sm font-medium sm:justify-normal ms:justify-between sm:p-0 ms:p-2">
+              <div className="flex items-center gap-2  text-sm font-medium max-sm:p-2">
                 {/* like-btn */}
                 <div className="user-info flex items-center bg-lightgray dark:bg-icon_black rounded-full ">
                   <div
@@ -242,7 +238,7 @@ const WatchPage = () => {
               </div>
             </div>
 
-            <div className="user-info gap-2 flex flex-col mt-2 sm:m-0 ms:m-2 text-sm bg-lightgray dark:bg-icon_black rounded-2xl p-3">
+            <div className="gap-2 flex flex-col mt-2 sm:m-0 text-sm bg-lightgray dark:bg-icon_black rounded-2xl p-3">
               {/* views */}
               <div className="flex items-center gap-x-2 font-semibold flex-wrap ">
                 <p className="p-0 m-0">{formattedViewCount} views</p>
@@ -283,11 +279,14 @@ const WatchPage = () => {
               )}
             </div>
             {/* comments-container */}
-            <div>
+            <div className="w-[100vw]">
               <h1>{formattedCommentsCount} Comments</h1>
               <div>
                 {youtubecomments.map((items, index) => (
-                  <div key={index} className="flex gap-4 items-start my-3">
+                  <div
+                    key={index}
+                    className="flex gap-4 text-wrap items-start my-3"
+                  >
                     <img
                       className="rounded-full w-10"
                       src={
@@ -321,7 +320,7 @@ const WatchPage = () => {
           </div>
         </div>
         {/* right */}
-        <div className="border sm:flex flex-col justify-between w-[30%] h-fit rounded-lg ms:hidden ">
+        <div className="border sm:flex flex-col justify-between w-[30%] hidden h-fit rounded-lg">
           <div className="flex justify-between items-center border-b p-4">
             <p>Top Chats</p>
             <BsThreeDotsVertical className="text-[2.2rem] p-2 rounded-full dark:bg-icon_black dark:hover:bg-hover_icon_black" />

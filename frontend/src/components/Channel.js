@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FiBell, FiBellOff } from "react-icons/fi";
 import { Link, Outlet, useParams } from "react-router-dom";
-import { BACKEND_USER, BACKEND_VIDEO } from "../utils/constants";
+import {
+  BACKEND_USER,
+  BACKEND_VIDEO,
+  LOCAL_BACKEND_USER,
+} from "../utils/constants";
 import { useSelector } from "react-redux";
 import { FaCircleUser } from "react-icons/fa6";
 
@@ -27,14 +31,21 @@ const channelNavigation = [
 const Channel = () => {
   const { id } = useParams();
   const user = useSelector((store) => store.user.user);
+  const userVideos = useSelector((store) => store.videos.userVideos);
   const [channelDetails, setChannelDetails] = useState({});
-  const [videos, setVideos] = useState([]);
+  const [userVideosCount, setUserVideosCount] = useState(0);
+
+  useEffect(() => {
+    if (userVideos) {
+      setUserVideosCount(userVideos.length);
+    }
+  }, [userVideos]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(
-          BACKEND_USER + `/getChannelDetails/${id}`,
+          LOCAL_BACKEND_USER + `/getChannelDetails/${id}`,
           {
             method: "GET",
             headers: {
@@ -51,25 +62,6 @@ const Channel = () => {
       }
     };
     fetchUserDetails();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchUserVideos = async () => {
-      try {
-        const response = await fetch(BACKEND_VIDEO + `/getUserAllVideo/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await response.json();
-        if (response.status === 200) {
-          setVideos(data?.data);
-        }
-      } catch (error) {
-        console.error("Error while fetching user videos", error);
-      }
-    };
-    fetchUserVideos();
   }, [id]);
 
   const [isActive, setIsActive] = useState("Videos");
@@ -104,7 +96,7 @@ const Channel = () => {
           <div className="font-semibold max-ml:text-sm flex flex-wrap gap-x-2 items-center">
             <h1>{channelDetails?.userName}</h1>
             <p>{channelDetails?.subscribersCount} subscribers</p>
-            <p>{videos?.length} videos</p>
+            <p>{userVideosCount} videos</p>
           </div>
           <p>{channelDetails?.description}</p>
           <div className="flex gap-x-5 ms:text-xs sm:text-sm items-center">
