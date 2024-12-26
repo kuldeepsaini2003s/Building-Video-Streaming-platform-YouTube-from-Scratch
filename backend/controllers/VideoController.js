@@ -294,7 +294,6 @@ const getAllVideo = async (req, res) => {
         "title thumbnail views duration likesCount video_id videoUrl category"
       )
       .populate("user", "publishedDetails.channelName publishedDetails.avatar");
-
     if (!videos || videos.length === 0) {
       return res.status(404).json({
         success: false,

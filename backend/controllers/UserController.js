@@ -8,9 +8,9 @@ import mongoose from "mongoose";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const generateAccessAndRefreshToken = (userId) => {
-  const accessToken = generateToken(userId, "10d");
-  const refreshToken = generateToken(userId, "30d");
+const generateAccessAndRefreshToken = (user) => {
+  const accessToken = generateToken(user, "10d");
+  const refreshToken = generateToken(user, "30d");
   return { accessToken, refreshToken };
 };
 
@@ -41,9 +41,7 @@ const handleImageUpload = async (user, file, type) => {
 const option = {
   httpOnly: true,
   // secure: true,
-  domain: ["http://localhost:3000", "https://youtube-kuldeep.vercel.app"],
   path: "/",
-  SameSite: "Lax",
 };
 
 const registerUser = async (req, res) => {
@@ -63,8 +61,6 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    const bcryptPassword = await bcrypt.hash(password, 10);
-
     const existingEmail = await User.findOne({ email });
     const existingUserName = await User.findOne({
       "publishedDetails.userName": userName,
@@ -85,7 +81,6 @@ const registerUser = async (req, res) => {
         message: "User name already exists",
       });
     }
-
     if (existingChannelName) {
       return res.status(409).json({
         success: false,
@@ -114,6 +109,7 @@ const registerUser = async (req, res) => {
       },
     };
 
+    const bcryptPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       ...userData,
       email,
@@ -122,7 +118,7 @@ const registerUser = async (req, res) => {
 
     if (user) {
       const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-        user._id
+        user
       );
       const _user = await User.findByIdAndUpdate(
         user._id,

@@ -5,13 +5,13 @@ const verifyToken = async (req, res, next) => {
   try {
     const token =
       req.cookies?.accessToken || req.header("authorization")?.split(" ")[1];
-
     if (!token) {
       return res
         .status(401)
         .json({ success: false, message: "unauthorized request" });
     }
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
     const user = await User.findById(decoded.id).select(
       "-password -refreshToken"
     );
