@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { BACKEND_USER, LOCAL_BACKEND_USER } from "../utils/constants";
+import { BACKEND_USER } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/userSlice";
 import useResponseHandler from "../hooks/UseResponseHandler";
@@ -77,7 +77,7 @@ const SignUp = () => {
     formData.append("avatar", imageFile);
     const toastId = toast.loading("Signing up...");
     try {
-      const response = await fetch(LOCAL_BACKEND_USER + "/register", {
+      const response = await fetch(BACKEND_USER + "/register", {
         method: "POST",
         body: formData,
       });

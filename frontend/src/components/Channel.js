@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FiBell, FiBellOff } from "react-icons/fi";
 import { Link, Outlet, useParams } from "react-router-dom";
-import {
-  BACKEND_USER,
-  BACKEND_VIDEO,
-  LOCAL_BACKEND_USER,
-} from "../utils/constants";
+import { BACKEND_USER } from "../utils/constants";
 import { useSelector } from "react-redux";
 import { FaCircleUser } from "react-icons/fa6";
+import UseFetchUserVideos from "../hooks/useFetchUserVideos";
 
 const channelNavigation = [
   {
@@ -29,9 +26,10 @@ const channelNavigation = [
 ];
 
 const Channel = () => {
+  UseFetchUserVideos();
   const { id } = useParams();
   const user = useSelector((store) => store.user.user);
-  const userVideos = useSelector((store) => store.videos.userVideos);
+  const userVideos = useSelector((store) => store.videos?.userVideos);
   const [channelDetails, setChannelDetails] = useState({});
   const [userVideosCount, setUserVideosCount] = useState(0);
 
@@ -40,12 +38,11 @@ const Channel = () => {
       setUserVideosCount(userVideos.length);
     }
   }, [userVideos]);
-
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(
-          LOCAL_BACKEND_USER + `/getChannelDetails/${id}`,
+          BACKEND_USER + `/getChannelDetails/${id}`,
           {
             method: "GET",
             headers: {
@@ -91,7 +88,7 @@ const Channel = () => {
         )}
         <div className="flex-grow ms:space-y-1 sm:space-y-2">
           <h1 className="sm:text-2xl font-bold ">
-            {channelDetails?.channelName}
+            {channelDetails?.channelName || ""}
           </h1>
           <div className="font-semibold max-ml:text-sm flex flex-wrap gap-x-2 items-center">
             <h1>{channelDetails?.userName}</h1>

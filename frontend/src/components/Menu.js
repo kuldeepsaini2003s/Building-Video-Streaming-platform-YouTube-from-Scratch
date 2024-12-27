@@ -1,10 +1,9 @@
-import React from "react";
-import UserImage from "../Images/user-img.jpg";
+import React, { useEffect } from "react";
 import { IoMdHome } from "react-icons/io";
 import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { MdOutlineVideoLibrary } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Menu = () => {
@@ -31,8 +30,12 @@ const Menu = () => {
       path: `/${user?.userName}`,
     },
   ];
+
+  const location = useLocation();
+  console.log(location);
+
   return (
-    <div id="sidebar">
+    <div className={`${location.pathname === "/watch" && "hidden"}`} id="sidebar">
       {/* home-btn */}
       {menu.map((item, index) => (
         <Link key={index} to={item?.path}>

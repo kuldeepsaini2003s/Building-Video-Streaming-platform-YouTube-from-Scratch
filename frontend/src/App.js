@@ -12,7 +12,7 @@ import VideoContainer from "./components/VideoContainer";
 import { useDispatch } from "react-redux";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import { BACKEND_USER, LOCAL_BACKEND_USER } from "./utils/constants";
+import { BACKEND_USER } from "./utils/constants";
 import { setUser } from "./utils/userSlice";
 import CreateVideo from "./components/CreateVideo";
 import Channel from "./components/Channel";
@@ -92,7 +92,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(LOCAL_BACKEND_USER + "/getUserDetails", {
+        const response = await fetch(BACKEND_USER + "/getUserDetails", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

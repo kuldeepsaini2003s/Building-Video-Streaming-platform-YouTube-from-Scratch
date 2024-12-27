@@ -14,8 +14,7 @@ const UseSearchSuggestions = () => {
   const getSearchSuggestion = async () => {
     try {
       const data = await fetch(YOUTUBE_SEARCH_SUGGESTION + searchQuary);
-      const json = await data.json();
-      console.log(json);
+      const json = await data.json();      
       dispatch(setSearchQuary(json[1]));
     } catch (error) {
       console.error("Error fetch search suggestion", error);

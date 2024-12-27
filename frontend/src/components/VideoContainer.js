@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import VideoCard from "./VideoCard";
 import ShimmerCard from "./ShimmerCard";
 import { useSelector } from "react-redux";
+import UseFetchAllVideos from "../hooks/useFetchAllVideos";
 
 const VideoContainer = () => {
+  UseFetchAllVideos();
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((store) => store.user.user);
@@ -26,14 +28,14 @@ const VideoContainer = () => {
   return (
     <div
       id="main"
-      className="grid max-sm:grid-cols-1 sm:grid-cols-2 ml:m-2 lg:m-0  lg:grid-cols-3"
+      className="p-2 grid max-md:grid-cols-1 ml:grid-cols-2 gap-2 sm:grid-cols-3 max-md:p-0 lg:grid-cols-3"
     >
       {user ? (
         isLoading ? (
           <ShimmerCard />
         ) : (
           videos?.map((video) => (
-            <Link key={video.id} to={"/watch?v=" + video.id}>
+            <Link key={video.id} to={"/watch?v=" + video?.video_id}>
               <VideoCard info={video} />
             </Link>
           ))

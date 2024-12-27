@@ -165,9 +165,11 @@ const CreateVideo = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        onUploadProgress: (data) => {
+          console.log(data.loaded / data.total);
+        },
       });
       const data = await response.json();
-      console.log(data);
       if (
         response.status === 409 ||
         response.status === 403 ||
