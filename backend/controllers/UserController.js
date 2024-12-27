@@ -410,16 +410,6 @@ const getUserDetails = async (req, res) => {
   });
 };
 
-const getSavedDetails = async (req, res) => {
-  const user = await User.findById(req.user._id);
-  const userData = user.draftDetails;
-  return res.status(200).json({
-    success: true,
-    data: userData,
-    message: "user data fetched successfully",
-  });
-};
-
 const getChannelDetails = async (req, res) => {
   const { userName } = req.params;
   if (!userName)
@@ -565,7 +555,6 @@ export {
   refreshAccessToken,
   updatePassword,
   getUserDetails,
-  getSavedDetails,
   getChannelDetails,
   getWatchHistory,
   updateUserDetails,

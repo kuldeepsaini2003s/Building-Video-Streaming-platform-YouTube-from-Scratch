@@ -255,7 +255,11 @@ const getUserAllVideos = async (req, res) => {
       });
     }
 
-    const videos = await Video.find({ user: user._id, published: true });
+    const videos = await Video.find({ user: user._id, published: true })
+      .select(
+        "title thumbnail views duration likesCount video_id videoUrl category"
+      )
+      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
 
     if (!videos || videos.length === 0) {
       return res.status(404).json({
@@ -264,9 +268,21 @@ const getUserAllVideos = async (req, res) => {
       });
     }
 
+    const filteredVideos = videos.map((video) => ({
+      title: video.title,
+      thumbnail: video.thumbnail,
+      views: video.views,
+      duration: video.duration,
+      video_id: video.video_id,
+      videoUrl: video.videoUrl,
+      category: video.category,
+      channelName: video.user?.publishedDetails?.channelName || "",
+      avatar: video.user?.publishedDetails?.avatar || "",
+    }));
+
     return res.status(200).json({
       success: true,
-      data: videos,
+      data: filteredVideos,
       message: "Videos fetched successfully",
     });
   } catch (error) {
@@ -293,7 +309,8 @@ const getAllVideo = async (req, res) => {
       .select(
         "title thumbnail views duration likesCount video_id videoUrl category"
       )
-      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
+      .populate("user", "publishedDetails.channelName publishedDetails.avatar");    
+
     if (!videos || videos.length === 0) {
       return res.status(404).json({
         success: false,
@@ -315,7 +332,7 @@ const getAllVideo = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: filteredVideos[0],
+      data: filteredVideos,
       message: "Videos fetched successfully",
     });
   } catch (error) {

@@ -10,8 +10,7 @@ const verifyToken = async (req, res, next) => {
         .status(401)
         .json({ success: false, message: "unauthorized request" });
     }
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);    
     const user = await User.findById(decoded.id).select(
       "-password -refreshToken"
     );

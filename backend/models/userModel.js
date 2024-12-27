@@ -21,11 +21,13 @@ const userSchema = new Schema(
         type: String,
         required: true,
         trim: true,
+        unique: true,
         lowercase: true,
       },
       channelName: {
         type: String,
         required: true,
+        unique: true,
         trim: true,
       },
       description: {
@@ -43,10 +45,12 @@ const userSchema = new Schema(
       userName: {
         type: String,
         trim: true,
+        unique: true,
         lowercase: true,
       },
       channelName: {
         type: String,
+        unique: true,
         trim: true,
       },
       description: {
