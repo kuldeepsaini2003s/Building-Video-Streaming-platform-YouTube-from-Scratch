@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { verify } from "jsonwebtoken";
 import {
   toggleCommentLike,
   toggleTweetLike,
   toggleVideoLike,
-} from "../controllers/likesController";
+} from "../controllers/likesController.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route.post("/likeVideo", verify, toggleVideoLike);
-router.route.post("/likeComment", verify, toggleCommentLike);
-router.route.post("/likeTweet", verify, toggleTweetLike);
+router.post("/likeVideo", verifyToken, toggleVideoLike);
+router.post("/likeComment", verifyToken, toggleCommentLike);
+router.post("/likeTweet", verifyToken, toggleTweetLike);
 
 export default router;
