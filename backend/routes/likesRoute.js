@@ -7,9 +7,9 @@ import {
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
-
-router.post("/likeVideo", verifyToken, toggleVideoLike);
-router.post("/likeComment", verifyToken, toggleCommentLike);
-router.post("/likeTweet", verifyToken, toggleTweetLike);
+router.use(verifyToken);
+router.get("/likeVideo", toggleVideoLike);
+router.get("/likeComment", toggleCommentLike);
+router.get("/likeTweet", toggleTweetLike);
 
 export default router;

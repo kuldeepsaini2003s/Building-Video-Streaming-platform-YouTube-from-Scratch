@@ -185,7 +185,7 @@ const getVideoById = async (req, res) => {
 };
 
 const updateVideo = async (req, res) => {
-  const { title, description, category, tags, status } = req.body;
+  const { title, description, category, tags, status } = req.body;  
 
   if (!title || !description || !category || !tags || !status) {
     return res
@@ -204,7 +204,7 @@ const updateVideo = async (req, res) => {
       });
     }
 
-    const thumbnail = req.file;
+    const thumbnail = req.files;
 
     if (!thumbnail) {
       return res.status(400).json({
@@ -309,7 +309,7 @@ const getAllVideo = async (req, res) => {
       .select(
         "title thumbnail views duration likesCount video_id videoUrl category"
       )
-      .populate("user", "publishedDetails.channelName publishedDetails.avatar");    
+      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
 
     if (!videos || videos.length === 0) {
       return res.status(404).json({
