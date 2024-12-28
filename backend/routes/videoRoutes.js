@@ -2,10 +2,10 @@ import { Router } from "express";
 import {
   createVideo,
   getVideoById,
-  getUserAllVideos,
   updateVideo,
   deleteVideo,
   getAllVideo,
+  updateViews,
 } from "../controllers/VideoController.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -21,10 +21,10 @@ router.post(
   createVideo
 );
 router.post("/updateVideo/:id", upload.single("thumbnail"), updateVideo);
+router.post("/getAllVideo", getAllVideo);
 
 router.get("/getVideo/:id", getVideoById);
-router.get("/getUserAllVideo/:userName", getUserAllVideos);
-router.get("/getAllVideo", verifyToken, getAllVideo);
+router.get("/updateViews/:id", updateViews);
 
 router.delete("/deleteVideo/:id", deleteVideo);
 

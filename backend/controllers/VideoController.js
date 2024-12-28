@@ -107,7 +107,7 @@ const getVideoById = async (req, res) => {
       {
         $lookup: {
           from: "likes",
-          localField: "video_id",
+          localField: "_id",
           foreignField: "video",
           as: "likes",
         },
@@ -185,7 +185,7 @@ const getVideoById = async (req, res) => {
 };
 
 const updateVideo = async (req, res) => {
-  const { title, description, category, tags, status } = req.body;  
+  const { title, description, category, tags, status } = req.body;
 
   if (!title || !description || !category || !tags || !status) {
     return res
@@ -242,74 +242,51 @@ const updateVideo = async (req, res) => {
   }
 };
 
-const getUserAllVideos = async (req, res) => {
-  try {
-    const { userName } = req.params;
-
-    const user = await User.findOne({ "publishedDetails.userName": userName });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const videos = await Video.find({ user: user._id, published: true })
-      .select(
-        "title thumbnail views duration likesCount video_id videoUrl category"
-      )
-      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
-
-    if (!videos || videos.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No videos found for this user",
-      });
-    }
-
-    const filteredVideos = videos.map((video) => ({
-      title: video.title,
-      thumbnail: video.thumbnail,
-      views: video.views,
-      duration: video.duration,
-      video_id: video.video_id,
-      videoUrl: video.videoUrl,
-      category: video.category,
-      channelName: video.user?.publishedDetails?.channelName || "",
-      avatar: video.user?.publishedDetails?.avatar || "",
-    }));
-
-    return res.status(200).json({
-      success: true,
-      data: filteredVideos,
-      message: "Videos fetched successfully",
-    });
-  } catch (error) {
-    console.log("Error while getting all videos", error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
-};
-
 const getAllVideo = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const { userName } = req.body;    
+    let user;
+    let videos;
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
+    if (userName) {
+      user = await User.findOne({
+        "publishedDetails.userName": userName,
       });
-    }
 
-    const videos = await Video.find({ published: true })
-      .select(
-        "title thumbnail views duration likesCount video_id videoUrl category"
-      )
-      .populate("user", "publishedDetails.channelName publishedDetails.avatar");
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      videos = await Video.find({ user: user._id, published: true })
+        .select(
+          "title thumbnail views duration likesCount video_id videoUrl category"
+        )
+        .populate(
+          "user",
+          "publishedDetails.channelName publishedDetails.avatar"
+        );
+    } else {
+      user = await User.findById(req.user._id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      videos = await Video.find({ published: true })
+        .select(
+          "title thumbnail views duration likesCount video_id videoUrl category"
+        )
+        .populate(
+          "user",
+          "publishedDetails.channelName publishedDetails.avatar"
+        );
+    }
 
     if (!videos || videos.length === 0) {
       return res.status(404).json({
@@ -340,6 +317,53 @@ const getAllVideo = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
+    });
+  }
+};
+
+const updateViews = async (req, res) => {
+  const { videoId } = req.params;
+
+  try {
+    const video = await Video.findOne({ video_id: videoId });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const updateViews = await Video.findOneAndUpdate(
+      { _id: video._id },
+      { $inc: { views: 1 } }
+    );
+
+    if (!updateViews) {
+      return res.status(403).json({
+        success: false,
+        message: "views updating failed",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Views updated successfully",
+    });
+  } catch (error) {
+    console.error("Error while updating views", error);
+    return res.status(500).json({
+      success: false,
+      message: "something went wrong",
     });
   }
 };
@@ -378,9 +402,9 @@ const deleteVideo = async (req, res) => {
 
 export {
   createVideo,
-  getVideoById,
-  getUserAllVideos,
-  updateVideo,
-  deleteVideo,
+  getVideoById,  
   getAllVideo,
+  updateVideo,
+  updateViews,
+  deleteVideo,
 };
