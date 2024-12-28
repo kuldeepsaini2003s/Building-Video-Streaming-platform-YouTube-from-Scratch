@@ -24,10 +24,10 @@ const toggleVideoLike = async (req, res) => {
       });
     }
 
-    const alreadyLiked = await Like.findOne(
-      { video: videoId },
-      { likeBy: user._id }
-    );
+    const alreadyLiked = await Like.findOne({
+      video: video._id,
+      likeBy: user._id,
+    });
 
     if (alreadyLiked) {
       return res.status(404).json({
@@ -36,10 +36,17 @@ const toggleVideoLike = async (req, res) => {
       });
     }
 
-    await Like.create({
-      video: videoId,
+    const like = await Like.create({
+      video: video._id,
       likeBy: user._id,
     });
+
+    if (!like) {
+      return res.status(400).json({
+        success: false,
+        message: "Unable to like video",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -77,7 +84,7 @@ const disLikeVideo = async (req, res) => {
     }
 
     const like = await Like.findOneAndDelete({
-      video: videoId,
+      video: video._id,
       likeBy: user._id,
     });
 
@@ -123,10 +130,10 @@ const toggleCommentLike = async (req, res) => {
       });
     }
 
-    const alreadyLiked = await Like.findOne(
-      { comment: videoId },
-      { likeBy: user._id }
-    );
+    const alreadyLiked = await Like.findOne({
+      comment: video._id,
+      likeBy: user._id,
+    });
 
     if (alreadyLiked) {
       return res.status(404).json({
@@ -135,10 +142,17 @@ const toggleCommentLike = async (req, res) => {
       });
     }
 
-    await Like.create({
-      comment: videoId,
+    const like = await Like.create({
+      comment: video._id,
       likeBy: user._id,
     });
+
+    if (!like) {
+      return res.status(400).json({
+        success: false,
+        message: "Unable to like video",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -175,10 +189,10 @@ const disLikeComment = async (req, res) => {
       });
     }
 
-    const like = await Like.findOneAndDelete(
-      { comment: videoId },
-      { likeBy: user._id }
-    );
+    const like = await Like.findOneAndDelete({
+      comment: video._id,
+      likeBy: user._id,
+    });
 
     if (!like) {
       return res.status(404).json({
@@ -222,10 +236,10 @@ const toggleTweetLike = async (req, res) => {
       });
     }
 
-    const alreadyLiked = await Like.findOne(
-      { tweet: videoId },
-      { likeBy: user._id }
-    );
+    const alreadyLiked = await Like.findOne({
+      tweet: video._id,
+      likeBy: user._id,
+    });
 
     if (alreadyLiked) {
       return res.status(404).json({
@@ -234,10 +248,17 @@ const toggleTweetLike = async (req, res) => {
       });
     }
 
-    await Like.create({
-      tweet: videoId,
+    const like = await Like.create({
+      tweet: video._id,
       likeBy: user._id,
     });
+
+    if (!like) {
+      return res.status(400).json({
+        success: false,
+        message: "Unable to like video",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -274,10 +295,10 @@ const disLikeTweet = async (req, res) => {
       });
     }
 
-    const like = await Like.findOneAndDelete(
-      { tweet: videoId },
-      { likeBy: user._id }
-    );
+    const like = await Like.findOneAndDelete({
+      tweet: video._id,
+      likeBy: user._id,
+    });
 
     if (!like) {
       return res.status(404).json({
