@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from "react-toastify";
 import {
@@ -7,11 +7,15 @@ import {
   IoImageOutline,
   IoVideocamOutline,
 } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { BACKEND_VIDEO } from "../utils/constants";
-import axios from "axios";
+import UseSingleVideo from "../hooks/UseSingleVideo";
+import { useSelector } from "react-redux";
 
-const CreateVideo = () => {
+const UpdateVideo = () => {
+  const { videoId } = useParams();
+  UseSingleVideo(videoId);
+  const getVideo = useSelector((store) => store.videos.singleVideo);
   const categories = [
     "Education",
     "Entertainment",
@@ -39,30 +43,42 @@ const CreateVideo = () => {
     videoName: "",
     status: true,
   });
-
+  const [initialData, setInitialData] = useState();
   const [preview, setPreview] = useState(null);
   const [submissionDisable, setSubmissionDisable] = useState(false);
   const [tags, setTags] = useState([]);
   const navigate = useNavigate();
   const fileInputRef = useRef();
 
+  useEffect(() => {
+    if (getVideo) {
+      const videoData = {
+        title: getVideo?.title,
+        description: getVideo?.description,
+        category: getVideo?.category,
+        tags: getVideo?.tags,
+        thumbnail: getVideo?.thumbnail,
+        video: getVideo?.videoUrl,
+        videoName: getVideo?.videoName,
+        status: true,
+      };
+      setTags(getVideo?.tags);
+      setFormInput(getVideo);
+      setInitialData(getVideo);
+    }
+  }, [getVideo]);
+
   const handleKeyDownImport = (e) => {
     if (e.key === "Enter" || e.key === "," || e.key === " ") {
       e.preventDefault();
-      const input = e.target.value.trim();
-      if (input) {
-        // Split input by comma, space, or both
-        const newTags = input
-          .split(/[\s,]+/) // Split by spaces or commas
-          .map((tag) => tag.replace(/^#/, "").trim()) // Remove leading '#' and trim spaces
-          .filter((tag) => tag); // Remove empty strings
-
-        // Add new tags to the list, avoiding duplicates
-        const uniqueTags = [...new Set([...tags, ...newTags])];
-        setTags(uniqueTags);
+      const tag = e.target.value.trim();
+      if (tag) {
+        const newTag = tag.replace(/^#/, "");
+        if (!tags.includes(newTag)) {
+          setTags([...tags, `#${newTag}`]);
+        }
       }
-
-      setFormInput({ ...formInput, tags: "" }); // Clear the input field
+      setFormInput({ ...formInput, tags: "" });
     }
   };
 
@@ -77,30 +93,6 @@ const CreateVideo = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    // if (file) {
-    //   const img = new Image();
-    //   const imageURL = URL.createObjectURL(file);
-    //   img.onload = () => {
-    //     const requiredWidth = 1280;
-    //     const requiredHeight = 720;
-    //     if (img.width === requiredWidth && img.height === requiredHeight) {
-    //       setPreview(imageURL);
-    //       setFormInput({ ...formInput, thumbnail: file });
-    //     } else {
-    //       toast.error(`Image must be ${requiredWidth}x${requiredHeight}px`);
-    //       setPreview(null);
-    //       setFormInput({ ...formInput, thumbnail: null });
-    //     }
-    //     URL.revokeObjectURL(imageURL);
-    //   };
-    //   img.onerror = () => {
-    //     toast.error("Invalid image file");
-    //     URL.revokeObjectURL(imageURL);
-    //     setPreview(null);
-    //   };
-    //   img.src = imageURL;
-    //   console.log(img);
-    // }
     if (file) {
       const url = URL.createObjectURL(file);
       setPreview(url);
@@ -154,78 +146,76 @@ const CreateVideo = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("thumbnail", thumbnail);
-    formData.append("video", video);
-    formData.append("tags", tags);
-    formData.append("status", status);
+    if (formInput !== initialData) {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("thumbnail", thumbnail);
+      formData.append("video", video);
+      formData.append("tags", tags);
+      formData.append("status", status);
 
-    const toastId = toast.loading("Creating video...");
+      const toastId = toast.loading("Creating video...");
 
-    try {
-      const response = await axios.post(
-        BACKEND_VIDEO + "/createVideo",
-        formData,
-        {
+      try {
+        const response = await fetch(BACKEND_VIDEO + "/updateVideo", {
+          method: "POST",
+          body: formData,
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          onUploadProgress: (progressEvent) => {
-            const percentage = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            toast.update(toastId, {
-              render: `Upload Progress: ${percentage}%`,
-              type: "info",
-              progress: percentage / 100,
-            });
+          onUploadProgress: (data) => {
+            console.log(data.loaded / data.total);
           },
+        });
+        const data = await response.json();
+        if (
+          response.status === 409 ||
+          response.status === 403 ||
+          response.status === 404 ||
+          response.status === 500 ||
+          response.status === 400
+        ) {
+          toast.update(toastId, {
+            render: data.message,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+            pauseOnFocusLoss: false,
+            closeOnClick: true,
+          });
         }
-      );
-
-      if ([400, 403, 404, 409, 500].includes(response.status)) {
+        if (response.status === 200) {
+          toast.update(toastId, {
+            render: data.message,
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+            pauseOnFocusLoss: false,
+            closeOnClick: true,
+          });
+          navigate("/");
+          setSubmissionDisable(false);
+        }
+      } catch (error) {
+        console.log("Error while creating video", error);
         toast.update(toastId, {
-          render: response.data.message,
+          render: "Something went wrong while creating the video",
           type: "error",
           isLoading: false,
           autoClose: 3000,
           pauseOnFocusLoss: false,
           closeOnClick: true,
         });
-      }
-      if (response.status === 200) {
-        toast.update(toastId, {
-          render: response.data.message,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-          pauseOnFocusLoss: false,
-          closeOnClick: true,
-        });
-        navigate("/");
         setSubmissionDisable(false);
       }
-    } catch (error) {
-      console.log("Error while creating video", error);
-      toast.update(toastId, {
-        render: "Something went wrong while creating the video",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-        pauseOnFocusLoss: false,
-        closeOnClick: true,
-      });
-      setSubmissionDisable(false);
     }
   };
 
   return (
     <div id="main" className="rounded-lg shadow-md px-6 pb-5">
-      <h1 className="mb-3 text-2xl font-bold">Create New Video</h1>
+      <h1 className="mb-3 text-2xl font-bold">Update Video</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
@@ -442,7 +432,7 @@ const CreateVideo = () => {
             disabled={submissionDisable}
             className="bg-red-600 px-6 py-2 rounded-md hover:bg-red-700"
           >
-            Create Video
+            Update Video
           </button>
         </div>
       </form>
@@ -450,4 +440,4 @@ const CreateVideo = () => {
   );
 };
 
-export default CreateVideo;
+export default UpdateVideo;

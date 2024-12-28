@@ -1,10 +1,5 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import Body from "./components/Body";
 import WatchPage from "./components/WatchPage";
 import React, { useEffect, useState } from "react";
 import Shimmer from "./components/Shimmer";
@@ -24,6 +19,9 @@ import {
   UserCommunity,
   UserPlaylist,
 } from "./components/userChannelCollection";
+import UpdateVideo from "./components/UpdateVideo";
+import ProtectedRoutes from "./utils/ProtectedRoutes";
+import LoginBlocker from "./utils/LoginBlocker";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -31,54 +29,69 @@ export const AppRouter = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: "/",
-        element: <VideoContainer />,
-      },
-      {
-        path: "/create-video",
-        element: <CreateVideo />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/signup",
-        element: <SignUp />,
-      },
-      {
-        path: "/:id",
-        element: <Channel />,
+        element: <LoginBlocker />,
         children: [
           {
-            index: true,
-            element: <UserAllVideo />,
+            path: "/login",
+            element: <Login />,
           },
           {
-            path: "videos",
-            element: <UserAllVideo />,
-          },
-          {
-            path: "playlists",
-            element: <UserPlaylist />,
-          },
-          {
-            path: "community",
-            element: <UserCommunity />,
-          },
-          {
-            path: "about",
-            element: <UserAbout />,
+            path: "/signup",
+            element: <SignUp />,
           },
         ],
       },
       {
-        path: "/customize-channel",
-        element: <CustomizeChannel />,
-      },
-      {
-        path: "watch",
-        element: <WatchPage />,
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            path: "/",
+            element: <VideoContainer />,
+          },
+          {
+            path: "/create-video",
+            element: <CreateVideo />,
+          },
+          {
+            path: "/update-video/:videoId",
+            element: <UpdateVideo />,
+          },
+
+          {
+            path: "/:userName",
+            element: <Channel />,
+            children: [
+              {
+                index: true,
+                element: <UserAllVideo />,
+              },
+              {
+                path: "videos",
+                element: <UserAllVideo />,
+              },
+              {
+                path: "playlists",
+                element: <UserPlaylist />,
+              },
+              {
+                path: "community",
+                element: <UserCommunity />,
+              },
+              {
+                path: "about",
+                element: <UserAbout />,
+              },
+            ],
+          },
+          {
+            path: "/customize-channel",
+            element: <CustomizeChannel />,
+          },
+          {
+            path: "watch",
+            element: <WatchPage />,
+          },
+        ],
       },
     ],
   },
@@ -88,7 +101,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const userToken = localStorage.getItem("token");
   const dispatch = useDispatch();
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -128,9 +140,7 @@ function App() {
         <Shimmer />
       ) : (
         <>
-          <RouterProvider router={AppRouter}>
-            <MainLayout />
-          </RouterProvider>
+          <RouterProvider router={AppRouter} />
         </>
       )}
     </>

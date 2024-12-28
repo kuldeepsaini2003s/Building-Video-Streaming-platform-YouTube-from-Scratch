@@ -1,14 +1,17 @@
 import { useDispatch } from "react-redux";
 import { setAllVideos } from "../utils/VideoSlice";
-import { BACKEND_VIDEO } from "../utils/constants";
+import { BACKEND_VIDEO, LOCAL_BACKEND_VIDEO } from "../utils/constants";
 import { useEffect } from "react";
 
-const UseFetchAllVideos = () => {
+const UseFetchAllVideos = (userName) => {
   const dispatch = useDispatch();
   const fetchUserVideos = async () => {
     try {
-      const response = await fetch(BACKEND_VIDEO + `/getAllVideo`, {
+      const response = await fetch(LOCAL_BACKEND_VIDEO + `/getAllVideo`, {
+        method: "POST",
+        body: JSON.stringify({ userName }),
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
@@ -22,7 +25,7 @@ const UseFetchAllVideos = () => {
   };
   useEffect(() => {
     fetchUserVideos();
-  }, []);
+  }, [userName]);
 };
 
 export default UseFetchAllVideos;

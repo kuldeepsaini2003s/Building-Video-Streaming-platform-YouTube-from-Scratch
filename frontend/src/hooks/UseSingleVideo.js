@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setSingleVideo } from "../utils/VideoSlice";
 import { BACKEND_VIDEO } from "../utils/constants";
 
-const UseSingleVideo = ({ videoId }) => {
+const UseSingleVideo = (videoId) => {
   const dispatch = useDispatch();
   const getSingleVideo = async () => {
     const data = await fetch(BACKEND_VIDEO + `/getVideo/${videoId}`, {

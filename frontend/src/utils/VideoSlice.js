@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   videos: null,
   allVideos: null,
-  userVideos: null,
   singleVideo: null,
   youtubeLogo: null,
   youtubeComments: null,
@@ -19,9 +18,6 @@ const videoSlice = createSlice({
     },
     setAllVideos: (state, action) => {
       state.allVideos = action.payload;
-    },
-    setUserVideos: (state, action) => {
-      state.userVideos = action.payload;
     },
     setSingleVideo: (state, action) => {
       state.singleVideo = action.payload;
@@ -49,7 +45,6 @@ export const {
   setYoutubeComments,
   setFetchCategories,
   setCategories,
-  setUserVideos,
 } = videoSlice.actions;
 
 export default videoSlice.reducer;

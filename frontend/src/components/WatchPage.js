@@ -12,6 +12,7 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
+import { BACKEND_LIKE, LOCAL_BACKEND_LIKE } from "../utils/constants";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -26,7 +27,9 @@ const formatViewCount = (viewCount) => {
 const WatchPage = () => {
   const [searchParams] = useSearchParams();
   const [subscribed, setSubscribed] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const [videoLiked, setVideoLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [subscribersCount, setSubscribersCount] = useState(0);
   const [disliked, setDisliked] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const videoId = searchParams.get("v");
@@ -36,7 +39,7 @@ const WatchPage = () => {
   const dispatch = useDispatch();
   const [shimmer, setShimmer] = useState(true);
 
-  UseSingleVideo({ videoId });
+  UseSingleVideo(videoId);
   UseYoutubeComments({ videoId });
   const getVideo = useSelector((store) => store.videos.singleVideo);
 
@@ -49,7 +52,11 @@ const WatchPage = () => {
       setYoutubeComments(getYoutubeComments);
     }
     if (getVideo) {
+      const { likesCount, subscribersCount, subscribed } = getVideo;
       setVideo(getVideo);
+      setLikesCount(likesCount);
+      setSubscribersCount(subscribersCount);
+      setSubscribed(subscribed);
       setShimmer(false);
     }
   }, [getVideo]);
@@ -58,8 +65,6 @@ const WatchPage = () => {
     channelName,
     description,
     duration,
-    likesCount,
-    subscribersCount,
     tags,
     title,
     userAvatar,
@@ -74,14 +79,31 @@ const WatchPage = () => {
   const subscriberHandler = () => {
     setSubscribed(!subscribed);
   };
-  const likeHandler = () => {
-    setLiked(!liked);
+  const likeHandler = async () => {
+    setLikesCount(likesCount + 1);
+    try {
+      const response = await fetch(
+        LOCAL_BACKEND_LIKE + `/likeVideo/${videoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response === 200) {
+        setLikesCount(data?.data);
+      }
+    } catch (error) {
+      console.error("Error while liking a video", error);
+    }
+    setVideoLiked(!videoLiked);
     setDisliked(true);
   };
 
   const dislikeHandler = () => {
     setDisliked(!disliked);
-    setLiked(false);
+    setVideoLiked(false);
   };
   const handleShare = () => {
     const currentUrl = window.location.href;
@@ -112,7 +134,7 @@ const WatchPage = () => {
           <div className="xl:ml-10 max-xl:mx-2 ms:w-full ">
             {/* video */}
             <video
-              className="sm:rounded-xl w-full sm:h-[380px]"
+              className="sm:rounded-xl -z-40 w-full sm:h-[380px]"
               src={videoUrl}
               controls="true"
             ></video>
@@ -158,7 +180,7 @@ const WatchPage = () => {
                         borderBottomLeftRadius: "20px",
                       }}
                     >
-                      {!liked ? (
+                      {!videoLiked ? (
                         <BiLike className="text-[1.3rem]" />
                       ) : (
                         <BiSolidLike className="text-[1.3rem]" />

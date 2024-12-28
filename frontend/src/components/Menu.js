@@ -32,10 +32,12 @@ const Menu = () => {
   ];
 
   const location = useLocation();
-  console.log(location);
 
   return (
-    <div className={`${location.pathname === "/watch" && "hidden"}`} id="sidebar">
+    <div
+      className={`${location.pathname === "/watch" && "hidden"}`}
+      id="sidebar"
+    >
       {/* home-btn */}
       {menu.map((item, index) => (
         <Link key={index} to={item?.path}>
