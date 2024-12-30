@@ -97,11 +97,21 @@ const createVideo = async (req, res) => {
 
 const getVideoById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { videoId } = req.params;
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     const video = await Video.aggregate([
       {
         $match: {
-          video_id: id,
+          video_id: videoId,
         },
       },
       {
@@ -129,9 +139,12 @@ const getVideoById = async (req, res) => {
         },
       },
       {
+        $unwind: "$likes",
+      },
+      {
         $addFields: {
           likesCount: {
-            $size: "$likes",
+            $size: "$likes.likeBy",
           },
           subscribersCount: {
             $size: "$subscribers",
@@ -141,6 +154,36 @@ const getVideoById = async (req, res) => {
           },
           userAvatar: {
             $arrayElemAt: ["$userDetails.publishedDetails.avatar", 0],
+          },
+          videoViewed: {
+            $cond: [
+              {
+                $in: [user._id, "$views"],
+              },
+              true,
+              false,
+            ],
+          },
+          isLiked: {
+            $cond: [
+              {
+                $in: [user._id, "$likes.likeBy"],
+              },
+              true,
+              false,
+            ],
+          },
+          isDisliked: {
+            $cond: [
+              {
+                $in: [user._id, "$likes.dislikeBy"],
+              },
+              true,
+              false,
+            ],
+          },
+          viewsCount: {
+            $size: "$views",
           },
         },
       },
@@ -154,11 +197,14 @@ const getVideoById = async (req, res) => {
           duration: 1,
           user: 1,
           videoUrl: 1,
-          views: 1,
+          viewsCount: 1,
+          videoViewed: 1,
           channelName: 1,
           userAvatar: 1,
           subscribersCount: 1,
           likesCount: 1,
+          isLiked: 1,
+          isDisliked: 1,
         },
       },
     ]);
@@ -244,7 +290,7 @@ const updateVideo = async (req, res) => {
 
 const getAllVideo = async (req, res) => {
   try {
-    const { userName } = req.body;    
+    const { userName } = req.body;
     let user;
     let videos;
 
@@ -298,7 +344,7 @@ const getAllVideo = async (req, res) => {
     const filteredVideos = videos.map((video) => ({
       title: video.title,
       thumbnail: video.thumbnail,
-      views: video.views,
+      viewsCount: video?.views?.length || 0,
       duration: video.duration,
       video_id: video.video_id,
       videoUrl: video.videoUrl,
@@ -343,22 +389,20 @@ const updateViews = async (req, res) => {
       });
     }
 
-    const updateViews = await Video.findOneAndUpdate(
-      { _id: video._id },
-      { $inc: { views: 1 } }
-    );
+    if (!video.views.includes(user._id)) {
+      video.views.push(user._id);
+      await video.save();
 
-    if (!updateViews) {
-      return res.status(403).json({
+      return res.status(200).json({
+        success: true,
+        message: "Views updated successfully",
+      });
+    } else {
+      return res.status(200).json({
         success: false,
-        message: "views updating failed",
+        message: "You have alreayd viewed this video",
       });
     }
-
-    return res.status(200).json({
-      success: true,
-      message: "Views updated successfully",
-    });
   } catch (error) {
     console.error("Error while updating views", error);
     return res.status(500).json({
@@ -402,7 +446,7 @@ const deleteVideo = async (req, res) => {
 
 export {
   createVideo,
-  getVideoById,  
+  getVideoById,
   getAllVideo,
   updateVideo,
   updateViews,

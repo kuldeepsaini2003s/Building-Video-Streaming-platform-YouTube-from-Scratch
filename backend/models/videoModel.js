@@ -22,10 +22,12 @@ const videoSchema = new Schema(
       type: Number,
       required: true,
     },
-    views: {
-      type: Number,
-      default: 0,
-    },
+    views: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     published: {
       type: Boolean,
       default: true,

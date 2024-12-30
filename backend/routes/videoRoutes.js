@@ -23,8 +23,8 @@ router.post(
 router.post("/updateVideo/:id", upload.single("thumbnail"), updateVideo);
 router.post("/getAllVideo", getAllVideo);
 
-router.get("/getVideo/:id", getVideoById);
-router.get("/updateViews/:id", updateViews);
+router.get("/getVideo/:videoId", getVideoById);
+router.get("/updateViews/:videoId", updateViews);
 
 router.delete("/deleteVideo/:id", deleteVideo);
 

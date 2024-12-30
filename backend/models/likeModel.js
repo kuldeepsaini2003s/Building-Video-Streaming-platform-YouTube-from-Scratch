@@ -10,10 +10,18 @@ const likeSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Comment",
     },
-    likeBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
+    likeBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    dislikeBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     tweet: {
       type: Schema.Types.ObjectId,
       ref: "Tweet",
