@@ -12,7 +12,9 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
-import { BACKEND_LIKE, LOCAL_BACKEND_LIKE } from "../utils/constants";
+import { BACKEND_VIDEO } from "../utils/constants";
+import axios from "axios";
+import UseLikeHandler from "../hooks/UseLikeHandler";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -27,34 +29,26 @@ const formatViewCount = (viewCount) => {
 const WatchPage = () => {
   const [searchParams] = useSearchParams();
   const [subscribed, setSubscribed] = useState(false);
-  const [videoLiked, setVideoLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
   const [subscribersCount, setSubscribersCount] = useState(0);
-  const [disliked, setDisliked] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const videoId = searchParams.get("v");
   const [video, setVideo] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [youtubecomments, setYoutubeComments] = useState([]);
   const dispatch = useDispatch();
   const [shimmer, setShimmer] = useState(true);
 
-  UseSingleVideo(videoId);
-  UseYoutubeComments({ videoId });
+  const { liked, disliked, likesCount, likeHandler, dislikeHandler } =
+    UseLikeHandler(videoId);
+
+  if (videoId) {
+    UseSingleVideo(videoId);
+  }
   const getVideo = useSelector((store) => store.videos.singleVideo);
 
-  const getYoutubeComments = useSelector(
-    (store) => store.videos.youtubecomments
-  );
-
   useEffect(() => {
-    if (getYoutubeComments) {
-      setYoutubeComments(getYoutubeComments);
-    }
     if (getVideo) {
-      const { likesCount, subscribersCount, subscribed } = getVideo;
+      const { subscribersCount, subscribed } = getVideo;
       setVideo(getVideo);
-      setLikesCount(likesCount);
       setSubscribersCount(subscribersCount);
       setSubscribed(subscribed);
       setShimmer(false);
@@ -69,8 +63,29 @@ const WatchPage = () => {
     title,
     userAvatar,
     videoUrl,
-    views,
+    videoViewed,
+    viewsCount,
   } = video;
+
+  useEffect(() => {
+    const updateViews = async () => {
+      try {
+        await axios.get(BACKEND_VIDEO + `/updateViews/${videoId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+      } catch (error) {
+        console.error("Error while updating views", error);
+      }
+    };
+    if (!videoViewed) {
+      const timeout = setTimeout(() => {
+        updateViews();
+      }, 10000);
+      return () => clearTimeout(timeout);
+    }
+  }, [videoViewed, videoId]);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -79,32 +94,7 @@ const WatchPage = () => {
   const subscriberHandler = () => {
     setSubscribed(!subscribed);
   };
-  const likeHandler = async () => {
-    setLikesCount(likesCount + 1);
-    try {
-      const response = await fetch(
-        LOCAL_BACKEND_LIKE + `/likeVideo/${videoId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (response === 200) {
-        setLikesCount(data?.data);
-      }
-    } catch (error) {
-      console.error("Error while liking a video", error);
-    }
-    setVideoLiked(!videoLiked);
-    setDisliked(true);
-  };
 
-  const dislikeHandler = () => {
-    setDisliked(!disliked);
-    setVideoLiked(false);
-  };
   const handleShare = () => {
     const currentUrl = window.location.href;
     navigator.clipboard.writeText(currentUrl);
@@ -180,7 +170,7 @@ const WatchPage = () => {
                         borderBottomLeftRadius: "20px",
                       }}
                     >
-                      {!videoLiked ? (
+                      {!liked ? (
                         <BiLike className="text-[1.3rem]" />
                       ) : (
                         <BiSolidLike className="text-[1.3rem]" />
@@ -192,7 +182,7 @@ const WatchPage = () => {
                       onClick={dislikeHandler}
                       className="cursor-pointer px-4 rounded-full rounded-l-none py-2 dark:hover:bg-hover_icon_black "
                     >
-                      {disliked ? (
+                      {!disliked ? (
                         <BiDislike className="text-[1.3rem]" />
                       ) : (
                         <BiSolidDislike className="text-[1.3rem]" />
@@ -217,7 +207,7 @@ const WatchPage = () => {
               <div className="gap-2 flex flex-col mt-2 sm:m-0 text-sm bg-lightgray dark:bg-icon_black rounded-2xl p-3">
                 {/* views */}
                 <div className="flex items-center gap-x-2 font-semibold flex-wrap ">
-                  <p className="p-0 m-0">{formatViewCount(views)} views</p>
+                  <p className="p-0 m-0">{formatViewCount(viewsCount)} views</p>
                   <p className="p-0 m-0">{duration} </p>
                   <div
                     className={`${showFullDescription ? "" : "line-clamp-1 "}`}

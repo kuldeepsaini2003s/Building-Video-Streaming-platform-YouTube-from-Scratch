@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import UseVideoCategories from "../hooks/UseVideoCategories";
-import UseSearchSuggestions from "../hooks/UseSearchSuggestions";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchQuary } from "../utils/SearchSlice";
 import { toggleSlider } from "../utils/appSlice";
@@ -13,11 +12,8 @@ import { setUser } from "../utils/userSlice";
 import { toast } from "react-toastify";
 import "@theme-toggles/react/css/Expand.css";
 import { Expand } from "@theme-toggles/react";
-import UseFetchAllVideos from "../hooks/useFetchAllVideos";
 
 const Navbar = () => {
-  UseFetchAllVideos();
-  UseSearchSuggestions();
   UseVideoCategories();
 
   const [inputValue, setInputValue] = useState("");

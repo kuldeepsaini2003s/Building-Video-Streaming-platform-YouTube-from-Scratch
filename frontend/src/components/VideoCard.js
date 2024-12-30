@@ -18,7 +18,7 @@ const formatDuration = (duration) => {
 };
 
 const VideoCard = ({ info }) => {
-  const { title, duration, thumbnail, views, channelName, avatar } = info;
+  const { title, duration, thumbnail, viewsCount, channelName, avatar } = info;
 
   return (
     <div>
@@ -55,7 +55,7 @@ const VideoCard = ({ info }) => {
             <p className="text-Lightblack text-sm">{channelName}</p>
             <p className="flex items-center ">
               <span className="text-Lightblack text-sm">
-                {formatViewCount(views)} views
+                {formatViewCount(viewsCount)} views
               </span>
               <span>
                 <svg

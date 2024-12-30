@@ -5,7 +5,6 @@ import { BACKEND_USER } from "../utils/constants";
 import { useSelector } from "react-redux";
 import { FaCircleUser } from "react-icons/fa6";
 import UseFetchAllVideos from "../hooks/useFetchAllVideos";
-import Shimmer from "./Shimmer";
 import ShimmerCard from "./ShimmerCard";
 
 const channelNavigation = [
@@ -29,9 +28,11 @@ const channelNavigation = [
 
 const Channel = () => {
   const { userName } = useParams();
-  UseFetchAllVideos(userName && userName);
+  if (userName) {
+    UseFetchAllVideos(userName && userName);
+  }
   const user = useSelector((store) => store.user.user);
-  const userVideos = useSelector((store) => store.videos?.allVideos);  
+  const userVideos = useSelector((store) => store.videos?.allVideos);
   const [channelDetails, setChannelDetails] = useState({});
   const [userVideosCount, setUserVideosCount] = useState(0);
   const [shimmer, setShimmer] = useState(true);
