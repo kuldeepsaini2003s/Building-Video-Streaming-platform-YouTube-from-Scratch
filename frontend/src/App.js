@@ -114,24 +114,18 @@ function App() {
         const data = await response.json();
         if (response.status === 200) {
           dispatch(setUser(data.data));
+          setLoading(false);
         }
       } catch (error) {
         console.log("error while checking token", error);
       }
     };
-    if (userToken) {
-      fetchUser();
-    }
+    fetchUser();
   }, [userToken]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     document.body.classList.add("className", savedTheme);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   return (
