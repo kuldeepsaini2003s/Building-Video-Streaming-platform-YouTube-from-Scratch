@@ -12,43 +12,49 @@ import { GrHistory } from "react-icons/gr";
 import { MdOutlineWatchLater } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-const tabs = [
-  {
-    name: "Home",
-    icon: <IoMdHome className="text-[1.4rem]" />,
-    path: "/",
-  },
-  {
-    name: "Shorts",
-    icon: <SiYoutubeshorts className="text-[1.1rem]" />,
-  },
-  {
-    name: "Subscribers",
-    icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
-  },
-];
-
-const userTabs = [
-  {
-    name: "Your channel",
-    icon: <BsPersonSquare className="text-[1.2rem]" />,
-  },
-  {
-    name: "History",
-    icon: <GrHistory className="text-[1.1rem]" />,
-  },
-  {
-    name: "Your Videos",
-    icon: <MdOutlineVideoLibrary className="text-[1.3rem]" />,
-  },
-  {
-    name: "Watch later",
-    icon: <MdOutlineWatchLater className="text-[1.3rem]" />,
-  },
-];
-
 const Slider = () => {
   const dispatch = useDispatch();
+  const user = useSelector((store) => store.user.user);
+
+  const tabs = [
+    {
+      name: "Home",
+      icon: <IoMdHome className="text-[1.4rem]" />,
+      path: "/",
+    },
+    {
+      name: "Shorts",
+      icon: <SiYoutubeshorts className="text-[1.1rem]" />,
+    },
+    {
+      name: "Subscribers",
+      icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
+    },
+  ];
+
+  const userTabs = [
+    {
+      name: "Your channel",
+      icon: <BsPersonSquare className="text-[1.2rem]" />,
+      path: `/${user.userName}`,
+    },
+    {
+      name: "History",
+      icon: <GrHistory className="text-[1.1rem]" />,
+      path: `/history`,
+    },
+    {
+      name: "Your Videos",
+      icon: <MdOutlineVideoLibrary className="text-[1.3rem]" />,
+      path: `/${user.userName}/videos`,
+    },
+    {
+      name: "Watch later",
+      icon: <MdOutlineWatchLater className="text-[1.3rem]" />,
+      path: `/${user.userName}`,
+    },
+  ];
+
   const isSliderOpen = useSelector((store) => store.app.open);
 
   const handleToggle = () => {
@@ -170,14 +176,17 @@ const Slider = () => {
               <MdOutlineKeyboardArrowRight className="text-[1.3rem] mt-1" />
             </div>
             {userTabs.map((item, index) => (
-              <div
-                key={index}
-                id="HomeBtn menu-items"
-                className="slider-icon active flex hover:bg-Gray dark:hover:bg-icon_black items-center px-3 rounded-xl py-3"
-              >
-                {item.icon}
-                <p className="text-sm  pl-6">{item.name}</p>
-              </div>
+              <Link to={item.path}>
+                <div
+                  key={index}
+                  onClick={handleToggle}
+                  id="HomeBtn menu-items"
+                  className="slider-icon active flex hover:bg-Gray dark:hover:bg-icon_black items-center px-3 rounded-xl py-3"
+                >
+                  {item.icon}
+                  <p className="text-sm  pl-6">{item.name}</p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

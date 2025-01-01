@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import UseSingleVideo from "../hooks/UseSingleVideo";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "../Images/user.avif";
@@ -12,9 +12,15 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
-import { BACKEND_VIDEO } from "../utils/constants";
+import { BACKEND_VIDEO, LOCAL_BACKEND_SUBSCRIPTION } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
+import Lottie from "lottie-react";
+import bell_icon_black from "../Icons/Bell-icon-black.json";
+import bell_icon_white from "../Icons/Bell-icon-white.json";
+import { FaRegBookmark } from "react-icons/fa";
+import { CreatePlaylist, SavePlaylist } from "./PlaylistPage";
+import { Bookmark } from "lucide-react";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -36,13 +42,16 @@ const WatchPage = () => {
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
   const [shimmer, setShimmer] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPop, setShowPop] = useState(false);
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
 
   const { liked, disliked, likesCount, likeHandler, dislikeHandler } =
     UseLikeHandler(videoId);
+  UseSingleVideo(videoId);
 
-  if (videoId) {
-    UseSingleVideo(videoId);
-  }
+  const currentUser = useSelector((store) => store.user.user);
   const getVideo = useSelector((store) => store.videos.singleVideo);
 
   useEffect(() => {
@@ -62,9 +71,11 @@ const WatchPage = () => {
     tags,
     title,
     userAvatar,
+    userName,
     videoUrl,
     videoViewed,
     viewsCount,
+    user,
   } = video;
 
   useEffect(() => {
@@ -91,8 +102,24 @@ const WatchPage = () => {
     setShowFullDescription(!showFullDescription);
   };
 
-  const subscriberHandler = () => {
-    setSubscribed(!subscribed);
+  const subscriberHandler = async () => {
+    if (!subscribed) {
+      try {
+        await axios.get(
+          LOCAL_BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error while subscribing channel", error);
+      }
+      setSubscribed(true);
+    } else {
+      setShowPop(true);
+    }
   };
 
   const handleShare = () => {
@@ -112,6 +139,49 @@ const WatchPage = () => {
       })
     );
     setInputValue("");
+  };
+
+  const handleConfirmation = async () => {
+    try {
+      await axios.get(
+        LOCAL_BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error while subscribing channel", error);
+    }
+    setSubscribed(false);
+  };
+
+  const ConfirmationPop = () => {
+    return (
+      <div
+        onClick={() => setShowPop(false)}
+        className="absolute w-dvw h-dvh top-0 left-0 remove-scrollbar bg-black bg-opacity-30 flex justify-center items-center"
+      >
+        <div className="text-Lightblack bg-[#212121] flex flex-col justify-between items-center h-36 rounded-md p-5">
+          <p>Unsubscribe from {channelName}</p>
+          <div className="flex gap-4 items-center justify-end">
+            <button
+              onClick={() => setShowPop(false)}
+              className="px-4 py-1 rounded-full font-medium dark:hover:bg-hover_icon_black dark:text-white hover:bg-lightgray"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmation}
+              className="px-4 py-1 rounded-full font-medium text-[#388BD4] hover:bg-[#3ca4ff36]"
+            >
+              Unsubscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -145,26 +215,41 @@ const WatchPage = () => {
                     />
                     <div>
                       <p className="font-medium">{channelName}</p>
-                      <p className="text-xs text-[#656565]">
+                      <p className="text-xs text-Lightblack font-medium">
                         {subscribersCount} subscribers
                       </p>
                     </div>
                   </div>
                   {/* subscribe-btn */}
-                  <button
-                    onClick={subscriberHandler}
-                    className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex items-center text-sm cursor-pointer rounded-3xl"
-                  >
-                    {subscribed && <FaRegBell className="text-[1rem] mr-1" />}
-                    {!subscribed ? "Subscribe" : "Subscribed"}
-                  </button>
+                  {currentUser?._id !== user ? (
+                    <button
+                      onClick={subscriberHandler}
+                      className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
+                    >
+                      {!subscribed ? "Subscribe" : "Subscribed"}
+                      {subscribed && (
+                        <Lottie
+                          animationData={bell_icon_white}
+                          play={isPlaying}
+                          loop={false}
+                          className="w-6"
+                        />
+                      )}
+                    </button>
+                  ) : (
+                    <Link to={`/${userName}`}>
+                      <button className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl">
+                        View Channel
+                      </button>
+                    </Link>
+                  )}
                 </div>
                 <div className="flex items-center gap-2  text-sm font-medium max-sm:p-2">
                   {/* like-btn */}
                   <div className="user-info flex items-center bg-lightgray dark:bg-icon_black rounded-full ">
                     <div
                       onClick={likeHandler}
-                      className="watch-btn flex gap-1 items-center px-3 py-2 select-none dark:hover:bg-hover_icon_black  cursor-pointer"
+                      className="watch-btn flex gap-1 items-center px-4 py-2 select-none dark:hover:bg-hover_icon_black  cursor-pointer"
                       style={{
                         borderTopLeftRadius: "20px",
                         borderBottomLeftRadius: "20px",
@@ -191,15 +276,18 @@ const WatchPage = () => {
                   </div>
                   {/* share-btn */}
                   <div
-                    className="watch-btn user-info flex items-center gap-1 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-3 py-2 cursor-pointer "
+                    className="watch-btn user-info flex items-center gap-1 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-4 py-2 cursor-pointer "
                     onClick={handleShare}
                   >
                     <RiShareForwardLine className="text-[1.3rem]" />
                     <p>Share</p>
                   </div>
                   {/* option-btn */}
-                  <div className="watch-btn bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl p-2 cursor-pointer ">
-                    <HiOutlineDotsHorizontal className="text-[1.3rem]" />
+                  <div
+                    onClick={() => setShowPlaylist(true)}
+                    className="watch-btn user-info flex items-center gap-2 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-4 py-2 cursor-pointer "
+                  >
+                    <Bookmark strokeWidth={2} size={21} /> Save
                   </div>
                 </div>
               </div>
@@ -212,12 +300,11 @@ const WatchPage = () => {
                   <div
                     className={`${showFullDescription ? "" : "line-clamp-1 "}`}
                   >
-                    {tags &&
-                      tags.length > 0 &&
-                      tags.map((tag, index) => (
+                    {tags?.length > 0 &&
+                      tags?.map((tag, index) => (
                         <span
                           key={index}
-                          className="text-[#656565] p-0 m-0 white"
+                          className="text-Lightblack p-0 m-0 white"
                         >
                           {tag}
                         </span>
@@ -314,6 +401,19 @@ const WatchPage = () => {
               <LuSendHorizontal className="text-[1.3rem]" />
             </div>
           </div>
+          {showPop && <ConfirmationPop />}
+          {showCreatePlaylist && (
+            <CreatePlaylist
+              setShowCreatePlaylist={setShowCreatePlaylist}
+              setShowPlaylist={setShowPlaylist}
+            />
+          )}
+          {showPlaylist && (
+            <SavePlaylist
+              setShowPlaylist={setShowPlaylist}
+              setShowCreatePlaylist={setShowCreatePlaylist}
+            />
+          )}
         </div>
       )}
     </>

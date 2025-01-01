@@ -23,7 +23,7 @@ const VideoCard = ({ info }) => {
   return (
     <div>
       <img
-        className="ml:rounded-md sm:h-[12rem]  ms:h-[12rem] object-cover object-center w-full"
+        className="ml:rounded-md sm:h-[10rem]  ms:h-[12rem] object-cover object-center w-full"
         alt="Thumbnails"
         src={thumbnail}
       />

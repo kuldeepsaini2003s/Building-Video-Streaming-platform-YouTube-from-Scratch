@@ -9,7 +9,7 @@ const useResponseHandler = () => {
   }) => {
     const errorStatusCodes = [400, 401, 402, 403, 404, 409, 500];
 
-    if (status === 200) {
+    if (status === 200 || status === 201) {
       toast.update(toastId, {
         render: message,
         type: "success",

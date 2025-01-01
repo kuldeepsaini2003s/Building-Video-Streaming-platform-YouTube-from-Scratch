@@ -4,15 +4,18 @@ export const LOCAL_BACKEND_USER = "http://localhost:8000/api/users";
 export const LOCAL_BACKEND_VIDEO = "http://localhost:8000/api/videos";
 export const LOCAL_BACKEND_PLAYLIST = "http://localhost:8000/api/playlists";
 export const LOCAL_BACKEND_LIKE = "http://localhost:8000/api/likes";
+export const LOCAL_BACKEND_SUBSCRIPTION =
+  "http://localhost:8000/api/subscriptions";
 
 export const BACKEND_USER = "https://streamtube-kuldeep.onrender.com/api/users";
 export const BACKEND_VIDEO =
   "https://streamtube-kuldeep.onrender.com/api/videos";
 export const BACKEND_PLAYLIST =
   "https://streamtube-kuldeep.onrender.com/api/playlists";
-export const BACKEND_LIKE =
-  "https://streamtube-kuldeep.onrender.com/api/likes";
-  
+export const BACKEND_LIKE = "https://streamtube-kuldeep.onrender.com/api/likes";
+export const BACKEND_SUBSCRIPTION =
+  "https://streamtube-kuldeep.onrender.com/api/subscriptions";
+
 export const YOUTUBE_VIDEOS_API =
   "https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=50&regionCode=IN&key=" +
   YOUTUBE_API_KEY;

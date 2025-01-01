@@ -8,7 +8,7 @@ module.exports = {
         white: "#fdfdff",
         black: "#000000",
         icon_black: "#292929",
-        Lightblack: "#5a5a5a",
+        Lightblack: "#8b8b8b",
         Gray: "#cccccc",
         lightgray: "#f2f2f2",
         hover_icon_black: "#3b3b3b",
