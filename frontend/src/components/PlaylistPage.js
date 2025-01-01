@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { LOCAL_BACKEND_PLAYLIST } from "../utils/constants";
+import { BACKEND_PLAYLIST } from "../utils/constants";
 import useResponseHandler from "../hooks/UseResponseHandler";
 import { FiChevronDown } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -59,7 +59,7 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
     const toastId = toast.loading("Adding video to playlist...");
     try {
       const response = await axios.post(
-        LOCAL_BACKEND_PLAYLIST + "/createPlaylist",
+        BACKEND_PLAYLIST + "/createPlaylist",
         details,
         {
           headers: {

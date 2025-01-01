@@ -3,7 +3,7 @@ import VideoCard from "./VideoCard";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { LOCAL_BACKEND_PLAYLIST } from "../utils/constants";
+import { BACKEND_PLAYLIST } from "../utils/constants";
 import { IoMdGlobe } from "react-icons/io";
 import { LockKeyhole } from "lucide-react";
 
@@ -40,7 +40,7 @@ export const UserPlaylist = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          LOCAL_BACKEND_PLAYLIST + `/userPlaylist/${user._id}`,
+          BACKEND_PLAYLIST + `/userPlaylist/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

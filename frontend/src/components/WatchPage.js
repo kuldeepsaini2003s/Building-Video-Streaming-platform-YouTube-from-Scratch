@@ -12,7 +12,7 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
-import { BACKEND_VIDEO, LOCAL_BACKEND_SUBSCRIPTION } from "../utils/constants";
+import { BACKEND_SUBSCRIPTION, BACKEND_VIDEO,  } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
 import Lottie from "lottie-react";
@@ -106,7 +106,7 @@ const WatchPage = () => {
     if (!subscribed) {
       try {
         await axios.get(
-          LOCAL_BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`,
+          BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -144,7 +144,7 @@ const WatchPage = () => {
   const handleConfirmation = async () => {
     try {
       await axios.get(
-        LOCAL_BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`,
+        BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { LOCAL_BACKEND_LIKE } from "../utils/constants";
+import { BACKEND_LIKE } from "../utils/constants";
 
 const UseLikeHandler = (videoId) => {
   const [liked, setLiked] = useState(false);
@@ -21,8 +21,8 @@ const UseLikeHandler = (videoId) => {
     if (!liked) {
       setLikesCount(likesCount + 1);
       try {
-        const response = await fetch(
-          LOCAL_BACKEND_LIKE + `/likeVideo/${videoId}`,
+        await fetch(
+          BACKEND_LIKE + `/likeVideo/${videoId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -41,8 +41,8 @@ const UseLikeHandler = (videoId) => {
     if (!disliked) {
       setLikesCount(likesCount - 1);
       try {
-        const response = await fetch(
-          LOCAL_BACKEND_LIKE + `/disLikeVideo/${videoId}`,
+        await fetch(
+          BACKEND_LIKE + `/disLikeVideo/${videoId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
