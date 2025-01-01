@@ -6,20 +6,17 @@ const playlistSchema = new Schema(
       type: String,
       require: true,
     },
-    description: {
-      type: String,
-      require: true,
-    },
-    thumbnail: {
-      type: String,
-      require: true,
-    },
     video: [
       {
         type: Schema.Types.ObjectId,
         ref: "Video",
       },
     ],
+    status: {
+      type: String,
+      enum: ["Private", "Public"],
+      default: "Private",
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",

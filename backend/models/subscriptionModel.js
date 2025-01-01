@@ -6,6 +6,10 @@ const subscriptionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    channelName: {
+      type: String,
+      require: true,
+    },
     channel: {
       type: Schema.Types.ObjectId,
       ref: "User",

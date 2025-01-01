@@ -402,10 +402,17 @@ const updateUserDetails = async (req, res) => {
 
 const getUserDetails = async (req, res) => {
   const user = await User.findById(req.user._id);
-  const userData = user.publishedDetails;
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
   return res.status(200).json({
     success: true,
-    data: userData,
+    data: user.publishedDetails,
     message: "user data fetched successfully",
   });
 };

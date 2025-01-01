@@ -1,31 +1,55 @@
 import { Playlist } from "../models/playlistModel.js";
 import { User } from "../models/userModel.js";
+import { Video } from "../models/videoModel.js";
 
 const createPlaylist = async (req, res) => {
-  const { title, description } = req.body;
-
-  if (!title || !description) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required" });
-  }
-
-  const user = await User.findById(req.user._id);
-
-  if (!req.user) {
-    return res.status(400).json({ success: false, message: "User not found" });
-  }
-
   try {
-    const playlist = await Playlist.create({
+    const { title, status, videoId } = req.body;
+
+    if (!title || !status || !videoId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const video = await Video.findOne({ video_id: videoId });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const existingPlaylist = await Playlist.findOne({
       title,
-      description,
+      owner: user._id,
+    });
+
+    if (existingPlaylist) {
+      return res.status(201).json({
+        success: false,
+        message: "Playlist already exist",
+      });
+    }
+
+    await Playlist.create({
+      title,
+      video: [video._id],
+      status,
       owner: user._id,
     });
 
     return res.status(200).json({
       success: true,
-      data: playlist,
       message: "Playlist created successfully",
     });
   } catch (error) {
@@ -88,7 +112,45 @@ const getUserPlaylist = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const playlists = await Playlist.find({ owner: user._id });
+    const playlists = await Playlist.aggregate([
+      {
+        $match: {
+          owner: user._id,
+        },
+      },
+      {
+        $addFields: {
+          video_id: {
+            $toObjectId: {
+              $arrayElemAt: ["$video", 0],
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "video_id",
+          foreignField: "_id",
+          as: "videoDetails",
+        },
+      },
+      {
+        $addFields: {
+          thumbnail: {
+            $arrayElemAt: ["$videoDetails.thumbnail", 0],
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          status: 1,
+          owner: 1,
+          thumbnail: 1,
+        },
+      },
+    ]);
 
     if (!playlists || playlists.length === 0) {
       return res

@@ -149,11 +149,23 @@ const getVideoById = async (req, res) => {
           subscribersCount: {
             $size: "$subscribers",
           },
+          subscribed: {
+            $cond: {
+              if: {
+                $in: [req.user._id, "$subscribers.subscriber"],
+              },
+              then: true,
+              else: false,
+            },
+          },
           channelName: {
             $arrayElemAt: ["$userDetails.publishedDetails.channelName", 0],
           },
           userAvatar: {
             $arrayElemAt: ["$userDetails.publishedDetails.avatar", 0],
+          },
+          userName: {
+            $arrayElemAt: ["$userDetails.publishedDetails.userName", 0],
           },
           videoViewed: {
             $cond: [
@@ -200,8 +212,10 @@ const getVideoById = async (req, res) => {
           viewsCount: 1,
           videoViewed: 1,
           channelName: 1,
+          userName: 1,
           userAvatar: 1,
           subscribersCount: 1,
+          subscribed: 1,
           likesCount: 1,
           isLiked: 1,
           isDisliked: 1,

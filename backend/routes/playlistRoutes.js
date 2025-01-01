@@ -17,7 +17,7 @@ router.post("/createPlaylist", createPlaylist);
 router.post("/updatePlaylist/:playlistId", updatePlaylist);
 router.post("/addVideoToPlaylist/:videoId", addVideoToPlaylist);
 
-router.get("/getUserPlaylist/:userId", getUserPlaylist);
+router.get("/userPlaylist/:userId", getUserPlaylist);
 router.get("/getPlaylist/:playlistId", getPlaylistById);
 router.get("/deleteVideoFromPlaylist/:videoId", removeVideoFromPlaylist);
 
