@@ -6,6 +6,7 @@ import axios from "axios";
 import { BACKEND_PLAYLIST } from "../utils/constants";
 import { IoMdGlobe } from "react-icons/io";
 import { LockKeyhole } from "lucide-react";
+import { IoMdPlay } from "react-icons/io";
 
 export const UserAllVideo = () => {
   const [videos, setVideos] = useState([]);
@@ -59,23 +60,30 @@ export const UserPlaylist = () => {
     }
   }, [user._id]);
   return (
-    <div className="grid grid-cols-5 gap-2 mt-4">
+    <div className="grid grid-cols-5 gap-2 my-4">
       {playlist ? (
         playlist?.map((item) => (
-          <div className="relative space-y-[2px] h-40">
+          <div className="relative cursor-pointer space-y-[2px] group">
             <div className="flex flex-col justify-center items-center">
               <div className="w-[88%] border-b-4 border-l-transparent border-r-transparent border-l-4 border-r-4 mb-[1px] border-[#514842]"></div>
               <div className="w-[93%] border-b-4 border-l-transparent border-r-transparent border-l-4 border-r-4   border-[#938176]"></div>
-              <div className="relative w-full">
-              <img
-                src={item?.thumbnail}
-                className="w-full h-32 object-cover object-center rounded-md bg-yellow-500"
-              ></img>              
-              <div></div>
+              <div className="relative w-full ">
+                <img
+                  src={item?.thumbnail}
+                  className="w-full h-32 object-cover object-center rounded-md bg-yellow-500"
+                ></img>
+                <div className="hidden rounded-md group-hover:block absolute w-full h-full top-0 bg-black bg-opacity-70">
+                  <p className="flex justify-center items-center h-full w-full">
+                    <IoMdPlay /> Play all
+                  </p>
+                </div>
+                <div></div>
               </div>
             </div>
             <div className="w-[90%]">
-              <h1 className="text-sm line-clamp-2 font-medium mt-2">{item?.title}</h1>
+              <h1 className="text-sm line-clamp-2 font-medium mt-2">
+                {item?.title}
+              </h1>
               <div className="flex justify-between font-medium items-center text-Lightblack text-xs">
                 <h1>View full playlist</h1>
                 {item.owner === user._id && (

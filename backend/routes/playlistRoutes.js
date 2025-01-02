@@ -2,11 +2,11 @@ import { Router } from "express";
 import {
   createPlaylist,
   updatePlaylist,
-  getUserPlaylist,
-  getPlaylistById,
-  addVideoToPlaylist,
-  removeVideoFromPlaylist,
   deletePlaylist,
+  removeVideo,
+  addVideo,
+  userPlaylist,
+  playlistById,
 } from "../controllers/PlaylistController.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
@@ -15,11 +15,11 @@ router.use(verifyToken);
 
 router.post("/createPlaylist", createPlaylist);
 router.post("/updatePlaylist/:playlistId", updatePlaylist);
-router.post("/addVideoToPlaylist/:videoId", addVideoToPlaylist);
+router.post("/addVideo", addVideo);
+router.post("/removeVideo", removeVideo);
 
-router.get("/userPlaylist/:userId", getUserPlaylist);
-router.get("/getPlaylist/:playlistId", getPlaylistById);
-router.get("/deleteVideoFromPlaylist/:videoId", removeVideoFromPlaylist);
+router.get("/userPlaylist/:userId", userPlaylist);
+router.get("/getPlaylist/:playlistId", playlistById);
 
 router.delete("/deletePlaylist/:playlistId", deletePlaylist);
 

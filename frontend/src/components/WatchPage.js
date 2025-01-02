@@ -12,7 +12,10 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
-import { BACKEND_SUBSCRIPTION, BACKEND_VIDEO,  } from "../utils/constants";
+import {
+  BACKEND_SUBSCRIPTION,  
+  BACKEND_VIDEO,
+} from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
 import Lottie from "lottie-react";
@@ -21,6 +24,7 @@ import bell_icon_white from "../Icons/Bell-icon-white.json";
 import { FaRegBookmark } from "react-icons/fa";
 import { CreatePlaylist, SavePlaylist } from "./PlaylistPage";
 import { Bookmark } from "lucide-react";
+import { MdBookmarkAdded } from "react-icons/md";
 
 const formatViewCount = (viewCount) => {
   if (viewCount >= 1e6) {
@@ -75,6 +79,7 @@ const WatchPage = () => {
     videoUrl,
     videoViewed,
     viewsCount,
+    videoSaved,
     user,
   } = video;
 
@@ -105,14 +110,11 @@ const WatchPage = () => {
   const subscriberHandler = async () => {
     if (!subscribed) {
       try {
-        await axios.get(
-          BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        await axios.get(BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
       } catch (error) {
         console.error("Error while subscribing channel", error);
       }
@@ -143,14 +145,11 @@ const WatchPage = () => {
 
   const handleConfirmation = async () => {
     try {
-      await axios.get(
-        BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await axios.get(BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
     } catch (error) {
       console.error("Error while subscribing channel", error);
     }
@@ -283,12 +282,18 @@ const WatchPage = () => {
                     <p>Share</p>
                   </div>
                   {/* option-btn */}
-                  <div
-                    onClick={() => setShowPlaylist(true)}
-                    className="watch-btn user-info flex items-center gap-2 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-4 py-2 cursor-pointer "
-                  >
-                    <Bookmark strokeWidth={2} size={21} /> Save
-                  </div>
+                  {videoSaved ? (
+                    <button className="watch-btn user-info flex items-center gap-2 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-4 py-2 cursor-pointer ">
+                      <MdBookmarkAdded size={21} /> Saved
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowPlaylist(true)}
+                      className="watch-btn user-info flex items-center gap-2 bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black rounded-3xl px-4 py-2 cursor-pointer "
+                    >
+                      <Bookmark strokeWidth={2} size={21} /> Save
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -412,6 +417,7 @@ const WatchPage = () => {
             <SavePlaylist
               setShowPlaylist={setShowPlaylist}
               setShowCreatePlaylist={setShowCreatePlaylist}
+              videoId={video._id}
             />
           )}
         </div>

@@ -1,8 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import WatchPage from "./components/WatchPage";
-import React, { useEffect, useState } from "react";
-import Shimmer from "./components/Shimmer";
+import React, { useEffect } from "react";
 import VideoContainer from "./components/VideoContainer";
 import { useDispatch } from "react-redux";
 import Login from "./components/Login";
@@ -98,7 +97,6 @@ export const AppRouter = createBrowserRouter([
 ]);
 
 function App() {
-  const [loading, setLoading] = useState(true);
   const userToken = localStorage.getItem("token");
   const dispatch = useDispatch();
   useEffect(() => {
@@ -114,7 +112,6 @@ function App() {
         const data = await response.json();
         if (response.status === 200) {
           dispatch(setUser(data.data));
-          setLoading(false);
         }
       } catch (error) {
         console.log("error while checking token", error);
@@ -130,13 +127,7 @@ function App() {
 
   return (
     <>
-      {loading ? (
-        <Shimmer />
-      ) : (
-        <>
-          <RouterProvider router={AppRouter} />
-        </>
-      )}
+      <RouterProvider router={AppRouter} />
     </>
   );
 }

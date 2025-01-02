@@ -61,6 +61,63 @@ const createPlaylist = async (req, res) => {
   }
 };
 
+const addVideo = async (req, res) => {
+  try {
+    const { selectedItem, videoId } = req.body;
+
+    if (selectedItem.length === 0 || !videoId) {
+      return res.status(402).json({
+        success: false,
+        message: "Please provide selectedItem and videoId",
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const video = await Video.findOne({ video_id: videoId });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const playlist = await Playlist.updateMany(
+      { _id: { $in: selectedItem } },
+      {
+        $addToSet: { video: video._id },
+      }
+    );
+
+    if (!playlist) {
+      return res.status(404).json({
+        success: false,
+        message: "Playlist not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: playlist,
+      message: "Video added to playlist successfully",
+    });
+  } catch (error) {
+    console.error("Error while updating all the playlist", error);
+    return res.status(500).json({
+      success: false,
+      message: "something went wrong",
+    });
+  }
+};
+
 const updatePlaylist = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -100,7 +157,7 @@ const updatePlaylist = async (req, res) => {
   }
 };
 
-const getUserPlaylist = async (req, res) => {
+const userPlaylist = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -119,20 +176,25 @@ const getUserPlaylist = async (req, res) => {
         },
       },
       {
-        $addFields: {
-          video_id: {
-            $toObjectId: {
-              $arrayElemAt: ["$video", 0],
-            },
-          },
+        $lookup: {
+          from: "videos",
+          localField: "video",
+          foreignField: "_id",
+          as: "videoDetails",
         },
       },
       {
-        $lookup: {
-          from: "videos",
-          localField: "video_id",
-          foreignField: "_id",
-          as: "videoDetails",
+        $addFields: {
+          videoDetails: {
+            $map: {
+              input: "$videoDetails",
+              as: "video",
+              in: {
+                _id: "$$video._id",
+                thumbnail: "$$video.thumbnail",
+              },
+            },
+          },
         },
       },
       {
@@ -145,9 +207,12 @@ const getUserPlaylist = async (req, res) => {
       {
         $project: {
           title: 1,
+          video: 1,
           status: 1,
           owner: 1,
           thumbnail: 1,
+          createdAt: 1,
+          updatedAt: 1,
         },
       },
     ]);
@@ -172,11 +237,46 @@ const getUserPlaylist = async (req, res) => {
   }
 };
 
-const getPlaylistById = async (req, res) => {
+const playlistById = async (req, res) => {
   try {
     const { playlistId } = req.params;
 
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.aggregate([
+      {
+        $match: {
+          owner: playlistById,
+        },
+      },
+      {
+        $unwind: {
+          path: "$video",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "video",
+          foreignField: "_id",
+          as: "videoDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$videoDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          title: { $first: "$title" },
+          status: { $first: "$status" },
+          owner: { $first: "$owner" },
+          videoDetails: { $first: "$videoDetails" },
+        },
+      },
+    ]);
 
     if (!playlist) {
       return res
@@ -197,46 +297,11 @@ const getPlaylistById = async (req, res) => {
   }
 };
 
-const addVideoToPlaylist = async (req, res) => {
-  const { playlistId } = req.body;
-  const { videoId } = req.params;
-
-  if (!playlistId || !videoId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required" });
-  }
-  const user = await User.findById(req.user._id);
-
-  if (!user) {
-    return res.status(400).json({ success: false, message: "User not found" });
-  }
-
-  const playlist = await Playlist.findByIdAndUpdate(
-    playlistId,
-    { $push: { video: videoId } },
-    { new: true }
-  );
-
-  if (!playlist) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Playlist not found" });
-  }
-
-  return res.status(200).json({
-    success: true,
-    data: playlist,
-    message: "Video added to playlist successfully",
-  });
-};
-
-const removeVideoFromPlaylist = async (req, res) => {
+const removeVideo = async (req, res) => {
   try {
-    const { playlistId } = req.body;
-    const { videoId } = req.params;
+    const { selectedItem, videoId } = req.body;
 
-    if (!playlistId || !videoId) {
+    if (selectedItem.length === 0 || !videoId) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -250,9 +315,18 @@ const removeVideoFromPlaylist = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const playlist = await Playlist.findByIdAndUpdate(
-      playlistId,
-      { $pull: { video: videoId } },
+    const video = await Video.findOne({ video_id: videoId });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const playlist = await Playlist.updateMany(
+      { _id: { $in: selectedItem } },
+      { $pull: { video: video._id } },
       { new: true }
     );
 
@@ -268,7 +342,6 @@ const removeVideoFromPlaylist = async (req, res) => {
     });
   } catch (error) {
     console.log("Error while removing video from playlist", error);
-
     return res
       .status(500)
       .json({ success: false, message: "something went wrong" });
@@ -304,10 +377,10 @@ const deletePlaylist = async (req, res) => {
 
 export {
   createPlaylist,
+  userPlaylist,
   updatePlaylist,
-  getUserPlaylist,
-  getPlaylistById,
-  addVideoToPlaylist,
-  removeVideoFromPlaylist,
   deletePlaylist,
+  playlistById,
+  addVideo,
+  removeVideo,
 };

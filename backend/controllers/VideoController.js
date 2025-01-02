@@ -139,20 +139,38 @@ const getVideoById = async (req, res) => {
         },
       },
       {
-        $unwind: "$likes",
+        $lookup: {
+          from: "playlists",
+          let: { videoId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ["$$videoId", "$video"] },
+              },
+            },
+          ],
+          as: "playlistDetails",
+        },
       },
       {
         $addFields: {
+          videoSaved: {
+            $cond: {
+              if: { $gt: [{ $size: "$playlistDetails" }, 0] },
+              then: true,
+              else: false,
+            },
+          },
           likesCount: {
-            $size: "$likes.likeBy",
+            $size: { $ifNull: ["$likes.likeBy", []] },
           },
           subscribersCount: {
-            $size: "$subscribers",
+            $size: { $ifNull: ["$subscribers", []] },
           },
           subscribed: {
             $cond: {
               if: {
-                $in: [req.user._id, "$subscribers.subscriber"],
+                $in: [user._id, { $ifNull: ["$subscribers.subscriber", []] }],
               },
               then: true,
               else: false,
@@ -170,7 +188,7 @@ const getVideoById = async (req, res) => {
           videoViewed: {
             $cond: [
               {
-                $in: [user._id, "$views"],
+                $in: [user._id, { $ifNull: ["$views", []] }],
               },
               true,
               false,
@@ -179,7 +197,7 @@ const getVideoById = async (req, res) => {
           isLiked: {
             $cond: [
               {
-                $in: [user._id, "$likes.likeBy"],
+                $in: [user._id, { $ifNull: ["$likes.likeBy", []] }],
               },
               true,
               false,
@@ -188,14 +206,14 @@ const getVideoById = async (req, res) => {
           isDisliked: {
             $cond: [
               {
-                $in: [user._id, "$likes.dislikeBy"],
+                $in: [user._id, { $ifNull: ["$likes.dislikeBy", []] }],
               },
               true,
               false,
             ],
           },
           viewsCount: {
-            $size: "$views",
+            $size: { $ifNull: ["$views", []] },
           },
         },
       },
@@ -219,6 +237,7 @@ const getVideoById = async (req, res) => {
           likesCount: 1,
           isLiked: 1,
           isDisliked: 1,
+          videoSaved: 1,
         },
       },
     ]);
@@ -383,7 +402,6 @@ const getAllVideo = async (req, res) => {
 
 const updateViews = async (req, res) => {
   const { videoId } = req.params;
-
   try {
     const video = await Video.findOne({ video_id: videoId });
 
@@ -414,7 +432,7 @@ const updateViews = async (req, res) => {
     } else {
       return res.status(200).json({
         success: false,
-        message: "You have alreayd viewed this video",
+        message: "You have already viewed this video",
       });
     }
   } catch (error) {

@@ -4,12 +4,11 @@ import { toast } from "react-toastify";
 import { BACKEND_PLAYLIST } from "../utils/constants";
 import useResponseHandler from "../hooks/UseResponseHandler";
 import { FiChevronDown } from "react-icons/fi";
-import { RxCross2 } from "react-icons/rx";
-import { MdOutlineLock } from "react-icons/md";
 import { IoMdGlobe } from "react-icons/io";
-import { BsPlusLg } from "react-icons/bs";
 import { Check, LockKeyhole, Plus, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import debounce from "lodash.debounce";
 
 const visibilityOptions = [
   {
@@ -45,6 +44,7 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowCreatePlaylist(false);
     const { title, status } = playlistData;
     if (!title) {
       toast.error("Title can't be empty");
@@ -56,7 +56,7 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
       status,
       videoId,
     };
-    const toastId = toast.loading("Adding video to playlist...");
+
     try {
       const response = await axios.post(
         BACKEND_PLAYLIST + "/createPlaylist",
@@ -67,22 +67,13 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
           },
         }
       );
-
-      handleResponse({
-        status: response?.status,
-        message: response?.data?.message,
-        onSuccess: () => {
-          setShowCreatePlaylist(false);
-        },
-        toastId,
-      });
+      if (response.status === 200) {
+        toast.success("New playlist created successfully");
+      } else if (response.status === 201) {
+        toast.success("playlist already exist");
+      }
     } catch (error) {
       console.error("Error while creating playlist", error);
-      handleError({
-        error,
-        toastId,
-        message: error?.message,
-      });
     }
   };
 
@@ -160,6 +151,7 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
             Cancel
           </button>
           <button
+            disabled={disable}
             onClick={handleSubmit}
             className="px-10 py-1 border rounded-full dark:bg-white dark:text-black font-medium text-sm hover:bg-gray-300"
           >
@@ -171,12 +163,137 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
   );
 };
 
-export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist }) => {
-  useEffect(() => {
-    try {
-    } catch (error) {}
-  }, []);
+export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id }) => {
+  const [searchParams] = useSearchParams();
+  const videoId = searchParams.get("v");
 
+  const user = useSelector((store) => store?.user?.user);
+  const [playlist, setPlaylist] = useState([]);
+  const [selectedItem, setSelectedItem] = useState([]);
+  const [previousSelectedItem, setPreviousSelectedItem] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          BACKEND_PLAYLIST + `/userPlaylist/${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setPlaylist(response?.data?.data);
+        }
+      } catch (error) {
+        console.error("Error while fetching user playlist", error);
+      }
+    };
+    if (user._id) {
+      fetchData();
+    }
+  }, [user._id]);
+
+  const handleChange = (e, id) => {
+    const isChecked = e.target.checked;
+    setSelectedItem((prevItem) => {
+      if (isChecked) {
+        return [...prevItem, id];
+      } else {
+        return prevItem.filter((itemId) => itemId !== id);
+      }
+    });
+  };
+
+  const handleSelectAll = async (e) => {
+    const isChecked = e.target.checked;
+
+    setSelectAll(isChecked);
+
+    if (isChecked) {
+      setSelectedItem(playlist.map((item) => item._id));
+    } else {
+      setSelectedItem([]);
+    }
+  };
+
+  const addVideoToPlaylist = async (selectedItem) => {
+    const videoData = {
+      selectedItem,
+      videoId,
+    };
+
+    try {
+      await axios.post(BACKEND_PLAYLIST + "/addVideo", videoData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error while adding video to playlist", error);
+    }
+  };
+
+  const removeVideoToPlaylist = async (selectedItem) => {
+    const videoData = {
+      selectedItem,
+      videoId,
+    };
+
+    try {
+      await axios.post(BACKEND_PLAYLIST + "/removeVideo", videoData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error while adding video to playlist", error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedItem.length === playlist.length) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
+    }
+  }, [selectedItem, playlist]);
+
+  const debounceAddVideo = debounce((item) => {
+    addVideoToPlaylist(item);
+  }, 1500);
+
+  const debounceRemovedVideo = debounce((item) => {
+    removeVideoToPlaylist(item);
+  }, 1500);
+
+  useEffect(() => {
+    const addItem = selectedItem.filter(
+      (item) => !previousSelectedItem.includes(item)
+    );
+
+    if (addItem.length >= 1) {
+      debounceAddVideo(addItem);
+    }
+
+    const removedItem = previousSelectedItem.filter(
+      (item) => !selectedItem.includes(item)
+    );
+
+    if (removedItem.length >= 1) {
+      debounceRemovedVideo(removedItem);
+    }
+
+    setPreviousSelectedItem(selectedItem);
+    return () => {
+      debounceAddVideo.cancel();
+      debounceRemovedVideo.cancel();
+    };
+  }, [selectedItem]);
+  console.log(video_id);
+  
   return (
     <div
       onClick={() => setShowPlaylist(false)}
@@ -184,21 +301,57 @@ export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative dark:bg-icon_black rounded-md p-4 font-medium flex flex-col items-center gap-5"
+        className="relative dark:bg-icon_black rounded-md w-[18rem] p-4 font-medium flex flex-col items-center gap-3"
       >
         <div className="flex justify-between items-center w-full ">
           <h1>Save video to...</h1>
-          <X size={20} strokeWidth={1.25} />{" "}
+          <X
+            onClick={() => setShowPlaylist(false)}
+            size={24}
+            className="cursor-pointer"
+            strokeWidth={1.25}
+          />{" "}
         </div>
-        <div className="flex justify-between items-center w-full">
-          <div className="flex items-center gap-4 text-sm">
+        {playlist.length > 0 && (
+          <div className="flex items-center gap-2 text-sm w-full">
             <div className="custom-checkbox-container">
-              <input type="checkbox" id="customCheckbox" />
-              <label for="customCheckbox"></label>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+                id="selectAll"
+              />
+              <label for="selectAll"></label>
             </div>
-            <p>Watch later</p>
+            <p className="line-clamp-2 leading-4">Select All</p>
           </div>
-          <LockKeyhole size={18} strokeWidth={2} />
+        )}
+        <div className="max-h-44 space-y-1 remove-scrollbar overflow-y-scroll w-full">
+          {playlist &&
+            playlist.map((item) => (
+              <div
+                key={item._id}
+                className="flex justify-between items-center w-full"
+              >
+                <div className="flex items-center gap-2 text-sm w-[90%]">
+                  <div className="custom-checkbox-container">
+                    <input
+                      type="checkbox"
+                      onChange={(e) => handleChange(e, item._id)}
+                      checked={selectedItem.includes(item._id) }
+                      id={`customCheckbox-${item._id}`}
+                    />
+                    <label for={`customCheckbox-${item._id}`}></label>
+                  </div>
+                  <p className="line-clamp-2 leading-4">{item.title}</p>
+                </div>
+                {item.status === "Private" ? (
+                  <LockKeyhole size={15} strokeWidth={2} />
+                ) : (
+                  <IoMdGlobe size={17} />
+                )}
+              </div>
+            ))}
         </div>
         <button
           onClick={() => {

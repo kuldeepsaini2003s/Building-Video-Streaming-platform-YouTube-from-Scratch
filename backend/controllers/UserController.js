@@ -401,8 +401,6 @@ const updateUserDetails = async (req, res) => {
 };
 
 const getUserDetails = async (req, res) => {
-  console.log("Hello");
-
   const user = await User.findById(req.user._id);
 
   if (!user) {
