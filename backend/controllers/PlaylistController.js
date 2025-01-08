@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Playlist } from "../models/playlistModel.js";
 import { User } from "../models/userModel.js";
 import { Video } from "../models/videoModel.js";
@@ -176,31 +177,34 @@ const userPlaylist = async (req, res) => {
         },
       },
       {
+        $addFields: {
+          reversedVideos: {
+            $reverseArray: "$video",
+          },
+        },
+      },
+      {
+        $addFields: {
+          firstVideo: {
+            $arrayElemAt: ["$reversedVideos", 0],
+          },
+        },
+      },
+      {
         $lookup: {
           from: "videos",
-          localField: "video",
+          localField: "firstVideo",
           foreignField: "_id",
           as: "videoDetails",
         },
       },
       {
         $addFields: {
-          videoDetails: {
-            $map: {
-              input: "$videoDetails",
-              as: "video",
-              in: {
-                _id: "$$video._id",
-                thumbnail: "$$video.thumbnail",
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
           thumbnail: {
             $arrayElemAt: ["$videoDetails.thumbnail", 0],
+          },
+          video_id: {
+            $arrayElemAt: ["$videoDetails.video_id", 0],
           },
         },
       },
@@ -211,6 +215,7 @@ const userPlaylist = async (req, res) => {
           status: 1,
           owner: 1,
           thumbnail: 1,
+          video_id: 1,
           createdAt: 1,
           updatedAt: 1,
         },
@@ -244,19 +249,26 @@ const playlistById = async (req, res) => {
     const playlist = await Playlist.aggregate([
       {
         $match: {
-          owner: playlistById,
+          _id: new mongoose.Types.ObjectId(playlistId),
+        },
+      },
+      {
+        $addFields: {
+          reversedVideos: {
+            $reverseArray: "$video",
+          },
         },
       },
       {
         $unwind: {
-          path: "$video",
+          path: "$reversedVideos",
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $lookup: {
           from: "videos",
-          localField: "video",
+          localField: "reversedVideos",
           foreignField: "_id",
           as: "videoDetails",
         },
@@ -268,12 +280,32 @@ const playlistById = async (req, res) => {
         },
       },
       {
-        $group: {
-          _id: "$_id",
-          title: { $first: "$title" },
-          status: { $first: "$status" },
-          owner: { $first: "$owner" },
-          videoDetails: { $first: "$videoDetails" },
+        $lookup: {
+          from: "users",
+          localField: "videoDetails.user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $addFields: {
+          channelName: {
+            $arrayElemAt: ["$userDetails.publishedDetails.channelName", 0],
+          },
+          thumbnail: "$videoDetails.thumbnail",
+          video_id: "$videoDetails.video_id",
+          video_title: "$videoDetails.title",
+          duration: "$videoDetails.duration",
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          channelName: 1,
+          thumbnail: 1,
+          video_id: 1,
+          video_title: 1,
+          duration: 1,
         },
       },
     ]);

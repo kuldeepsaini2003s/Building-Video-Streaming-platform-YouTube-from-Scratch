@@ -12,6 +12,7 @@ import { setUser } from "../utils/userSlice";
 import { toast } from "react-toastify";
 import "@theme-toggles/react/css/Expand.css";
 import { Expand } from "@theme-toggles/react";
+import { FaCircleUser } from "react-icons/fa6";
 
 const Navbar = () => {
   UseVideoCategories();
@@ -277,11 +278,15 @@ const Navbar = () => {
           >
             {user ? (
               <button onClick={settingHandler}>
-                <img
-                  className="w-10 h-10 rounded-full object-cover object-center"
-                  src={user?.avatar}
-                  alt=""
-                />
+                {user?.avatar ? (
+                  <img
+                    className="w-10 h-10 rounded-full object-cover object-center"
+                    src={user?.avatar}
+                    alt=""
+                  />
+                ) : (
+                  <FaCircleUser className="sm:w-8 sm:h-10" />
+                )}
               </button>
             ) : (
               <button onClick={() => navigate("/login")}>Signin</button>
@@ -289,9 +294,14 @@ const Navbar = () => {
           </div>
           {showSetting && (
             <div className="fixed z-50 top-[56px] flex flex-col w-[8rem] rounded-md shadow-lg right-2">
-              <button className="bg-Gray rounded-t-md border-b border-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black p-2">
-                Profile
-              </button>
+              <Link to={`/${user?.userName}`} className="w-full">
+                <button
+                  onClick={() => setShowSetting(false)}
+                  className="bg-Gray w-full rounded-t-md border-b border-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black p-2"
+                >
+                  Profile
+                </button>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-Gray hover:bg-Gray dark:bg-icon_black dark:hover:bg-hover_icon_black p-2"

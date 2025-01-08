@@ -5,25 +5,22 @@ import { useDispatch, useSelector } from "react-redux";
 import Image from "../Images/user.avif";
 import LiveChats from "./LiveChats";
 import { setMessages } from "../utils/ChatSlice";
-import UseYoutubeComments from "../hooks/UseYoutubeComments";
-import { FaRegBell } from "react-icons/fa6";
 import { BiLike, BiSolidLike, BiDislike, BiSolidDislike } from "react-icons/bi";
 import { RiShareForwardLine } from "react-icons/ri";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuSendHorizontal } from "react-icons/lu";
 import {
-  BACKEND_SUBSCRIPTION,  
+  BACKEND_SUBSCRIPTION,
   BACKEND_VIDEO,
+  formatDuration,
+  LOCAL_BACKEND_PLAYLIST,
 } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
 import Lottie from "lottie-react";
 import bell_icon_black from "../Icons/Bell-icon-black.json";
 import bell_icon_white from "../Icons/Bell-icon-white.json";
-import { FaRegBookmark } from "react-icons/fa";
-import { CreatePlaylist, SavePlaylist } from "./PlaylistPage";
-import { Bookmark } from "lucide-react";
+import { CreatePlaylist, SavePlaylist } from "./Playlist";
+import { Bookmark, X } from "lucide-react";
 import { MdBookmarkAdded } from "react-icons/md";
 
 const formatViewCount = (viewCount) => {
@@ -42,7 +39,10 @@ const WatchPage = () => {
   const [subscribersCount, setSubscribersCount] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const videoId = searchParams.get("v");
+  const playlistId = searchParams.get("list");
+
   const [video, setVideo] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
   const [shimmer, setShimmer] = useState(true);
@@ -82,6 +82,25 @@ const WatchPage = () => {
     videoSaved,
     user,
   } = video;
+
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      const { data } = await axios.get(
+        LOCAL_BACKEND_PLAYLIST + `/playlist/${playlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (data) {
+        setPlaylist(data?.data);
+      }
+    };
+    if (playlistId) {
+      fetchPlaylist();
+    }
+  }, [playlistId]);
 
   useEffect(() => {
     const updateViews = async () => {
@@ -188,9 +207,9 @@ const WatchPage = () => {
       {shimmer ? (
         <p>Loading....</p>
       ) : (
-        <div id="main" className="p-5 flex gap-10">
+        <div id="main" className="sm:px-24 py-5 flex max-sm::flex-col gap-5">
           {/* left  */}
-          <div className="xl:ml-10 max-xl:mx-2 ms:w-full ">
+          <div className="ms:w-full">
             {/* video */}
             <video
               className="sm:rounded-xl -z-40 w-full sm:h-[380px]"
@@ -198,7 +217,7 @@ const WatchPage = () => {
               controls="true"
             ></video>
             {/* channel-info */}
-            <div className="flex flex-col gap-2 my-2 justify-center">
+            <div className="max-sm:mx-3 flex flex-col gap-2 my-2 justify-center">
               {/* Channel titile */}
               <h1 className=" text-xl font-semibold w-[95%] overflow-hidden whitespace-nowrap text-ellipsis">
                 {title}
@@ -206,26 +225,27 @@ const WatchPage = () => {
               <div className="flex max-sm:flex-col sm:items-center sm:justify-between">
                 <div className="flex max-sm:justify-between items-center max-sm:gap-3 gap-5 max-sm:p-2">
                   {/* user-profile */}
-                  <div className="flex gap-5 items-center">
-                    <img
-                      className="h-12 w-12 rounded-full object-cover object-center"
-                      src={userAvatar}
-                      alt=""
-                    />
-                    <div>
-                      <p className="font-medium">{channelName}</p>
-                      <p className="text-xs text-Lightblack font-medium">
-                        {subscribersCount} subscribers
-                      </p>
+                  <Link to={`/${userName}`}>
+                    <div className="flex gap-5 items-center">
+                      <img
+                        className="h-12 w-12 rounded-full object-cover object-center"
+                        src={userAvatar}
+                        alt=""
+                      />
+                      <div>
+                        <p className="font-medium">{channelName}</p>
+                        <p className="text-xs text-Lightblack font-medium">
+                          {subscribersCount} subscribers
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                   {/* subscribe-btn */}
                   {currentUser?._id !== user ? (
                     <button
                       onClick={subscriberHandler}
                       className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
                     >
-                      {!subscribed ? "Subscribe" : "Subscribed"}
                       {subscribed && (
                         <Lottie
                           animationData={bell_icon_white}
@@ -234,6 +254,7 @@ const WatchPage = () => {
                           className="w-6"
                         />
                       )}
+                      {!subscribed ? "Subscribe" : "Subscribed"}
                     </button>
                   ) : (
                     <Link to={`/${userName}`}>
@@ -379,33 +400,60 @@ const WatchPage = () => {
             </div>
           </div>
           {/* right */}
-          <div className="border sm:flex flex-col justify-between min-w-[30%] hidden h-fit rounded-lg">
-            <div className="flex justify-between items-center border-b p-4">
-              <p>Top Chats</p>
-              <BsThreeDotsVertical className="text-[2.2rem] p-2 rounded-full dark:bg-icon_black dark:hover:bg-hover_icon_black" />
+          {playlistId && (
+            <div className="border sm:flex flex-col dark:bg-icon_black justify-between min-w-[35%] hidden h-fit rounded-lg">
+              <div className="flex justify-between items-center border-b p-2">
+                <div>
+                  <p className="font-bold text-lg">{playlist[0]?.title}</p>
+                  <p className="text-xs text-Lightblack">
+                    <span className="text-white font-medium">
+                      {playlist[0]?.channelName}
+                    </span>{" "}
+                    - {playlist?.length}
+                  </p>
+                </div>
+                <X
+                  size={40}
+                  strokeWidth={1}
+                  className="p-2 rounded-full dark:bg-icon_black dark:hover:bg-hover_icon_black"
+                />
+              </div>
+              <div className="no-scrollbar dark:bg-black rounded-b-xl flex flex-col-reverse overflow-y-auto px-4 py-2 max-h-[19rem]">
+                <div className="flex flex-col gap-2">
+                  {playlist &&
+                    playlist?.map((item, index) => (
+                      <Link
+                        to={`/watch?v=${item.video_id}&list=${item._id}&index=${
+                          index + 1
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs text-Lightblack">{index + 1}</p>
+                          <div className="relative">
+                            <img
+                              className="w-24 h-14 rounded-md object-cover object-center"
+                              src={item?.thumbnail}
+                              alt=""
+                            />
+                            <p className="absolute right-1 bottom-1 rounded-sm text-xs px-1 bg-black bg-opacity-80 ">
+                              {formatDuration(item?.duration)}
+                            </p>
+                          </div>
+                          <div className="flex flex-col justify-between text-sm">
+                            <h1 className="line-clamp-2">
+                              {item?.video_title}
+                            </h1>
+                            <h1 className="text-Lightblack text-xs">
+                              {item?.channelName}
+                            </h1>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              </div>
             </div>
-            <div className="no-scrollbar flex flex-col-reverse overflow-y-auto px-4 py-2 h-[22rem]">
-              <LiveChats />
-            </div>
-            <div className="w-full px-4 py-2  border-t flex justify-center items-center gap-3">
-              {/* user image */}
-              <img className="h-10 rounded-full" src={Image} alt="" />
-              <input
-                className="w-[90%] text-sm bg-transparent outline-none bg-lightblack px-4 py-2 rounded-full"
-                type="text"
-                placeholder="Chat..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    sendMessage();
-                  }
-                }}
-              />
-              {/* Send button */}
-              <LuSendHorizontal className="text-[1.3rem]" />
-            </div>
-          </div>
+          )}
           {showPop && <ConfirmationPop />}
           {showCreatePlaylist && (
             <CreatePlaylist

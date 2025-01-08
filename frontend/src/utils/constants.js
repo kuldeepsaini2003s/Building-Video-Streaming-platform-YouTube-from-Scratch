@@ -42,3 +42,22 @@ export const YOUTUBE_SEARCH_API =
 
 export const YOUTUBE_SEARCH_SUGGESTION =
   "http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&client=firefox&q=";
+
+
+export const formatViewCount = (viewCount) => {
+    if (viewCount >= 1e6) {
+      return (viewCount / 1e6).toFixed(1) + "M";
+    } else if (viewCount >= 1e3) {
+      return (viewCount / 1e3).toFixed(1) + "K";
+    } else {
+      return viewCount.toString();
+    }
+  };
+  
+export const formatDuration = (duration) => {
+    const totalSeconds = Math.round(duration);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+  

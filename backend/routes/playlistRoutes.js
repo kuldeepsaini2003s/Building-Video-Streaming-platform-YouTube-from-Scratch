@@ -19,7 +19,7 @@ router.post("/addVideo", addVideo);
 router.post("/removeVideo", removeVideo);
 
 router.get("/userPlaylist/:userId", userPlaylist);
-router.get("/getPlaylist/:playlistId", playlistById);
+router.get("/playlist/:playlistId", playlistById);
 
 router.delete("/deletePlaylist/:playlistId", deletePlaylist);
 

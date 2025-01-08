@@ -163,7 +163,11 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
   );
 };
 
-export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id }) => {
+export const SavePlaylist = ({
+  setShowPlaylist,
+  setShowCreatePlaylist,
+  video_id,
+}) => {
   const [searchParams] = useSearchParams();
   const videoId = searchParams.get("v");
 
@@ -293,7 +297,7 @@ export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id 
     };
   }, [selectedItem]);
   console.log(video_id);
-  
+
   return (
     <div
       onClick={() => setShowPlaylist(false)}
@@ -321,7 +325,7 @@ export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id 
                 onChange={handleSelectAll}
                 id="selectAll"
               />
-              <label for="selectAll"></label>
+              <label id="custom-label" for="selectAll"></label>
             </div>
             <p className="line-clamp-2 leading-4">Select All</p>
           </div>
@@ -338,10 +342,10 @@ export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id 
                     <input
                       type="checkbox"
                       onChange={(e) => handleChange(e, item._id)}
-                      checked={selectedItem.includes(item._id) }
+                      checked={selectedItem.includes(item._id)}
                       id={`customCheckbox-${item._id}`}
                     />
-                    <label for={`customCheckbox-${item._id}`}></label>
+                    <label id="custom-label" for={`customCheckbox-${item._id}`}></label>
                   </div>
                   <p className="line-clamp-2 leading-4">{item.title}</p>
                 </div>
@@ -368,9 +372,10 @@ export const SavePlaylist = ({ setShowPlaylist, setShowCreatePlaylist, video_id 
   );
 };
 
+
 const PlaylistPage = {
   CreatePlaylist,
-  SavePlaylist,
+  SavePlaylist,  
 };
 
 export default PlaylistPage;

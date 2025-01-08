@@ -11,10 +11,7 @@ const MainLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      setLoading(false);
-    } else {
+    if (user) {
       setLoading(false);
     }
   }, [user]);

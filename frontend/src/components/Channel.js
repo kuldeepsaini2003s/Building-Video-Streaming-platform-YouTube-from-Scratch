@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FiBell, FiBellOff } from "react-icons/fi";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
-import { BACKEND_USER } from "../utils/constants";
-import { useSelector } from "react-redux";
+import { BACKEND_SUBSCRIPTION, BACKEND_USER } from "../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
 import { FaCircleUser } from "react-icons/fa6";
 import UseFetchAllVideos from "../hooks/useFetchAllVideos";
-import ShimmerCard from "./ShimmerCard";
 import { GoDotFill } from "react-icons/go";
+import Channel_Page_Shimmer from "./Channel_Page_Shimmer";
+import { setChannelUser } from "../utils/userSlice";
+import axios from "axios";
+import bell_icon_white from "../Icons/Bell-icon-white.json";
+import Lottie from "lottie-react";
 
 const channelNavigation = [
   {
@@ -37,7 +40,11 @@ const Channel = () => {
   const userVideos = useSelector((store) => store.videos?.allVideos);
   const [channelDetails, setChannelDetails] = useState({});
   const [userVideosCount, setUserVideosCount] = useState(0);
+  const [subscribed, setSubscribed] = useState(false);
+  const [showPop, setShowPop] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [shimmer, setShimmer] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (userVideos) {
@@ -61,13 +68,78 @@ const Channel = () => {
         const data = await response.json();
         if (response.status === 200) {
           setChannelDetails(data?.data);
+          setSubscribed(data?.data?.subscribed);
+          dispatch(setChannelUser(data?.data));
         }
       } catch (error) {
         console.log("error while fetching user channel details", error);
       }
     };
     fetchUserDetails();
-  }, [userName]);
+  }, [userName]);  
+  
+  const subscriberHandler = async () => {
+    if (!subscribed) {
+      try {
+        await axios.get(
+          BACKEND_SUBSCRIPTION + `/subscribe/${channelDetails?.channelName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error while subscribing channel", error);
+      }
+      setSubscribed(true);
+    } else {
+      setShowPop(true);
+    }
+  };
+
+  const handleConfirmation = async () => {
+    try {
+      await axios.get(
+        BACKEND_SUBSCRIPTION + `/unsubscribe/${channelDetails?.channelName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error while subscribing channel", error);
+    }
+    setSubscribed(false);
+  };
+
+  const ConfirmationPop = () => {
+    return (
+      <div
+        onClick={() => setShowPop(false)}
+        className="absolute w-dvw h-dvh top-0 left-0 remove-scrollbar bg-black bg-opacity-30 flex justify-center items-center"
+      >
+        <div className="text-Lightblack bg-[#212121] flex flex-col justify-between items-center h-36 rounded-md p-5">
+          <p>Unsubscribe from {channelDetails?.channelName}</p>
+          <div className="flex gap-4 items-center justify-end">
+            <button
+              onClick={() => setShowPop(false)}
+              className="px-4 py-1 rounded-full font-medium dark:hover:bg-hover_icon_black dark:text-white hover:bg-lightgray"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmation}
+              className="px-4 py-1 rounded-full font-medium text-[#388BD4] hover:bg-[#3ca4ff36]"
+            >
+              Unsubscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const getCurrentTab = () => {
     const currentPath = location.pathname.split("/").pop();
@@ -86,9 +158,9 @@ const Channel = () => {
   return (
     <>
       {shimmer ? (
-        <ShimmerCard />
+        <Channel_Page_Shimmer />
       ) : (
-        <div id="main">
+        <div id="main" className="p-2">
           <div className="border-b dark:border-gray-700 px-20">
             {channelDetails?.coverImage && (
               <img
@@ -108,10 +180,10 @@ const Channel = () => {
                 </div>
               ) : (
                 <div className="flex-shrink-0">
-                  <FaCircleUser className="sm:w-20 sm:h-20" />
+                  <FaCircleUser className="sm:w-16 sm:h-20" />
                 </div>
               )}
-              <div className="flex flex-col justify-between flex-grow ms:space-y-1 sm:space-y-2">
+              <div className="flex flex-col flex-grow ms:space-y-1 sm:space-y-1">
                 <div className="ms:space-y-1 sm:space-y-2">
                   <h1 className="sm:text-2xl font-bold ">
                     {channelDetails?.channelName || ""}
@@ -131,7 +203,7 @@ const Channel = () => {
                   </p>
                 </div>
                 <div className="flex self-baseline gap-x-5 ms:text-xs sm:text-sm items-center">
-                  {userName === user.userName && (
+                  {userName === user?.userName ? (
                     <>
                       <Link to={"/customize-channel"}>
                         <button className="flex font-medium items-center gap-2 px-5 py-2 rounded-full hover:bg-lightgray dark:bg-icon_black dark:hover:bg-hover_icon_black">
@@ -144,22 +216,20 @@ const Channel = () => {
                         </button>
                       </Link>
                     </>
-                  )}
-                  {!userName === user.userName && (
-                    <button className="flex items-center font-medium gap-2 px-5 py-2 bg-lightgray dark:bg-icon_black rounded-full hover:bg-Gray dark:hover:bg-hover_icon_black">
-                      {!channelDetails?.subscribed ? (
-                        <>
-                          {" "}
-                          <FiBell className="w-4 h-4" />
-                          <span>Subscribe</span>{" "}
-                        </>
-                      ) : (
-                        <>
-                          {" "}
-                          <FiBellOff className="w-4 h-4" />
-                          <span>Subscribed</span>
-                        </>
+                  ) : (
+                    <button
+                      onClick={subscriberHandler}
+                      className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
+                    >
+                      {subscribed && (
+                        <Lottie
+                          animationData={bell_icon_white}
+                          play={isPlaying}
+                          loop={false}
+                          className="w-6"
+                        />
                       )}
+                      {!subscribed ? "Subscribe" : "Subscribed"}
                     </button>
                   )}
                 </div>
@@ -183,7 +253,10 @@ const Channel = () => {
               ))}
             </nav>
           </div>
-              <div className="px-20"><Outlet /></div>
+          <div className="px-20">
+            <Outlet />
+          </div>
+          {showPop && <ConfirmationPop />}
         </div>
       )}
     </>

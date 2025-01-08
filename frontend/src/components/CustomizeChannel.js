@@ -5,14 +5,16 @@ import { LuSave } from "react-icons/lu";
 import { BsSend } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { BACKEND_USER } from "../utils/constants";
+import { BACKEND_USER, LOCAL_BACKEND_USER } from "../utils/constants";
 import useResponseHandler from "../hooks/UseResponseHandler";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/userSlice";
 
 const CustomizeChannel = () => {
-  const user = useSelector((store) => store.user.user);
+  const user = useSelector((store) => store.user.channelUser);
+  console.log(user);
+
   const [formInput, setFormInput] = useState({
     username: "",
     channelName: "",
@@ -50,6 +52,10 @@ const CustomizeChannel = () => {
       };
       setFormInput(data);
       setCurrentData(data);
+      setImageFiles({
+        coverImageFile: data?.coverImage,
+        avatarImageFile: data?.avatar,
+      });
     }
   }, [user]);
 
@@ -57,6 +63,7 @@ const CustomizeChannel = () => {
     const { name, value } = e.target;
     setFormInput({ ...formInput, [name]: value });
   };
+  console.log(imageFiles);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -88,7 +95,7 @@ const CustomizeChannel = () => {
       const toastId = toast.loading("Updating channel information...");
       try {
         const response = await fetch(
-          BACKEND_USER + "/updateUserDetails",
+          LOCAL_BACKEND_USER + "/updateUserDetails",
           {
             method: "POST",
             body: formData,
@@ -196,7 +203,7 @@ const CustomizeChannel = () => {
           </label>
           <input
             type="text"
-            id="channelName"  
+            id="channelName"
             name="channelName"
             value={formInput?.channelName}
             onChange={handleChange}

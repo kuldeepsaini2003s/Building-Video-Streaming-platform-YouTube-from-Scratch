@@ -22,7 +22,7 @@ const Menu = () => {
     {
       name: "Subscribers",
       icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
-      path: "/subscribedTo",
+      path: "/subscriptions",
     },
     {
       name: "You",

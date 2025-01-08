@@ -21,6 +21,7 @@ import {
 import UpdateVideo from "./components/UpdateVideo";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import LoginBlocker from "./utils/LoginBlocker";
+import Subscriptions from "./components/Subscriptions";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -55,7 +56,10 @@ export const AppRouter = createBrowserRouter([
             path: "/update-video/:videoId",
             element: <UpdateVideo />,
           },
-
+          {
+            path : "/subscriptions",
+            element : <Subscriptions/>
+          },
           {
             path: "/:userName",
             element: <Channel />,
@@ -82,6 +86,7 @@ export const AppRouter = createBrowserRouter([
               },
             ],
           },
+
           {
             path: "/customize-channel",
             element: <CustomizeChannel />,
@@ -89,7 +94,7 @@ export const AppRouter = createBrowserRouter([
           {
             path: "watch",
             element: <WatchPage />,
-          },
+          },          
         ],
       },
     ],

@@ -27,7 +27,8 @@ const VideoContainer = () => {
   return (
     <div
       id="main"
-      className="p-2 grid max-md:grid-cols-1 ml:grid-cols-2 gap-3 sm:grid-cols-3 max-md:p-0 lg:grid-cols-3"
+      // className="p-2 grid max-md:grid-cols-1 ml:grid-cols-2 gap-3 sm:grid-cols-3 max-md:p-0 lg:grid-cols-3"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
     >
       {isLoading ? (
         <ShimmerCard />

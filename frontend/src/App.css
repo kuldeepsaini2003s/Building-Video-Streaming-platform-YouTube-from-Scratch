@@ -104,7 +104,7 @@ body {
   font-size: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   html {
     font-size: 62.5%;
   }
@@ -147,7 +147,7 @@ input[type="checkbox"] {
   display: none;
 }
 
-label {
+#custom-label {
   display: inline-block;
   width: 21px;
   height: 20px;
@@ -158,12 +158,12 @@ label {
   border: 2px solid #fff; /* Matches background */
 }
 
-input[type="checkbox"]:checked + label {
+input[type="checkbox"]:checked + #custom-label {
   background-color: #3fa6ff; /* Blue color for checked */
   border-color: #3fa6ff; /* Blue border */
 }
 
-label::after {
+#custom-label::after {
   content: "";
   display: block;
   width: 6px;
@@ -178,6 +178,6 @@ label::after {
   transition: opacity 0.2s;
 }
 
-input[type="checkbox"]:checked + label::after {
+input[type="checkbox"]:checked + #custom-label::after {
   opacity: 1;
 }

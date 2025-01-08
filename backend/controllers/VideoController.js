@@ -345,7 +345,7 @@ const getAllVideo = async (req, res) => {
         )
         .populate(
           "user",
-          "publishedDetails.channelName publishedDetails.avatar"
+          "publishedDetails.channelName publishedDetails.avatar publishedDetails.userName"
         );
     } else {
       user = await User.findById(req.user._id);
@@ -363,7 +363,7 @@ const getAllVideo = async (req, res) => {
         )
         .populate(
           "user",
-          "publishedDetails.channelName publishedDetails.avatar"
+          "publishedDetails.channelName publishedDetails.avatar publishedDetails.userName"
         );
     }
 
@@ -383,6 +383,7 @@ const getAllVideo = async (req, res) => {
       videoUrl: video.videoUrl,
       category: video.category,
       channelName: video.user?.publishedDetails?.channelName || "",
+      userName: video.user?.publishedDetails?.userName || "",
       avatar: video.user?.publishedDetails?.avatar || "",
     }));
 
