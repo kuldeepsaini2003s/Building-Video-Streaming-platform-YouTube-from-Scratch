@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { setAllVideos } from "../utils/VideoSlice";
-import { BACKEND_VIDEO  } from "../utils/constants";
+import { BACKEND_VIDEO } from "../utils/constants";
 import { useEffect } from "react";
 
 const UseFetchAllVideos = (userName) => {
@@ -18,9 +18,12 @@ const UseFetchAllVideos = (userName) => {
       const data = await response.json();
       if (response.status === 200) {
         dispatch(setAllVideos(data?.data));
+      } else {
+        dispatch(setAllVideos([]));
       }
     } catch (error) {
       console.error("Error while fetching user videos", error);
+      dispatch(setAllVideos([]));
     }
   };
   useEffect(() => {
