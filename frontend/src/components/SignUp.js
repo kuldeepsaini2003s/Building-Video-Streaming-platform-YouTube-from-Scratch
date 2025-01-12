@@ -88,6 +88,7 @@ const SignUp = () => {
         toastId,
         onSuccess: () => {
           localStorage.setItem("token", data?.accessToken);
+          localStorage.setItem("refreshToken", data?.refreshToken);
           navigate("/");
           dispatch(setUser(data.data));
           setSubmissionDisable(false);

@@ -217,7 +217,7 @@ const logoutUser = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken || req.header("authorization");
+    const token = req.cookies.refreshToken || req.header("authorization")?.split(" ")[1];
 
     if (!token) {
       return res
@@ -370,6 +370,7 @@ const updateUserDetails = async (req, res) => {
           files?.avatar[0],
           "avatar"
         );
+        user.draftDetails.avatar = null;
       } else {
         user.publishedDetails.avatar = user?.draftDetails?.avatar;
       }
@@ -531,8 +532,8 @@ const getWatchHistory = async (req, res) => {
     },
     {
       $unwind: {
-        path: "$watchHistory", // flatten the watchHistory array
-        preserveNullAndEmptyArrays: true, // keep documents with no watch history
+        path: "$watchHistory",
+        preserveNullAndEmptyArrays: true,
       },
     },
     {

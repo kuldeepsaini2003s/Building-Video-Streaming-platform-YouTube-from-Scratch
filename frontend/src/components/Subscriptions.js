@@ -5,7 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import {
   BACKEND_SUBSCRIPTION,
-  LOCAL_BACKEND_SUBSCRIPTION,
+
 } from "../utils/constants";
 
 const Subscriptions = () => {
@@ -16,25 +16,26 @@ const Subscriptions = () => {
 
   const user = useSelector((store) => store?.user?.user);
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const response = await axios.get(
-          LOCAL_BACKEND_SUBSCRIPTION + "/subscribedChannels",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        if (response.status === 200) {
-          setSubscriptions(response?.data?.data);
+  const fetchSubscriptions = async () => {
+    try {
+      const response = await axios.get(
+        BACKEND_SUBSCRIPTION + "/subscribedChannels",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      } catch (error) {
-        console.error("Error while fetching subscriptions");
-        setSubscriptions([]);
+      );
+      if (response.status === 200) {
+        setSubscriptions(response?.data?.data);
       }
-    };
+    } catch (error) {
+      console.error("Error while fetching subscriptions");
+      setSubscriptions([]);
+    }
+  };
+
+  useEffect(() => {
     if (user) {
       fetchSubscriptions();
     }
@@ -42,15 +43,21 @@ const Subscriptions = () => {
 
   const handleConfirmation = async () => {
     try {
-      await axios.get(BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        fetchSubscriptions();
+      }
     } catch (error) {
       console.error("Error while subscribing channel", error);
     }
-  };
+  };  
 
   const ConfirmationPop = () => {
     return (
@@ -62,7 +69,10 @@ const Subscriptions = () => {
           <p>Unsubscribe from {channelName}</p>
           <div className="flex gap-4 items-center justify-end">
             <button
-              onClick={() => setShowPop(false)}
+              onClick={() => {
+                setShowPop(false);
+                setChannelName("");
+              }}
               className="px-4 py-1 rounded-full font-medium dark:hover:bg-hover_icon_black dark:text-white hover:bg-lightgray"
             >
               Cancel
@@ -80,7 +90,7 @@ const Subscriptions = () => {
   };
 
   return (
-    <div className="px-20 py-5" id="main">
+    <div className="relative px-20 py-5" id="main">
       <h1 className="font-bold text-xl">All Subscriptions</h1>
       <div>
         {subscriptions.length > 0 ? (
@@ -94,7 +104,7 @@ const Subscriptions = () => {
                 className="w-32 h-32  object-cover object-center rounded-full flex-shrink-0"
                 alt="Avatar"
               />
-              <div className="space-y-1 text-Lightblack text-sm">
+              <div className="space-y-1 text-Lightblack text-sm w-full">
                 <h1 className="text-xl text-white font-bold">
                   {item?.channelName}
                 </h1>
@@ -105,8 +115,8 @@ const Subscriptions = () => {
               </div>
               <button
                 onClick={() => {
-                  setChannelName("");
-                  ConfirmationPop();
+                  setChannelName(item?.channelName);
+                  setShowPop(true);
                 }}
                 className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
               >
@@ -124,6 +134,7 @@ const Subscriptions = () => {
           <p>You have not subscribed anyone</p>
         )}
       </div>
+      {showPop && <ConfirmationPop />}
     </div>
   );
 };

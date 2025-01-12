@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { BACKEND_PLAYLIST, LOCAL_BACKEND_PLAYLIST } from "../utils/constants";
+import { BACKEND_PLAYLIST,  } from "../utils/constants";
 import { IoMdGlobe } from "react-icons/io";
 import { LockKeyhole } from "lucide-react";
 import { IoMdPlay } from "react-icons/io";
@@ -47,7 +47,7 @@ export const UserPlaylist = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          LOCAL_BACKEND_PLAYLIST + `/userPlaylist/${channelUser?._id}`,
+          BACKEND_PLAYLIST + `/userPlaylist/${channelUser?._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

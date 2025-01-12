@@ -7,11 +7,15 @@ import Shimmer from "./Shimmer";
 
 const MainLayout = () => {
   const user = useSelector((store) => store.user.user);
+  const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
+      setLoading(false);
+    }
+    if (!token) {
       setLoading(false);
     }
   }, [user]);

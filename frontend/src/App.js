@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import WatchPage from "./components/WatchPage";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import VideoContainer from "./components/VideoContainer";
 import { useDispatch } from "react-redux";
 import Login from "./components/Login";
@@ -22,6 +22,8 @@ import UpdateVideo from "./components/UpdateVideo";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import LoginBlocker from "./utils/LoginBlocker";
 import Subscriptions from "./components/Subscriptions";
+import History from "./components/History";
+import axios from "axios";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -57,8 +59,12 @@ export const AppRouter = createBrowserRouter([
             element: <UpdateVideo />,
           },
           {
-            path : "/subscriptions",
-            element : <Subscriptions/>
+            path: "/subscriptions",
+            element: <Subscriptions />,
+          },
+          {
+            path: "/history",
+            element: <History />,
           },
           {
             path: "/:userName",
@@ -94,7 +100,7 @@ export const AppRouter = createBrowserRouter([
           {
             path: "watch",
             element: <WatchPage />,
-          },          
+          },
         ],
       },
     ],
@@ -104,6 +110,27 @@ export const AppRouter = createBrowserRouter([
 function App() {
   const userToken = localStorage.getItem("token");
   const dispatch = useDispatch();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refreshAccessToken = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    try {
+      const response = await axios.get(BACKEND_USER + "/refresh_token", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+        },
+      });
+      if (response.status === 200) {
+        // window.location.reload();
+        localStorage.setItem("token", response?.data?.accessToken);
+        localStorage.setItem("refreshToken", response?.data?.refreshToken);
+      }
+    } catch (error) {
+      console.error("Error while refreshing the user token", error);
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -115,14 +142,20 @@ function App() {
           },
         });
         const data = await response.json();
+        if (response.status === 401) {
+          refreshAccessToken();
+        }
         if (response.status === 200) {
           dispatch(setUser(data.data));
+          setIsRefreshing(false);
         }
       } catch (error) {
         console.log("error while checking token", error);
       }
     };
-    fetchUser();
+    if (userToken) {
+      fetchUser();
+    }
   }, [userToken]);
 
   useEffect(() => {

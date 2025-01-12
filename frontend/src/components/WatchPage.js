@@ -9,10 +9,10 @@ import { BiLike, BiSolidLike, BiDislike, BiSolidDislike } from "react-icons/bi";
 import { RiShareForwardLine } from "react-icons/ri";
 import { LuSendHorizontal } from "react-icons/lu";
 import {
+  BACKEND_PLAYLIST,
   BACKEND_SUBSCRIPTION,
   BACKEND_VIDEO,
   formatDuration,
-  LOCAL_BACKEND_PLAYLIST,
 } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
@@ -86,7 +86,7 @@ const WatchPage = () => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       const { data } = await axios.get(
-        LOCAL_BACKEND_PLAYLIST + `/playlist/${playlistId}`,
+        BACKEND_PLAYLIST + `/playlist/${playlistId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -117,7 +117,7 @@ const WatchPage = () => {
     if (!videoViewed) {
       const timeout = setTimeout(() => {
         updateViews();
-      }, 10000);
+      }, 5000);
       return () => clearTimeout(timeout);
     }
   }, [videoViewed, videoId]);

@@ -29,6 +29,7 @@ const Slider = () => {
     {
       name: "Subscribers",
       icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
+      path: "/subscriptions",
     },
   ];
 
@@ -51,7 +52,7 @@ const Slider = () => {
     {
       name: "Watch later",
       icon: <MdOutlineWatchLater className="text-[1.3rem]" />,
-      path: `/${user.userName}`,
+      path: `/watchLater/${user.userName}`,
     },
   ];
 

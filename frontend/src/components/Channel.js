@@ -49,7 +49,6 @@ const Channel = () => {
   useEffect(() => {
     if (userVideos) {
       setUserVideosCount(userVideos.length);
-      setShimmer(false);
     }
   }, [userVideos]);
 
@@ -69,6 +68,7 @@ const Channel = () => {
         if (response.status === 200) {
           setChannelDetails(data?.data);
           setSubscribed(data?.data?.subscribed);
+          setShimmer(false);
           dispatch(setChannelUser(data?.data));
         }
       } catch (error) {
@@ -76,8 +76,8 @@ const Channel = () => {
       }
     };
     fetchUserDetails();
-  }, [userName]);  
-  
+  }, [userName]);
+
   const subscriberHandler = async () => {
     if (!subscribed) {
       try {
