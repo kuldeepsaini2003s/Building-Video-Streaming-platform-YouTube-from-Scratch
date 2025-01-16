@@ -217,7 +217,8 @@ const logoutUser = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const token = req.cookies.refreshToken || req.header("authorization")?.split(" ")[1];
+    const token =
+      req.cookies.refreshToken || req.header("authorization")?.split(" ")[1];
 
     if (!token) {
       return res
@@ -498,36 +499,7 @@ const getWatchHistory = async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(req.user._id),
-      },
-    },
-    {
-      $lookup: {
-        from: "videos",
-        localField: "watchHistory",
-        foreignField: "_id",
-        as: "watchHistory",
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "owner",
-              foreignField: "_id",
-              as: "owner",
-            },
-          },
-          {
-            $addFields: {
-              owner: { $arrayElemAt: ["$owner", 0] },
-            },
-          },
-          {
-            $project: {
-              "owner.avatar": 1,
-              "owner.channelName": 1,
-            },
-          },
-        ],
+        _id: req.user._id,  
       },
     },
     {
@@ -537,14 +509,49 @@ const getWatchHistory = async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "videoDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$videoDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "videoDetails.user",
+        foreignField: "_id",
+        as: "videoOwner",
+      },
+    },
+    {
+      $addFields: {
+        title: "$videoDetails.title",
+        description: "$videoDetails.description",
+        thumbnail: "$videoDetails.thumbnail",
+        videoId: "$videoDetails.video_id",
+        duration: "$videoDetails.duration",
+        views: { $size: "$videoDetails.views" },
+        channelName: {
+          $arrayElemAt: ["$videoOwner.publishedDetails.channelName", 0],
+        },
+      },
+    },
+    {
       $project: {
-        "watchHistory._id": 1,
-        "watchHistory.title": 1,
-        "watchHistory.thumbnail": 1,
-        "watchHistory.video_id": 1,
-        "watchHistory.description": 1,
-        "watchHistory.owner.avatar": 1,
-        "watchHistory.owner.channelName": 1,
+        title: 1,
+        description: 1,
+        thumbnail: 1,
+        videoId: 1,
+        duration: 1,
+        views: 1,
+        channelName: 1,
       },
     },
   ]);

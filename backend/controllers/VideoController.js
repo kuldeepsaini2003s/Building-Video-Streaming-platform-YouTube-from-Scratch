@@ -444,6 +444,42 @@ const updateViews = async (req, res) => {
     });
   }
 };
+const addVideoToWatched = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+
+    const video = await Video.findOne({ video_id: videoId });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { watchHistory: video._id },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Video added to watch history successfully",
+    });
+  } catch (error) {
+    console.log("Error while adding video to watched", error);
+    return res.status(500).json({
+      success: false,
+      message: "something went wrong",
+    });
+  }
+};
 
 const deleteVideo = async (req, res) => {
   try {
@@ -483,5 +519,6 @@ export {
   getAllVideo,
   updateVideo,
   updateViews,
+  addVideoToWatched,
   deleteVideo,
 };

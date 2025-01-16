@@ -18,11 +18,16 @@ const VideoCard = ({ info }) => {
 
   return (
     <div>
-      <img
-        className={`ml:rounded-md sm:h-[13rem]  ms:h-[12rem] object-cover object-center w-full`}
-        alt="Thumbnails"
-        src={thumbnail}
-      />
+      <div className="relative rounded-md">
+        <img
+          className={`ml:rounded-md sm:h-[13rem]  ms:h-[12rem] object-cover object-center w-full`}
+          alt="Thumbnails"
+          src={thumbnail}
+        />
+        <p className="absolute text-[0.8rem] font-medium bg-black opacity-80 rounded-md right-2 bottom-2 px-2 py-0.5">
+          {formatDuration(duration)}
+        </p>
+      </div>
       <div className="yt-details py-2 sm:px-0 ms:px-4 ms:py-3 flex gap-x-3">
         <Link to={`/${userName}`} className="flex-shrink-0">
           {avatar ? (
@@ -50,7 +55,6 @@ const VideoCard = ({ info }) => {
           <div className="flex gap-1 items-center text-Lightblack text-sm">
             <p>{formatViewCount(viewsCount)} views</p>
             <GoDotFill size={8} />
-            <p>{formatDuration(duration)}</p>
           </div>
         </div>
       </div>

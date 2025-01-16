@@ -6,6 +6,7 @@ import {
   deleteVideo,
   getAllVideo,
   updateViews,
+  addVideoToWatched,
 } from "../controllers/VideoController.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -23,6 +24,7 @@ router.post(
 router.post("/updateVideo/:id", upload.single("thumbnail"), updateVideo);
 router.post("/getAllVideo", getAllVideo);
 
+router.get("/add_To_Watched/:videoId", addVideoToWatched);
 router.get("/getVideo/:videoId", getVideoById);
 router.get("/updateViews/:videoId", updateViews);
 

@@ -13,6 +13,7 @@ import {
   BACKEND_SUBSCRIPTION,
   BACKEND_VIDEO,
   formatDuration,
+  LOCAL_BACKEND_VIDEO,
 } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
@@ -40,7 +41,7 @@ const WatchPage = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const videoId = searchParams.get("v");
   const playlistId = searchParams.get("list");
-
+  const userToken = localStorage.getItem("token");
   const [video, setVideo] = useState([]);
   const [playlist, setPlaylist] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -89,7 +90,7 @@ const WatchPage = () => {
         BACKEND_PLAYLIST + `/playlist/${playlistId}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${userToken}`,
           },
         }
       );
@@ -103,11 +104,28 @@ const WatchPage = () => {
   }, [playlistId]);
 
   useEffect(() => {
+    const addVideoToWatched = async () => {
+      try {
+        await axios.get(LOCAL_BACKEND_VIDEO + `/add_To_Watched/${videoId}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+      } catch (error) {
+        console.error("Error while adding video to watched history", error);
+      }
+    };
+    if (videoId) {
+      addVideoToWatched();
+    }
+  }, [videoId]);
+
+  useEffect(() => {
     const updateViews = async () => {
       try {
         await axios.get(BACKEND_VIDEO + `/updateViews/${videoId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${userToken}`,
           },
         });
       } catch (error) {
@@ -131,7 +149,7 @@ const WatchPage = () => {
       try {
         await axios.get(BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${userToken}`,
           },
         });
       } catch (error) {
@@ -166,7 +184,7 @@ const WatchPage = () => {
     try {
       await axios.get(BACKEND_SUBSCRIPTION + `/unsubscribe/${channelName}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${userToken}`,
         },
       });
     } catch (error) {
@@ -322,7 +340,7 @@ const WatchPage = () => {
                 {/* views */}
                 <div className="flex items-center gap-x-2 font-semibold flex-wrap ">
                   <p className="p-0 m-0">{formatViewCount(viewsCount)} views</p>
-                  <p className="p-0 m-0">{duration} </p>
+                  <p className="p-0 m-0">{formatDuration(duration)} </p>
                   <div
                     className={`${showFullDescription ? "" : "line-clamp-1 "}`}
                   >

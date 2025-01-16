@@ -1,3 +1,5 @@
+import { round, floor, padStart } from "lodash";
+
 export const YOUTUBE_API_KEY = "AIzaSyB_0tssWKUF2AGkgH3eYLVAQLRkY1yNt9I"; // youtube api 1
 
 export const LOCAL_BACKEND_USER = "http://localhost:8000/api/users";
@@ -54,10 +56,18 @@ export const formatViewCount = (viewCount) => {
     }
   };
   
-export const formatDuration = (duration) => {
-    const totalSeconds = Math.round(duration);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
+export function formatDuration(seconds) {  
+  const totalSeconds = Math.round(seconds);
   
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const remainingSeconds = totalSeconds % 60;
+  
+  const formattedMinutes = hours > 0 ? String(minutes).padStart(2, '0') : minutes;
+  const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+  return hours > 0
+    ? `${hours}:${formattedMinutes}:${formattedSeconds}`
+    : `${formattedMinutes}:${formattedSeconds}`;
+}
+

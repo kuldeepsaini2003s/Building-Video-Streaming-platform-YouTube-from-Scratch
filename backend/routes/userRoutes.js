@@ -30,6 +30,7 @@ router.post(
   updateUserDetails
 );
 
+
 router.get("/getUserDetails", verifyToken, getUserDetails);
 router.get("/getChannelDetails/:userName", verifyToken, getChannelDetails);
 router.get("/watchHistory", verifyToken, getWatchHistory);
