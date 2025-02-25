@@ -165,7 +165,7 @@ const Channel = () => {
             {channelDetails?.coverImage && (
               <img
                 src={channelDetails?.coverImage}
-                className="h-56 max-md:h-28 w-full object-cover object-center md:rounded-xl"
+                className="h-56 max-md:h-28 w-full object-contain aspect-square object-center md:rounded-xl"
                 alt=""
               />
             )}
@@ -174,7 +174,7 @@ const Channel = () => {
                 <div className="flex-shrink-0">
                   <img
                     src={channelDetails?.avatar}
-                    className="w-32 h-32 max-sm:w-24 max-sm:h-24 object-cover object-center rounded-full"
+                    className="w-32 h-32 max-sm:w-24 max-sm:h-24 object-contain aspect-square object-center rounded-full"
                     alt=""
                   />
                 </div>

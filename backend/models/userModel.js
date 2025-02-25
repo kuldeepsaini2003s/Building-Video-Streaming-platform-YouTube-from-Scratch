@@ -15,7 +15,7 @@ const userSchema = new Schema(
     },
     publishedDetails: {
       _id: {
-        type: String,        
+        type: String,
       },
       userName: {
         type: String,

@@ -9,8 +9,7 @@ const UseYoutubeComments = ({ videoId }) => {
     const data = await fetch(
       `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=50&videoId=${videoId}&key=${YOUTUBE_API_KEY}`
     );
-    const json = await data.json();
-    // console.log(json?.items);
+    const json = await data.json();    
     dispatch(setYoutubeComments(json?.items));
   };
 

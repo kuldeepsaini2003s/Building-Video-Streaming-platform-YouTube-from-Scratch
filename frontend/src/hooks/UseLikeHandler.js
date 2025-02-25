@@ -21,14 +21,11 @@ const UseLikeHandler = (videoId) => {
     if (!liked) {
       setLikesCount(likesCount + 1);
       try {
-        await fetch(
-          BACKEND_LIKE + `/likeVideo/${videoId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        await fetch(BACKEND_LIKE + `/likeVideo/${videoId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
       } catch (error) {
         console.error("Error while liking a video", error);
       }
@@ -41,14 +38,11 @@ const UseLikeHandler = (videoId) => {
     if (!disliked) {
       setLikesCount(likesCount - 1);
       try {
-        await fetch(
-          BACKEND_LIKE + `/disLikeVideo/${videoId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        await fetch(BACKEND_LIKE + `/disLikeVideo/${videoId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
       } catch (error) {
         console.error("Error while liking a video", error);
       }

@@ -4,7 +4,6 @@ import { uploadOnCloudinary } from "../utils/cloudinaryUpload.js";
 import { generateToken } from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
-import mongoose from "mongoose";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

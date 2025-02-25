@@ -19,11 +19,11 @@ import {
   UserPlaylist,
 } from "./components/userChannelCollection";
 import UpdateVideo from "./components/UpdateVideo";
-import ProtectedRoutes from "./utils/ProtectedRoutes";
 import LoginBlocker from "./utils/LoginBlocker";
 import Subscriptions from "./components/Subscriptions";
 import History from "./components/History";
 import axios from "axios";
+import UserChannel from "./components/UserChannel";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -44,64 +44,59 @@ export const AppRouter = createBrowserRouter([
         ],
       },
       {
-        element: <ProtectedRoutes />,
+        path: "/",
+        element: <VideoContainer />,
+      },
+      {
+        path: "/create-video",
+        element: <CreateVideo />,
+      },
+      {
+        path: "/update-video/:videoId",
+        element: <UpdateVideo />,
+      },
+      {
+        path: "/subscriptions",
+        element: <Subscriptions />,
+      },
+      {
+        path: "/history",
+        element: <History />,
+      },
+      { path: "/feed/you", element: <UserChannel /> },
+      {
+        path: "/:userName",
+        element: <Channel />,
         children: [
           {
-            path: "/",
-            element: <VideoContainer />,
+            index: true,
+            element: <UserAllVideo />,
           },
           {
-            path: "/create-video",
-            element: <CreateVideo />,
+            path: "videos",
+            element: <UserAllVideo />,
           },
           {
-            path: "/update-video/:videoId",
-            element: <UpdateVideo />,
+            path: "playlists",
+            element: <UserPlaylist />,
           },
           {
-            path: "/subscriptions",
-            element: <Subscriptions />,
+            path: "community",
+            element: <UserCommunity />,
           },
           {
-            path: "/history",
-            element: <History />,
-          },
-          {
-            path: "/:userName",
-            element: <Channel />,
-            children: [
-              {
-                index: true,
-                element: <UserAllVideo />,
-              },
-              {
-                path: "videos",
-                element: <UserAllVideo />,
-              },
-              {
-                path: "playlists",
-                element: <UserPlaylist />,
-              },
-              {
-                path: "community",
-                element: <UserCommunity />,
-              },
-              {
-                path: "about",
-                element: <UserAbout />,
-              },
-            ],
-          },
-
-          {
-            path: "/customize-channel",
-            element: <CustomizeChannel />,
-          },
-          {
-            path: "watch",
-            element: <WatchPage />,
+            path: "about",
+            element: <UserAbout />,
           },
         ],
+      },
+      {
+        path: "/customize-channel",
+        element: <CustomizeChannel />,
+      },
+      {
+        path: "watch",
+        element: <WatchPage />,
       },
     ],
   },
@@ -164,7 +159,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <>    
       <RouterProvider router={AppRouter} />
     </>
   );

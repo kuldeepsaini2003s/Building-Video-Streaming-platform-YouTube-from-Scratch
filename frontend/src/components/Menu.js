@@ -15,11 +15,6 @@ const Menu = () => {
       path: "/",
     },
     {
-      name: "Shorts",
-      icon: <SiYoutubeshorts className="text-[1.1rem]" />,
-      path: "/shorts",
-    },
-    {
       name: "Subscribers",
       icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
       path: "/subscriptions",
@@ -27,7 +22,7 @@ const Menu = () => {
     {
       name: "You",
       icon: <MdOutlineVideoLibrary className="text-[1.3rem]" />,
-      path: `/${user?.userName}`,
+      path: "/feed/you",
     },
   ];
 
@@ -35,7 +30,7 @@ const Menu = () => {
 
   return (
     <div
-      className={`${location.pathname === "/watch" && "hidden"}`}
+      className={`${location.pathname === "/watch" && "hidden"} max-[600px]:flex justify-around`}
       id="sidebar"
     >
       {/* home-btn */}
@@ -59,7 +54,7 @@ const Menu = () => {
           >
             <img
               src={user?.avatar}
-              className="w-8 h-8 rounded-full object-cover object-center"
+              className="w-8 h-8 rounded-full object-contain aspect-square object-center"
               alt=""
             />
             <p className="sm:text-xs ms:text-[12px]">You</p>

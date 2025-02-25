@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
 import Body from "./Body";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -8,8 +7,7 @@ import Shimmer from "./Shimmer";
 const MainLayout = () => {
   const user = useSelector((store) => store.user.user);
   const token = localStorage.getItem("token");
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);  
 
   useEffect(() => {
     if (user) {
@@ -23,10 +21,9 @@ const MainLayout = () => {
   return (
     <>
       {loading ? (
-        <Shimmer />
+        <Shimmer />        
       ) : (
         <>
-          <Navbar />
           <Body />
         </>
       )}

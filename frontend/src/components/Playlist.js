@@ -165,8 +165,7 @@ export const CreatePlaylist = ({ setShowCreatePlaylist }) => {
 
 export const SavePlaylist = ({
   setShowPlaylist,
-  setShowCreatePlaylist,
-  video_id,
+  setShowCreatePlaylist,  
 }) => {
   const [searchParams] = useSearchParams();
   const videoId = searchParams.get("v");
@@ -295,8 +294,7 @@ export const SavePlaylist = ({
       debounceAddVideo.cancel();
       debounceRemovedVideo.cancel();
     };
-  }, [selectedItem]);
-  console.log(video_id);
+  }, [selectedItem]);  
 
   return (
     <div

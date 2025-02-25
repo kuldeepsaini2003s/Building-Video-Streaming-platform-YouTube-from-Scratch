@@ -356,7 +356,7 @@ const UpdateVideo = () => {
                   <img
                     src={preview}
                     alt="Thumbnail preview"
-                    className="max-h-48 mx-auto rounded"
+                    className="max-h-48 mx-auto rounded object-contain aspect-video"
                   />
                   <button
                     type="button"

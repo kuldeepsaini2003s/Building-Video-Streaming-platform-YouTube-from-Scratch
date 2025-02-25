@@ -132,7 +132,7 @@ const CustomizeChannel = () => {
         <img
           src={formInput?.coverImage}
           alt="Channel Cover"
-          className="w-full h-full object-cover rounded-md"
+          className="w-full h-full object-contain aspect-square rounded-md"
         />
         <input
           ref={coverImageRef}
@@ -158,7 +158,7 @@ const CustomizeChannel = () => {
           <img
             src={formInput?.avatar}
             alt="Channel Avatar"
-            className="w-32 h-32 rounded-full border-4 border-white object-cover"
+            className="w-32 h-32 rounded-full border-4 border-white object-contain aspect-square"
           />
           <input
             ref={avatarImageRef}

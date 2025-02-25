@@ -3,10 +3,9 @@ import bell_icon_white from "../Icons/Bell-icon-white.json";
 import Lottie from "lottie-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import {
-  BACKEND_SUBSCRIPTION,
-
-} from "../utils/constants";
+import { BACKEND_SUBSCRIPTION } from "../utils/constants";
+import { Link } from "react-router-dom";
+import { CircleUserRound } from "lucide-react";
 
 const Subscriptions = () => {
   const [showPop, setShowPop] = useState(false);
@@ -57,7 +56,7 @@ const Subscriptions = () => {
     } catch (error) {
       console.error("Error while subscribing channel", error);
     }
-  };  
+  };
 
   const ConfirmationPop = () => {
     return (
@@ -90,52 +89,65 @@ const Subscriptions = () => {
   };
 
   return (
-    <div className="relative px-20 py-5" id="main">
-      <h1 className="font-bold text-xl">All Subscriptions</h1>
-      <div>
-        {subscriptions.length > 0 ? (
-          subscriptions.map((item) => (
-            <div
-              key={item._id}
-              className="flex gap-10 items-center w-full my-4"
-            >
-              <img
-                src={item?.avatar}
-                className="w-32 h-32  object-cover object-center rounded-full flex-shrink-0"
-                alt="Avatar"
-              />
-              <div className="space-y-1 text-Lightblack text-sm w-full">
-                <h1 className="text-xl text-white font-bold">
-                  {item?.channelName}
-                </h1>
-                <p>
-                  {item?.userName}. {item?.subscribers} Subscribers
-                </p>
-                <p className="leading-5">{item?.description}</p>
-              </div>
-              <button
-                onClick={() => {
-                  setChannelName(item?.channelName);
-                  setShowPop(true);
-                }}
-                className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
-              >
-                <Lottie
-                  animationData={bell_icon_white}
-                  play={isPlaying}
-                  loop={false}
-                  className="w-6"
-                />
-                Subscribed
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>You have not subscribed anyone</p>
-        )}
-      </div>
-      {showPop && <ConfirmationPop />}
-    </div>
+    <>
+      {user ? (
+        <div className="relative px-20 py-2" id="main">
+          <h1 className="font-bold text-xl">All Subscriptions</h1>
+          <div>
+            {subscriptions.length > 0 ? (
+              subscriptions.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex gap-10 items-center w-full my-4"
+                >
+                  <img
+                    src={item?.avatar}
+                    className="w-32 h-32  object-contain aspect-square object-center rounded-full flex-shrink-0"
+                    alt="Avatar"
+                  />
+                  <div className="space-y-1 text-Lightblack text-sm w-full">
+                    <h1 className="text-xl text-white font-bold">
+                      {item?.channelName}
+                    </h1>
+                    <p>
+                      {item?.userName}. {item?.subscribers} Subscribers
+                    </p>
+                    <p className="leading-5">{item?.description}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setChannelName(item?.channelName);
+                      setShowPop(true);
+                    }}
+                    className="watch-btn subscriber px-3 py-2 dark:bg-icon_black dark:hover:bg-hover_icon_black flex gap-1 items-center text-sm cursor-pointer rounded-3xl"
+                  >
+                    <Lottie
+                      animationData={bell_icon_white}
+                      play={isPlaying}
+                      loop={false}
+                      className="w-6"
+                    />
+                    Subscribed
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="font-medium">You have not subscribed anyone</p>
+            )}
+          </div>
+          {showPop && <ConfirmationPop />}
+        </div>
+      ) : (
+        <div id="main" className="flex flex-col items-center pt-40">
+          <p>Sign in to see updates from your favorite YouTube channels</p>
+          <Link to={"/login"}>
+            <button className="flex gap-2 items-center border mt-5 border-icon_black font-medium rounded-full text-sm px-3 py-1">
+              <CircleUserRound size={25} strokeWidth={1} /> Sign in
+            </button>
+          </Link>
+        </div>
+      )}
+    </>
   );
 };
 

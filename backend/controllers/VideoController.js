@@ -2,6 +2,8 @@ import { v2 as cloudinary } from "cloudinary";
 import { User } from "../models/userModel.js";
 import { Video } from "../models/videoModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryUpload.js";
+import fs from "fs";
+import path from "path";
 
 function generateWatchId(length = 11) {
   const characters =
@@ -21,91 +23,232 @@ export const extractPublicId = (url) => {
   return publicIdWithExtension;
 };
 
-const createVideo = async (req, res) => {
-  const { title, description, category, tags, status } = req.body;
+const uploadProgress = {};
 
-  if (!title || !description || !category || !tags || !status) {
+const createVideo = async (req, res) => {
+  const {
+    chunkIndex,
+    totalChunks,
+    fileName,
+    title,
+    description,
+    tags,
+    status,
+    category,
+  } = req.body;
+
+  console.log(
+    `Received chunk ${chunkIndex + 1} of ${totalChunks} for file: ${fileName}`
+  );
+
+  if (
+    (!chunkIndex && chunkIndex !== 0) ||
+    !totalChunks ||
+    !fileName ||
+    !title ||
+    !description ||
+    !tags ||
+    !status ||
+    !category
+  ) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
 
-  try {
-    const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
 
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
-    }
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
 
-    const files = req.files;
-
-    if (!files || !files.thumbnail) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please upload a thumbnail" });
-    }
-
-    if (!files || !files.video) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please upload a video" });
-    }
-
-    const thumbnailFile = files.thumbnail[0];
-
-    const videoFile = files.video[0];
-
-    const thumbnailUrl = await uploadOnCloudinary(thumbnailFile.path);
-    const videoUrl = await uploadOnCloudinary(videoFile.path);
-
-    if (!thumbnailUrl || !videoUrl) {
-      return res
-        .status(400)
-        .json({ success: false, message: "uploading files failed" });
-    }
-
-    const videoData = {
-      title,
-      description,
-      category,
-      tags,
-      video_id: generateWatchId(),
-      duration: videoUrl.duration,
-      user: user._id,
-      published: status,
-      thumbnail: thumbnailUrl.secure_url,
-      videoUrl: videoUrl.secure_url,
+  // Track progress
+  if (!uploadProgress[fileName]) {
+    uploadProgress[fileName] = {
+      progress: 0,
+      status: "uploading",
+      thumbnailUrl: "",
     };
+  }
 
-    const video = await Video.create(videoData);
+  let thumbnailUrl;
+  if (chunkIndex == 0) {
+    try {
+      uploadProgress[fileName].progress = 10;
+      const onProgress = (progress) => {
+        uploadProgress[fileName].progress = Math.min(
+          25,
+          10 + (progress / 100) * 15
+        );
+      };
+      thumbnailUrl = await uploadOnCloudinary(
+        req?.files?.thumbnail[0].path,
+        onProgress
+      );
+      uploadProgress[fileName].progress = 25;
+      uploadProgress[fileName].thumbnailUrl = thumbnailUrl.secure_url;
+      uploadProgress[fileName].status = "uploading";
 
-    return res.status(200).json({
-      success: true,
-      data: video,
-      message: "Video created successfully",
-    });
-  } catch (error) {
-    console.log("Error while create video", error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-    });
+      console.log("Thumbnail uploaded successfully:", thumbnailUrl);
+    } catch (err) {
+      console.error("Error uploading thumbnail:", err);
+      uploadProgress[fileName].status = "error";
+      cleanupUploadedFiles(req.files);
+      return res
+        .status(500)
+        .json({ success: false, message: "Thumbnail upload failed" });
+    }
+  } else {
+    thumbnailUrl = uploadProgress[fileName]?.thumbnailUrl;
+  }
+
+  // Handle chunk storage
+  const tempDir = `temp/${path.parse(fileName).name}_chunks`;
+  if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
+
+  try {
+    const chunkPath = `${tempDir}/chunk_${chunkIndex}`;
+    fs.renameSync(req?.files?.chunk[0]?.path, chunkPath);
+
+    const files = fs.readdirSync(tempDir);
+    uploadProgress[fileName].progress =
+      25 + Math.round((files.length / totalChunks) * 25); // Max 50%
+
+    if (files.length === Number(totalChunks)) {
+      const combinedPath = `temp/${
+        path.parse(fileName).name
+      }_combined_${Date.now()}${path.extname(fileName)}`;
+      const writeStream = fs.createWriteStream(combinedPath);
+
+      for (let i = 0; i < totalChunks; i++) {
+        const chunkFile = `${tempDir}/chunk_${i}`;
+        const data = fs.readFileSync(chunkFile);
+        writeStream.write(data);
+        fs.unlinkSync(chunkFile);
+
+        uploadProgress[fileName].progress =
+          50 + Math.round(((i + 1) / totalChunks) * 25); // Max 75%
+      }
+
+      writeStream.end();
+
+      writeStream.on("finish", async () => {
+        try {
+          if (!fs.existsSync(combinedPath)) {
+            throw new Error("Combined file does not exist");
+          }
+          fs.rmSync(tempDir, { recursive: true });
+
+          uploadProgress[fileName].progress = 80; // Start video upload
+          const videoUrl = await uploadOnCloudinary(
+            combinedPath,
+            (progress) => {
+              uploadProgress[fileName].progress =
+                80 + Math.round((progress / 100) * 20); // Max 100%
+            }
+          );
+          uploadProgress[fileName].progress = 100;
+          uploadProgress[fileName].status = "completed";
+
+          const videoData = {
+            title,
+            description,
+            category,
+            tags,
+            video_id: generateWatchId(),
+            duration: videoUrl.duration,
+            user: user._id,
+            published: status,
+            thumbnail: uploadProgress[fileName]?.thumbnailUrl,
+            videoUrl: videoUrl.secure_url,
+          };
+          await Video.create(videoData);
+
+          console.log("Video created successfully:", videoData);
+          return res.status(200).json({
+            success: true,
+            message: "Video created successfully",
+            data: videoData,
+          });
+        } catch (err) {
+          console.error("Error uploading video:", err);
+          uploadProgress[fileName].status = "error";
+          cleanupUploadedFiles(req.files, combinedPath, tempDir);
+          return res
+            .status(500)
+            .json({ success: false, message: "Error uploading video" });
+        }
+      });
+
+      writeStream.on("error", (err) => {
+        console.error("Error writing combined file:", err);
+        uploadProgress[fileName].status = "error";
+        cleanupUploadedFiles(req.files, combinedPath, tempDir);
+        return res
+          .status(500)
+          .json({ success: false, message: "Error processing file" });
+      });
+    } else {
+      return res.status(200).json({
+        progress: uploadProgress[fileName].progress,
+      });
+    }
+  } catch (err) {
+    console.error("Error processing chunks:", err);
+    uploadProgress[fileName].status = "error";
+    cleanupUploadedFiles(req.files);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error processing chunks" });
+  }
+};
+
+const cleanupUploadedFiles = (
+  files,
+  fileName,
+  combinedPath = null,
+  tempDir = null
+) => {
+  try {
+    if (files?.thumbnail?.[0]?.path && fs.existsSync(files.thumbnail[0].path)) {
+      fs.unlinkSync(files.thumbnail[0].path);
+    }
+    if (files?.chunk?.[0]?.path && fs.existsSync(files.chunk[0].path)) {
+      fs.unlinkSync(files.chunk[0].path);
+    }
+    if (combinedPath && fs.existsSync(combinedPath)) {
+      fs.unlinkSync(combinedPath);
+    }
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  } catch (err) {
+    console.error("Error during cleanup:", err);
+  }
+};
+
+const getUploadProgress = (req, res) => {
+  const { fileName } = req.query;
+  if (!fileName) {
+    return res.status(400).json({ message: "File name is required" });
+  }
+  if (uploadProgress[fileName].progress === 100) {
+    return res
+      .status(200)
+      .json((uploadProgress[fileName].status = "completed"));
+  } else {
+    res.status(200).json(uploadProgress[fileName]);
   }
 };
 
 const getVideoById = async (req, res) => {
   try {
     const { videoId } = req.params;
+    const userId = req.body.user;
 
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+    let user = null;
+    if (userId) {
+      user = await User.findById(userId);
     }
 
     const video = await Video.aggregate([
@@ -167,15 +310,6 @@ const getVideoById = async (req, res) => {
           subscribersCount: {
             $size: { $ifNull: ["$subscribers", []] },
           },
-          subscribed: {
-            $cond: {
-              if: {
-                $in: [user._id, { $ifNull: ["$subscribers.subscriber", []] }],
-              },
-              then: true,
-              else: false,
-            },
-          },
           channelName: {
             $arrayElemAt: ["$userDetails.publishedDetails.channelName", 0],
           },
@@ -185,36 +319,48 @@ const getVideoById = async (req, res) => {
           userName: {
             $arrayElemAt: ["$userDetails.publishedDetails.userName", 0],
           },
-          videoViewed: {
-            $cond: [
-              {
-                $in: [user._id, { $ifNull: ["$views", []] }],
-              },
-              true,
-              false,
-            ],
-          },
-          isLiked: {
-            $cond: [
-              {
-                $in: [user._id, { $ifNull: ["$likes.likeBy", []] }],
-              },
-              true,
-              false,
-            ],
-          },
-          isDisliked: {
-            $cond: [
-              {
-                $in: [user._id, { $ifNull: ["$likes.dislikeBy", []] }],
-              },
-              true,
-              false,
-            ],
-          },
           viewsCount: {
             $size: { $ifNull: ["$views", []] },
           },
+          // Check user-specific fields only if user exists
+          ...(user && {
+            subscribed: {
+              $cond: {
+                if: {
+                  $in: [user._id, { $ifNull: ["$subscribers.subscriber", []] }],
+                },
+                then: true,
+                else: false,
+              },
+            },
+            videoViewed: {
+              $cond: [
+                {
+                  $in: [user._id, { $ifNull: ["$views", []] }],
+                },
+                true,
+                false,
+              ],
+            },
+            isLiked: {
+              $cond: [
+                {
+                  $in: [user._id, { $ifNull: ["$likes.likeBy", []] }],
+                },
+                true,
+                false,
+              ],
+            },
+            isDisliked: {
+              $cond: [
+                {
+                  $in: [user._id, { $ifNull: ["$likes.dislikeBy", []] }],
+                },
+                true,
+                false,
+              ],
+            },
+          }),
         },
       },
       {
@@ -228,21 +374,25 @@ const getVideoById = async (req, res) => {
           user: 1,
           videoUrl: 1,
           viewsCount: 1,
-          videoViewed: 1,
           channelName: 1,
           userName: 1,
           userAvatar: 1,
           subscribersCount: 1,
-          subscribed: 1,
           likesCount: 1,
-          isLiked: 1,
-          isDisliked: 1,
           videoSaved: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          ...(user && {
+            subscribed: 1,
+            videoViewed: 1,
+            isLiked: 1,
+            isDisliked: 1,
+          }),
         },
       },
     ]);
 
-    if (!video) {
+    if (!video || video.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Video not found",
@@ -341,25 +491,16 @@ const getAllVideo = async (req, res) => {
 
       videos = await Video.find({ user: user._id, published: true })
         .select(
-          "title thumbnail views duration likesCount video_id videoUrl category"
+          "title thumbnail views duration likesCount video_id videoUrl category createdAt updatedAt"
         )
         .populate(
           "user",
           "publishedDetails.channelName publishedDetails.avatar publishedDetails.userName"
         );
     } else {
-      user = await User.findById(req.user._id);
-
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
       videos = await Video.find({ published: true })
         .select(
-          "title thumbnail views duration likesCount video_id videoUrl category"
+          "title thumbnail views duration likesCount video_id videoUrl category createdAt updatedAt"
         )
         .populate(
           "user",
@@ -385,6 +526,7 @@ const getAllVideo = async (req, res) => {
       channelName: video.user?.publishedDetails?.channelName || "",
       userName: video.user?.publishedDetails?.userName || "",
       avatar: video.user?.publishedDetails?.avatar || "",
+      createdAt: video.createdAt,
     }));
 
     return res.status(200).json({
@@ -520,5 +662,6 @@ export {
   updateVideo,
   updateViews,
   addVideoToWatched,
+  getUploadProgress,
   deleteVideo,
 };

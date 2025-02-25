@@ -28,7 +28,7 @@ const Categories = () => {
   };
 
   return (
-    <div id="category" className="no-scrollbar overflow-x-auto">
+    <div id="category" className="no-scrollbar overflow-x-auto px-4">
       <div className="flex sm:gap-3 ms:gap-2 ms:my-2 ms:mx-1 items-center">
         {categories.map((item, index) => (
           <div

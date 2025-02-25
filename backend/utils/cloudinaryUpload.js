@@ -10,18 +10,47 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, onProgress) => {
   try {
-    const response = await cloudinary.uploader.upload(localFilePath, {
-      public_id: "Youtube",
-      resource_type: "auto",
-      folder: "uploads",
+    const fileSize = fs.statSync(localFilePath).size; // Get file size in bytes
+    let uploadedBytes = 0;
+
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          public_id: "Youtube",
+          resource_type: "auto",
+          folder: "uploads",
+        },
+        (error, result) => {
+          if (error) {
+            fs.unlinkSync(localFilePath); // Cleanup the local file
+            return reject(error);
+          }
+          fs.unlinkSync(localFilePath); // Cleanup the local file
+          resolve(result);
+        }
+      );
+
+      const readStream = fs.createReadStream(localFilePath);
+
+      readStream.on("data", (chunk) => {
+        uploadedBytes += chunk.length;
+        if (onProgress) {
+          const progress = Math.round((uploadedBytes / fileSize) * 100);
+          onProgress(progress);
+        }
+      });
+
+      readStream.pipe(uploadStream);
+
+      readStream.on("error", (err) => {
+        reject(err);
+      });
     });
-    fs.unlinkSync(localFilePath);    
-    return response;
   } catch (error) {
     fs.unlinkSync(localFilePath);
-    console.log("Error while uploading the files to cloudinary", error);
+    console.log("Error while uploading the file to Cloudinary", error);
     return null;
   }
 };

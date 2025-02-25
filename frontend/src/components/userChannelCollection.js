@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { BACKEND_PLAYLIST,  } from "../utils/constants";
+import { BACKEND_PLAYLIST } from "../utils/constants";
 import { IoMdGlobe } from "react-icons/io";
 import { LockKeyhole } from "lucide-react";
 import { IoMdPlay } from "react-icons/io";
@@ -33,7 +33,7 @@ export const UserAllVideo = () => {
           </Link>
         ))
       ) : (
-        <div>No videos found</div>
+        <div className="font-medium">No videos found</div>
       )}
     </div>
   );
@@ -67,8 +67,7 @@ export const UserPlaylist = () => {
     if (channelUser?._id) {
       fetchData();
     }
-  }, [channelUser?._id]);
-  console.log(playlist);
+  }, [channelUser?._id]);  
 
   return (
     <div className="grid grid-cols-5 gap-2 my-4">
@@ -82,7 +81,7 @@ export const UserPlaylist = () => {
                 <div className="relative w-full ">
                   <img
                     src={item?.thumbnail}
-                    className="w-full h-32 object-cover object-center rounded-md bg-yellow-500"
+                    className="w-full h-32 object-contain aspect-video object-center rounded-md bg-yellow-500"
                   ></img>
                   <div className="absolute font-medium text-xs flex justify-center right-1 bottom-1 bg-icon_black bg-opacity-70 rounded-md px-2 py-1">
                     <CgPlayList className="text-lg" /> {item?.video?.length}{" "}
@@ -118,7 +117,7 @@ export const UserPlaylist = () => {
           </Link>
         ))
       ) : (
-        <p className="font-semibold">No playlist create yet.</p>
+        <p className="font-medium">No playlist create yet.</p>
       )}
     </div>
   );

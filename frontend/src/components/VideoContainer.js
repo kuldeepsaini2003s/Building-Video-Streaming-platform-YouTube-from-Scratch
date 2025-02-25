@@ -31,15 +31,18 @@ const VideoContainer = () => {
       ) : (
         <div
           id="main"
-          // className="p-2 grid max-md:grid-cols-1 ml:grid-cols-2 gap-3 sm:grid-cols-3 max-md:p-0 lg:grid-cols-3"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
+          className="pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 px-4"
         >
           {" "}
-          {videos?.map((video) => (
-            <Link key={video.id} to={"/watch?v=" + video?.video_id}>
-              <VideoCard info={video} />
-            </Link>
-          ))}
+          {videos?.length > 0 ? (
+            videos?.map((video) => (
+              <Link key={video.id} to={"/watch?v=" + video?.video_id}>
+                <VideoCard info={video} />
+              </Link>
+            ))
+          ) : (
+            <p className="font-medium">No videos uploaded yet</p>
+          )}
         </div>
       )}
     </>

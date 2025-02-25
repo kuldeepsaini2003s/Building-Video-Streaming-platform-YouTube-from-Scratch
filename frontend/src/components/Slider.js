@@ -9,7 +9,6 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { MdOutlineVideoLibrary } from "react-icons/md";
 import { BsPersonSquare } from "react-icons/bs";
 import { GrHistory } from "react-icons/gr";
-import { MdOutlineWatchLater } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 const Slider = () => {
@@ -21,11 +20,7 @@ const Slider = () => {
       name: "Home",
       icon: <IoMdHome className="text-[1.4rem]" />,
       path: "/",
-    },
-    {
-      name: "Shorts",
-      icon: <SiYoutubeshorts className="text-[1.1rem]" />,
-    },
+    },    
     {
       name: "Subscribers",
       icon: <MdOutlineSubscriptions className="text-[1.3rem]" />,
@@ -37,43 +32,43 @@ const Slider = () => {
     {
       name: "Your channel",
       icon: <BsPersonSquare className="text-[1.2rem]" />,
-      path: `/${user.userName}`,
+      path: "/feed/you",
     },
     {
       name: "History",
       icon: <GrHistory className="text-[1.1rem]" />,
       path: `/history`,
     },
-    {
-      name: "Your Videos",
-      icon: <MdOutlineVideoLibrary className="text-[1.3rem]" />,
-      path: `/${user.userName}/videos`,
-    },
-    {
-      name: "Watch later",
-      icon: <MdOutlineWatchLater className="text-[1.3rem]" />,
-      path: `/watchLater/${user.userName}`,
-    },
+    ...(user
+      ? [
+          {
+            name: "Your Videos",
+            icon: <MdOutlineVideoLibrary className="text-[1.3rem]" />,
+            path: `/${user && user.userName}/videos`,
+          },
+        ]
+      : []),
   ];
 
   const isSliderOpen = useSelector((store) => store.app.open);
 
   const handleToggle = () => {
     dispatch(toggleSlider());
-    document.querySelector("#slider").classList.add("active");
   };
 
   return (
-    <div
-      className={` fixed w-[100vw] z-50 h-[100vh] bg-black bg-opacity-40 top-0 ${
-        isSliderOpen ? "active" : ""
-      }`}
-      onClick={handleToggle}
-    >
+    <>
+      {isSliderOpen && (
+        <div
+          className={`overlay ${isSliderOpen ? "active" : ""}`}
+          onClick={handleToggle}
+        ></div>
+      )}
       <div
         id="slider"
-        className={`bg-white dark:bg-black w-full z-50 px-1 py-2 shadow-xl transition duration-700 ease-in-out`}
-        onClick={(e) => e.stopPropagation()}
+        className={`slider ${
+          isSliderOpen ? "active" : ""
+        } bg-white dark:bg-black px-2 py-2 shadow-xl`}
       >
         <div id="menu-bar yt-icon" className="flex items-center ml-1 gap-x-4">
           {/* Menu-Bar-Btn */}
@@ -172,10 +167,12 @@ const Slider = () => {
             )
           )}
           <div className=" border-t border-Gray  mt-3 py-2 w-full">
-            <div className="slider-icon active flex gap-2 items-center px-3 rounded-xl py-3">
-              <p>You</p>
-              <MdOutlineKeyboardArrowRight className="text-[1.3rem] mt-1" />
-            </div>
+            <Link to={"/feed/you"}>
+              <div className="slider-icon active flex gap-2 items-center px-3 rounded-xl py-3">
+                <p>You</p>
+                <MdOutlineKeyboardArrowRight className="text-[1.3rem] mt-1" />
+              </div>
+            </Link>
             {userTabs.map((item, index) => (
               <Link to={item.path}>
                 <div
@@ -192,7 +189,7 @@ const Slider = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

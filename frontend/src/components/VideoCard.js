@@ -4,6 +4,7 @@ import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { formatDuration, formatViewCount } from "../utils/constants";
 import { Link } from "react-router-dom";
 import { FaCircleUser } from "react-icons/fa6";
+import { timeAgo } from "../utils/customFunctions";
 
 const VideoCard = ({ info }) => {
   const {
@@ -14,17 +15,18 @@ const VideoCard = ({ info }) => {
     viewsCount,
     channelName,
     avatar,
+    createdAt,
   } = info;
 
   return (
-    <div>
+    <div className="shadow-md rounded-md">
       <div className="relative rounded-md">
         <img
-          className={`ml:rounded-md sm:h-[13rem]  ms:h-[12rem] object-cover object-center w-full`}
+          className={`ml:rounded-md sm:h-[13rem]  ms:h-[12rem] object-contain aspect-video object-center w-full`}
           alt="Thumbnails"
           src={thumbnail}
         />
-        <p className="absolute text-[0.8rem] font-medium bg-black opacity-80 rounded-md right-2 bottom-2 px-2 py-0.5">
+        <p className="absolute text-[0.8rem] font-medium text-white bg-black opacity-80 rounded-md right-2 bottom-2 px-2 py-0.5">
           {formatDuration(duration)}
         </p>
       </div>
@@ -32,7 +34,7 @@ const VideoCard = ({ info }) => {
         <Link to={`/${userName}`} className="flex-shrink-0">
           {avatar ? (
             <img
-              className="rounded-full sm:h-10 sm:w-10 ms:h-8 ms:w-8 object-cover flex-shrink-0 object-center"
+              className="rounded-full sm:h-10 sm:w-10 ms:h-8 ms:w-8 object-contain aspect-square flex-shrink-0 object-center"
               alt="Avatar"
               src={avatar}
             />
@@ -55,6 +57,7 @@ const VideoCard = ({ info }) => {
           <div className="flex gap-1 items-center text-Lightblack text-sm">
             <p>{formatViewCount(viewsCount)} views</p>
             <GoDotFill size={8} />
+            <p>{timeAgo(createdAt)}</p>
           </div>
         </div>
       </div>

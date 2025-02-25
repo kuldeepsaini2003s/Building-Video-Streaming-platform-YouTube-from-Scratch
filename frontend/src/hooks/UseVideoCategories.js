@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCategories } from "../utils/VideoSlice";
 
 const UseVideoCategories = () => {
-  const getFetchCategory = useSelector((store) => store.videos.fetchcategories);
-  // console.log(getFetchCategory);
+  const getFetchCategory = useSelector((store) => store.videos.fetchcategories);  
   const dispatch = useDispatch();
 
   const getVideoCategories = async () => {

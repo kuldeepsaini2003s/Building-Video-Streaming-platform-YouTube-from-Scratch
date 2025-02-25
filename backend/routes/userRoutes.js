@@ -25,14 +25,14 @@ router.post(
   verifyToken,
   upload.fields([
     { name: "avatar", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },
+    { name: "coverImage", maxCount: 1 },  
   ]),
   updateUserDetails
 );
 
 
 router.get("/getUserDetails", verifyToken, getUserDetails);
-router.get("/getChannelDetails/:userName", verifyToken, getChannelDetails);
+router.get("/getChannelDetails/:userName",  getChannelDetails);
 router.get("/watchHistory", verifyToken, getWatchHistory);
 
 export default router;

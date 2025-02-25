@@ -175,7 +175,7 @@ const SignUp = () => {
               />
               {formInput.avatar && (
                 <img
-                  className="w-10 h-10 object-cover object-center rounded-full"
+                  className="w-10 h-10 object-contain aspect-square object-center rounded-full"
                   src={formInput.avatar}
                   alt=""
                 />

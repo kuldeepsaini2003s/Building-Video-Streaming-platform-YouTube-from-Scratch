@@ -51,6 +51,7 @@ const WatchPage = () => {
   const [showPop, setShowPop] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
+  const [showLoginPop, setShowLoginPop] = useState(false);
 
   const { liked, disliked, likesCount, likeHandler, dislikeHandler } =
     UseLikeHandler(videoId);
@@ -82,6 +83,7 @@ const WatchPage = () => {
     viewsCount,
     videoSaved,
     user,
+    createdAt,
   } = video;
 
   useEffect(() => {
@@ -145,6 +147,10 @@ const WatchPage = () => {
   };
 
   const subscriberHandler = async () => {
+    if (!currentUser) {
+      setShowLoginPop(true);
+      return;
+    }
     if (!subscribed) {
       try {
         await axios.get(BACKEND_SUBSCRIPTION + `/subscribe/${channelName}`, {
@@ -220,6 +226,37 @@ const WatchPage = () => {
     );
   };
 
+  const LoginPop = () => {
+    return (
+      <div
+        onClick={() => setShowLoginPop(false)}
+        className="absolute w-dvw h-dvh top-0 left-0 remove-scrollbar bg-black bg-opacity-30 flex justify-center items-center"
+      >
+        <div className="text-Lightblack bg-[#212121] flex flex-col justify-between items-center h-36 rounded-md p-5">
+          <p>Unsubscribe from {channelName}</p>
+          <div className="flex gap-4 items-center justify-end">
+            <button
+              onClick={() => setShowPop(false)}
+              className="px-4 py-1 rounded-full font-medium dark:hover:bg-hover_icon_black dark:text-white hover:bg-lightgray"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmation}
+              className="px-4 py-1 rounded-full font-medium text-[#388BD4] hover:bg-[#3ca4ff36]"
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleLoginPop = () => {
+    setShowLoginPop(!showLoginPop);
+  };
+
   return (
     <>
       {shimmer ? (
@@ -227,12 +264,13 @@ const WatchPage = () => {
       ) : (
         <div id="main" className="sm:px-24 py-5 flex max-sm::flex-col gap-5">
           {/* left  */}
-          <div className="ms:w-full">
+          <div className="ms:w-[80%]">
             {/* video */}
             <video
-              className="sm:rounded-xl -z-40 w-full sm:h-[380px]"
+              className="sm:rounded-xl -z-40 w-full sm:h-[420px] object-contain aspect-video"
               src={videoUrl}
-              controls="true"
+              controls
+              autoPlay
             ></video>
             {/* channel-info */}
             <div className="max-sm:mx-3 flex flex-col gap-2 my-2 justify-center">
@@ -246,7 +284,7 @@ const WatchPage = () => {
                   <Link to={`/${userName}`}>
                     <div className="flex gap-5 items-center">
                       <img
-                        className="h-12 w-12 rounded-full object-cover object-center"
+                        className="h-12 w-12 rounded-full object-contain aspect-square object-center"
                         src={userAvatar}
                         alt=""
                       />
@@ -286,7 +324,13 @@ const WatchPage = () => {
                   {/* like-btn */}
                   <div className="user-info flex items-center bg-lightgray dark:bg-icon_black rounded-full ">
                     <div
-                      onClick={likeHandler}
+                      onClick={() => {
+                        if (!currentUser) {
+                          setShowLoginPop(true);
+                          return;
+                        }
+                        likeHandler();
+                      }}
                       className="watch-btn flex gap-1 items-center px-4 py-2 select-none dark:hover:bg-hover_icon_black  cursor-pointer"
                       style={{
                         borderTopLeftRadius: "20px",
@@ -302,7 +346,13 @@ const WatchPage = () => {
                     </div>
                     <span className="border-l-2 py-3"></span>
                     <div
-                      onClick={dislikeHandler}
+                      onClick={() => {
+                        if (!currentUser) {
+                          setShowLoginPop(true);
+                          return;
+                        }
+                        dislikeHandler();
+                      }}
                       className="cursor-pointer px-4 rounded-full rounded-l-none py-2 dark:hover:bg-hover_icon_black "
                     >
                       {!disliked ? (
@@ -449,7 +499,7 @@ const WatchPage = () => {
                           <p className="text-xs text-Lightblack">{index + 1}</p>
                           <div className="relative">
                             <img
-                              className="w-24 h-14 rounded-md object-cover object-center"
+                              className="w-24 h-14 rounded-md object-contain aspect-video object-center"
                               src={item?.thumbnail}
                               alt=""
                             />
@@ -472,6 +522,8 @@ const WatchPage = () => {
               </div>
             </div>
           )}
+
+          {showLoginPop && <LoginPop />}
           {showPop && <ConfirmationPop />}
           {showCreatePlaylist && (
             <CreatePlaylist

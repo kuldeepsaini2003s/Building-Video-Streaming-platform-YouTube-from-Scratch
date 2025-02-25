@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start" : "node index.js",
+    "start": "node index.js",
     "backend": "nodemon index.js",
     "build": "react-scripts build"
   },
@@ -12,7 +12,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrpyt": "^2.0.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",

@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import "@theme-toggles/react/css/Expand.css";
 import { Expand } from "@theme-toggles/react";
 import { FaCircleUser } from "react-icons/fa6";
+import { CircleUserRound } from "lucide-react";
+import { size } from "lodash";
 
 const Navbar = () => {
   UseVideoCategories();
@@ -108,12 +110,12 @@ const Navbar = () => {
 
   return (
     <>
-      <div id="navbar" className="flex items-center justify-between">
-        <div className="flex items-center gap-x-1 ml-2">
+      <div id="navbar" className="flex items-center justify-between px-3">
+        <div className="flex items-center gap-x-2">
           {/* Menu-btn */}
           <IoMenu
             onClick={handleToggle}
-            className="text-[2.6rem] hover:bg-Gray dark:hover:bg-icon_black p-2 rounded-full mr-2 ms:hidden sm:block"
+            className="text-[2.6rem] hover:bg-Gray dark:hover:bg-icon_black p-2 rounded-full ms:hidden sm:block"
           />
           {/* Youtube-logo */}
           <Link to={"/"}>
@@ -237,7 +239,7 @@ const Navbar = () => {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4 sm:pr-2">
+        <div className="flex items-center gap-4 ">
           <Expand
             toggled={theme === "light"}
             onToggle={toggleTheme}
@@ -251,24 +253,7 @@ const Navbar = () => {
           )}
           {/* search btn for mobile screen */}
           <div className="sm:hidden">
-            <button
-              id="search-btn"
-              className="sm:rounded-3xl sm:rounded-l-none sm:border sm:h-[2.5rem] sm:w-[5vw] flex justify-center items-center sm:p-0 ms:p-2 sm:hidden "
-            >
-              <svg
-                viewBox="0 0 24 24"
-                preserveAspectRatio="xMidYMid meet"
-                focusable="false"
-                className="style-scope yt-icon sm:h-5 ms:h-7 block"
-              >
-                <g className="style-scope yt-icon h-10">
-                  <path
-                    d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z"
-                    className="style-scope yt-icon h-10"
-                  ></path>
-                </g>
-              </svg>
-            </button>
+            <IoSearchOutline className="text-[1.2rem] mr-1" />
           </div>
 
           {/* user-icon */}
@@ -280,7 +265,7 @@ const Navbar = () => {
               <button onClick={settingHandler}>
                 {user?.avatar ? (
                   <img
-                    className="w-10 h-10 rounded-full object-cover object-center"
+                    className="w-10 h-10 rounded-full object-contain aspect-square object-center"
                     src={user?.avatar}
                     alt=""
                   />
@@ -289,7 +274,12 @@ const Navbar = () => {
                 )}
               </button>
             ) : (
-              <button onClick={() => navigate("/login")}>Signin</button>
+              <button
+                className="flex gap-1 items-center border border-icon_black font-medium rounded-full text-sm px-2 py-1"
+                onClick={() => navigate("/login")}
+              >
+                <CircleUserRound size={22} strokeWidth={1} /> Sign in
+              </button>
             )}
           </div>
           {showSetting && (
@@ -312,7 +302,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div></div>
     </>
   );
 };

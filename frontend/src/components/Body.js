@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Menu from "./Menu";
 import Categories from "./Categories";
-import { useSelector } from "react-redux";
 import Slider from "./Slider";
+import Navbar from "./Navbar";
 
 const Body = () => {
-  const { user } = useSelector((store) => store.user);
   const [categoryVisible, setCategoryVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const isSliderOpen = useSelector((store) => store.app.open);
-  const location = window.location.pathname;
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    setCategoryVisible(location === "/");
-    setMenuVisible(location === "/watch");
-  }, [location]);
+    console.log(pathname);
+    setCategoryVisible(pathname === "/");
+    setMenuVisible(pathname === "/watch");
+  }, [pathname]);
 
   return (
     <div className="main-container">
+      <Navbar />
       {!menuVisible && <Menu />}
       {categoryVisible && <Categories />}
-      {isSliderOpen && <Slider />}
+      <Slider />
       <Outlet />
     </div>
   );

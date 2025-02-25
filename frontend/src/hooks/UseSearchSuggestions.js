@@ -8,8 +8,7 @@ const UseSearchSuggestions = () => {
 
   const searchQuary = useSelector(
     (store) => store.searchSuggestion.searchQuery
-  );
-  // console.log(searchQuary);
+  );  
 
   const getSearchSuggestion = async () => {
     try {
