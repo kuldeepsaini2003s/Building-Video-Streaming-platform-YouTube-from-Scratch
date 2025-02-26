@@ -1,13 +1,13 @@
 import {
   userDetails,
-  getUserDetails,
   getWatchHistory,
   loginUser,
   logoutUser,
   refreshAccessToken,
   registerUser,
   updatePassword,
-  updateUserDetails,
+  updateUser,
+  channelDetails,
 } from "../controllers/UserController.js";
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -21,17 +21,17 @@ router.get("/logout", verifyToken, logoutUser);
 router.get("/refresh_token", refreshAccessToken);
 router.post("/updatePassword", verifyToken, updatePassword);
 router.post(
-  "/updateUserDetails",
+  "/updateUser",
   verifyToken,
   upload.fields([
     { name: "avatar", maxCount: 1 },
     { name: "coverImage", maxCount: 1 },
   ]),
-  updateUserDetails
+  updateUser
 );
 
-router.get("/user", verifyToken, getUserDetails);
-router.get("/updateUser/:userName", userDetails);
+router.get("/user", verifyToken, userDetails);
+router.get("/channel/:userName", channelDetails);
 router.get("/watchHistory", verifyToken, getWatchHistory);
 
 export default router;

@@ -11,7 +11,6 @@ const Body = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    console.log(pathname);
     setCategoryVisible(pathname === "/");
     setMenuVisible(pathname === "/watch");
   }, [pathname]);

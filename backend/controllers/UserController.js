@@ -319,7 +319,7 @@ const updatePassword = async (req, res) => {
   }
 };
 
-const updateUserDetails = async (req, res) => {
+const updateUser = async (req, res) => {
   const { userName, channelName, description, status } = req.body;
 
   if (!userName || !channelName) {
@@ -407,7 +407,7 @@ const updateUserDetails = async (req, res) => {
   }
 };
 
-const getUserDetails = async (req, res) => {
+const userDetails = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (!user) {
@@ -424,7 +424,7 @@ const getUserDetails = async (req, res) => {
   });
 };
 
-const userDetails = async (req, res) => {
+const channelDetails = async (req, res) => {
   const { userName } = req.params;
   if (!userName)
     return res
@@ -576,8 +576,8 @@ export {
   logoutUser,
   refreshAccessToken,
   updatePassword,
-  getUserDetails,
   userDetails,
+  channelDetails,
   getWatchHistory,
-  updateUserDetails,
+  updateUser,
 };
