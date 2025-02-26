@@ -129,7 +129,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(BACKEND_USER + "/getUserDetails", {
+        const response = await fetch(BACKEND_USER + "/user", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

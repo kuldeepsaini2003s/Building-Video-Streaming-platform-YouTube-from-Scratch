@@ -91,7 +91,7 @@ const CustomizeChannel = () => {
 
       const toastId = toast.loading("Updating channel information...");
       try {
-        const response = await fetch(BACKEND_USER + "/updateUserDetails", {
+        const response = await fetch(BACKEND_USER + "/updateUser", {
           method: "POST",
           body: formData,
           headers: {

@@ -106,9 +106,15 @@ const registerUser = async (req, res) => {
         channelName,
         avatar: avatarURL.secure_url,
       },
+      draftDetails: {
+        userName: "",
+        channelName: "",
+      },
     };
 
     const bcryptPassword = await bcrypt.hash(password, 10);
+    console.log({ ...userData, email, password: bcryptPassword });
+
     const user = await User.create({
       ...userData,
       email,
