@@ -424,7 +424,7 @@ const getUserDetails = async (req, res) => {
   });
 };
 
-const getChannelDetails = async (req, res) => {
+const userDetails = async (req, res) => {
   const { userName } = req.params;
   if (!userName)
     return res
@@ -577,7 +577,7 @@ export {
   refreshAccessToken,
   updatePassword,
   getUserDetails,
-  getChannelDetails,
+  userDetails,
   getWatchHistory,
   updateUserDetails,
 };

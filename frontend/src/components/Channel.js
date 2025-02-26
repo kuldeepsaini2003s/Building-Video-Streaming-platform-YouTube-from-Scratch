@@ -56,7 +56,7 @@ const Channel = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(
-          BACKEND_USER + `/getChannelDetails/${userName}`,
+          BACKEND_USER + `/user/${userName}`,
           {
             method: "GET",
             headers: {

@@ -1,5 +1,5 @@
 import {
-  getChannelDetails,
+  userDetails,
   getUserDetails,
   getWatchHistory,
   loginUser,
@@ -25,14 +25,13 @@ router.post(
   verifyToken,
   upload.fields([
     { name: "avatar", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },  
+    { name: "coverImage", maxCount: 1 },
   ]),
   updateUserDetails
 );
 
-
 router.get("/user", verifyToken, getUserDetails);
-router.get("/updateUser/:userName",  getChannelDetails);
+router.get("/updateUser/:userName", userDetails);
 router.get("/watchHistory", verifyToken, getWatchHistory);
 
 export default router;
