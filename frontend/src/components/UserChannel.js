@@ -1,13 +1,12 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useToast } from "react-toastify";
-import { LOCAL_BACKEND_USER } from "../utils/constants";
 import { CircleUserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { GoDotFill } from "react-icons/go";
 import { FaCircleUser } from "react-icons/fa6";
 import VideoCard from "./VideoCard";
+import { BACKEND_USER } from "../utils/constants";
+import axios from "axios";
 
 const UserChannel = () => {
   const userToken = localStorage.getItem("token");
@@ -15,26 +14,26 @@ const UserChannel = () => {
   const [userVideosCount, setUserVideosCount] = useState(0);
   const [history, setHistory] = useState([]);
 
-//   useEffect(() => {
-//     const fetchWatchHistory = async () => {
-//       try {
-//         const response = await axios.get(LOCAL_BACKEND_USER + "/watchHistory", {
-//           headers: {
-//             Authorization: `Bearer ${userToken}`,
-//           },
-//         });
-//         if (response.status === 200) {
-//           setHistory(response?.data?.data);
-//         }
-//       } catch (error) {
-//         console.error("Error while fetching user details");
-//         setHistory([]);
-//       }
-//     };
-//     if (userToken) {
-//       fetchWatchHistory();
-//     }
-//   }, [userToken]);
+  useEffect(() => {
+    const fetchWatchHistory = async () => {
+      try {
+        const response = await axios.get(BACKEND_USER + "/watchHistory", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (response.status === 200) {
+          setHistory(response?.data?.data);
+        }
+      } catch (error) {
+        console.error("Error while fetching user details");
+        setHistory([]);
+      }
+    };
+    if (userToken) {
+      fetchWatchHistory();
+    }
+  }, [userToken]);
 
   return (
     <div id="main" className="px-20 py-2">
@@ -87,8 +86,8 @@ const UserChannel = () => {
             <h1 className="font-semibold text-lg mt-4">History</h1>
             {history?.length > 0 ? (
               <div className="grid grid-cols-4 gap-4">
-                {history?.map((item) => (
-                  <VideoCard info={item} />
+                {history?.map((item, index) => (
+                  <VideoCard key={index} info={item} />
                 ))}
               </div>
             ) : (

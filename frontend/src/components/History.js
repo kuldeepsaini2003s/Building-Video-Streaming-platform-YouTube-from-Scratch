@@ -4,12 +4,10 @@ import axios from "axios";
 import {
   BACKEND_USER,
   formatDuration,
-  formatViewCount,
-  LOCAL_BACKEND_USER,
+  formatViewCount  
 } from "../utils/constants";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { size } from "lodash";
 
 const History = () => {
   const [watchHistory, setWatchHistory] = useState([]);
@@ -18,7 +16,7 @@ const History = () => {
   useEffect(() => {
     const fetchWatchHistory = async () => {
       try {
-        const response = await axios.get(LOCAL_BACKEND_USER + "/watchHistory", {
+        const response = await axios.get(BACKEND_USER + "/watchHistory", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

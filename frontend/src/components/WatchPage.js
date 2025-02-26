@@ -2,23 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import UseSingleVideo from "../hooks/UseSingleVideo";
 import { useDispatch, useSelector } from "react-redux";
-import Image from "../Images/user.avif";
-import LiveChats from "./LiveChats";
 import { setMessages } from "../utils/ChatSlice";
 import { BiLike, BiSolidLike, BiDislike, BiSolidDislike } from "react-icons/bi";
 import { RiShareForwardLine } from "react-icons/ri";
-import { LuSendHorizontal } from "react-icons/lu";
 import {
   BACKEND_PLAYLIST,
   BACKEND_SUBSCRIPTION,
   BACKEND_VIDEO,
-  formatDuration,
-  LOCAL_BACKEND_VIDEO,
+  formatDuration,  
 } from "../utils/constants";
 import axios from "axios";
 import UseLikeHandler from "../hooks/UseLikeHandler";
 import Lottie from "lottie-react";
-import bell_icon_black from "../Icons/Bell-icon-black.json";
 import bell_icon_white from "../Icons/Bell-icon-white.json";
 import { CreatePlaylist, SavePlaylist } from "./Playlist";
 import { Bookmark, X } from "lucide-react";
@@ -108,7 +103,7 @@ const WatchPage = () => {
   useEffect(() => {
     const addVideoToWatched = async () => {
       try {
-        await axios.get(LOCAL_BACKEND_VIDEO + `/add_To_Watched/${videoId}`, {
+        await axios.get(BACKEND_VIDEO + `/add_To_Watched/${videoId}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },

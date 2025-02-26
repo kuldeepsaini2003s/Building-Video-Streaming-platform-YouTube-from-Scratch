@@ -8,7 +8,7 @@ import {
   IoVideocamOutline,
 } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
-import { BACKEND_VIDEO, LOCAL_BACKEND_VIDEO } from "../utils/constants";
+import { BACKEND_VIDEO } from "../utils/constants";
 
 const CreateVideo = () => {
   const categories = [
@@ -148,7 +148,7 @@ const CreateVideo = () => {
     const interval = setInterval(async () => {
       try {
         const response = await fetch(
-          `${LOCAL_BACKEND_VIDEO}/progress?fileName=${video?.name}`
+          `${BACKEND_VIDEO}/progress?fileName=${video?.name}`
         );
         const data = await response.json();
 
@@ -199,7 +199,7 @@ const CreateVideo = () => {
       formData.append("fileName", video.name);
 
       try {
-        const response = await fetch(LOCAL_BACKEND_VIDEO + "/upload", {
+        const response = await fetch(BACKEND_VIDEO + "/upload", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

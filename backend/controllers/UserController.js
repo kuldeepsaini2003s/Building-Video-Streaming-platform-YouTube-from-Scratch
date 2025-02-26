@@ -498,7 +498,7 @@ const getWatchHistory = async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: req.user._id,  
+        _id: req.user._id,
       },
     },
     {
@@ -536,7 +536,8 @@ const getWatchHistory = async (req, res) => {
         thumbnail: "$videoDetails.thumbnail",
         videoId: "$videoDetails.video_id",
         duration: "$videoDetails.duration",
-        views: { $size: "$videoDetails.views" },
+        viewsCount: { $size: "$videoDetails.views" },
+        createdAt: "$videoDetails.createdAt",
         channelName: {
           $arrayElemAt: ["$videoOwner.publishedDetails.channelName", 0],
         },
@@ -549,7 +550,8 @@ const getWatchHistory = async (req, res) => {
         thumbnail: 1,
         videoId: 1,
         duration: 1,
-        views: 1,
+        viewsCount: 1,
+        createdAt: 1,
         channelName: 1,
       },
     },
